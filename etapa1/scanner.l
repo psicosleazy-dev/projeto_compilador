@@ -1,7 +1,7 @@
 /* Nomes: Lucas Brum e Arthur */
 
 %{ 
-#include<"tokens.h">
+#include "tokens.h"
 #include<stdio.h>
 int count_line = 1;
 int get_line_number(){
@@ -17,21 +17,22 @@ exponent [eE][+-]?{integer}
 float {integer}["."]?{integer}+{exponent}?
 %option noyywrap
 %option yylineno
+%option nounput
+%option noinput
 %%
 {white} {}
-\/\*(\*(?!\/)|[^*])*\*\/ {	
+[/\*[\s\S]*?\*/] {	
 	int i = 0;
-	while(yytext[i] != '\0' {
-	if(yytext[i] == '\n') 
-		count_line++;
-	}
+	while(yytext[i] != '\0')
+		if(yytext[i] == '\n') 
+			count_line++;
+	i++;
 }
 [/][/]+.* {}
-[,;:(){}+-*/%^<>=!] return yytext[0];
+[,;:(){}+\-*/%^<>=!] return yytext[0];
 \'([^\']?)\' return TK_LIT_CHAR;
-{float} return TK_LIT_FLOAT;
 {integer} return TK_LIT_INT;
-{id} return TK_IDENTIFICADOR;
+{float} return TK_LIT_FLOAT;
 "int" return TK_PR_INT;
 "float" return TK_PR_FLOAT;
 "bool" return TK_PR_BOOL;
@@ -46,6 +47,13 @@ float {integer}["."]?{integer}+{exponent}?
 "for" return TK_PR_FOR;
 "true" return TK_LIT_TRUE;
 "false" return TK_LIT_FALSE;
+"<=" return TK_OC_LE;
+">=" return TK_OC_GE;
+"==" return TK_OC_EQ;
+"!=" return TK_OC_NE;
+"&&" return TK_OC_AND;
+"||" return TK_OC_OR;
+{id} return TK_IDENTIFICADOR;
 [\n] count_line++;
 . return TK_ERRO;
 %%

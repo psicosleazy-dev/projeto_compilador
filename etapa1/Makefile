@@ -1,9 +1,5 @@
-main: main.c
-      gcc main.c -c
-
-scanner: scanner.l
-         flex scanner.l
-         gcc lex.yy.c -c
-
-all: main scanner
-       gcc lex.yy.o main.o -o etapa1
+etapa1: scanner.l
+	flex scanner.l
+	gcc -Wall -o etapa1 lex.yy.c main.c -lm
+clean:
+	rm -rf etapa1
