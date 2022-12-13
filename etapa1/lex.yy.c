@@ -545,7 +545,7 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "scanner.l"
-/* Nomes: Lucas Brum e Arthur */
+/* Nomes: Lucas Brum e Arthur Oliveira*/
 #line 4 "scanner.l"
 #include "tokens.h"
 #include<stdio.h>

@@ -1,4 +1,4 @@
-/* Nomes: Lucas Brum e Arthur */
+/* Nomes: Lucas Brum e Arthur Oliveira*/
 
 %{ 
 #include "tokens.h"
