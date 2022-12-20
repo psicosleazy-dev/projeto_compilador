@@ -1,0 +1,11 @@
+#! ./tesh
+! timeout 1
+$ ./main < tests/e1/entrada_102
+> 6 TK_IDENTIFICADOR [Isso]
+> 6 TK_IDENTIFICADOR [esta]
+> 6 TK_IDENTIFICADOR [fora]
+> 6 TK_IDENTIFICADOR [do]
+> 6 TK_IDENTIFICADOR [comentario]
+> 7 TK_ESPECIAL [*]
+> 7 TK_ESPECIAL [/]
+> 8 TK_IDENTIFICADOR [oi]

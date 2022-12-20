@@ -5,14 +5,14 @@
 #include<stdio.h>
 int count_line = 1;
 int get_line_number(){
-     return count_line;
+     return yylineno;
 }
 %}
 
 white [ \t\r]+
 digit [0-9]
 id [a-zA-Z]+
-integer {digit}+
+integer [+-]?{digit}+
 exponent [eE][+-]?{integer}
 float {integer}["."]?{integer}+{exponent}?
 %option noyywrap
@@ -21,14 +21,8 @@ float {integer}["."]?{integer}+{exponent}?
 %option noinput
 %%
 {white} {}
-[/\*[\s\S]*?\*/] {	
-	int i = 0;
-	while(yytext[i] != '\0')
-		if(yytext[i] == '\n') 
-			count_line++;
-	i++;
-}
 [/][/]+.* {}
+[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/] {}
 [,;:(){}+\-*/%^<>=!] return yytext[0];
 \'([^\']?)\' return TK_LIT_CHAR;
 {integer} return TK_LIT_INT;
