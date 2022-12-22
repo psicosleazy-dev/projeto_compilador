@@ -1,0 +1,669 @@
+Não-terminais inúteis na gramática
+
+   init_variavel_local
+   variaveis_locais
+   lista_nomes_local
+   retorno
+
+
+Terminais sem uso na gramática
+
+   TK_PR_IF
+   TK_PR_THEN
+   TK_PR_ELSE
+   TK_PR_WHILE
+   TK_PR_INPUT
+   TK_PR_OUTPUT
+   TK_PR_RETURN
+   TK_PR_FOR
+   TK_OC_LE
+   TK_OC_GE
+   TK_OC_EQ
+   TK_OC_NE
+   TK_OC_AND
+   TK_OC_OR
+   TK_LIT_CHAR
+   TK_ERRO
+   '<'
+   '='
+
+
+Regras inúteis na gramática
+
+   33 init_variavel_local: '<' '=' TK_LIT_INT
+   34                    | %empty
+
+   35 variaveis_locais: tipo lista_nomes_local ';'
+
+   36 lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR indice init_variavel_local
+   37                  | TK_IDENTIFICADOR indice init_variavel_local
+
+   38 retorno: TK_PR_RETURN expressao
+
+
+Regras inúteis no analisador por causa de conflitos
+
+   16 argumentos: expressao ',' expressao
+   17           | expressao
+
+
+Estado 30 conflitos: 1 de deslocamento/redução, 4 de redução/redução
+Estado 33 conflitos: 2 de deslocamento/redução, 1 de redução/redução
+Estado 43 conflitos: 1 de deslocamento/redução, 4 de redução/redução
+Estado 44 conflitos: 1 de deslocamento/redução, 1 de redução/redução
+
+
+Gramática
+
+    0 $accept: programa $end
+
+    1 programa: %empty
+    2         | variaveis_globais funcoes_
+    3         | funcoes variaveis_globais_
+
+    4 funcoes_: funcoes
+    5         | %empty
+
+    6 variaveis_globais_: variaveis_globais
+    7                   | %empty
+
+    8 variaveis_globais: tipo lista_nomes_global ';'
+
+    9 lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR indice
+   10                   | TK_IDENTIFICADOR indice
+
+   11 indice: ':' expressao
+   12       | %empty
+
+   13 expressao: expressao '^' expressao
+   14          | expressao
+   15          | operando
+
+   16 argumentos: expressao ',' expressao
+   17           | expressao
+
+   18 chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')'
+
+   19 operando: TK_IDENTIFICADOR indice
+   20         | TK_LIT_INT
+   21         | TK_LIT_FLOAT
+   22         | TK_LIT_FALSE
+   23         | TK_LIT_TRUE
+   24         | chamada_funcao
+
+   25 tipo: TK_PR_INT
+   26     | TK_PR_FLOAT
+   27     | TK_PR_BOOL
+   28     | TK_PR_CHAR
+
+   29 funcoes: funcoes funcao
+   30        | funcao
+
+   31 funcao: tipo TK_IDENTIFICADOR '(' argumentos ')' corpo
+
+   32 corpo: '{' '}'
+
+
+Terminais, com as regras onde eles aparecem
+
+$end (0) 0
+'(' (40) 18 31
+')' (41) 18 31
+',' (44) 9 16
+':' (58) 11
+';' (59) 8
+'<' (60)
+'=' (61)
+'^' (94) 13
+'{' (123) 32
+'}' (125) 32
+error (256)
+TK_PR_INT (258) 25
+TK_PR_FLOAT (259) 26
+TK_PR_BOOL (260) 27
+TK_PR_CHAR (261) 28
+TK_PR_IF (262)
+TK_PR_THEN (263)
+TK_PR_ELSE (264)
+TK_PR_WHILE (265)
+TK_PR_INPUT (266)
+TK_PR_OUTPUT (267)
+TK_PR_RETURN (268)
+TK_PR_FOR (269)
+TK_OC_LE (270)
+TK_OC_GE (271)
+TK_OC_EQ (272)
+TK_OC_NE (273)
+TK_OC_AND (274)
+TK_OC_OR (275)
+TK_LIT_INT (276) 20
+TK_LIT_FLOAT (277) 21
+TK_LIT_FALSE (278) 22
+TK_LIT_TRUE (279) 23
+TK_LIT_CHAR (280)
+TK_IDENTIFICADOR (281) 9 10 18 19 31
+TK_ERRO (282)
+
+
+Não terminais com as regras onde eles aparecem
+
+$accept (38)
+    à esquerda: 0
+programa (39)
+    à esquerda: 1 2 3, à direita: 0
+funcoes_ (40)
+    à esquerda: 4 5, à direita: 2
+variaveis_globais_ (41)
+    à esquerda: 6 7, à direita: 3
+variaveis_globais (42)
+    à esquerda: 8, à direita: 2 6
+lista_nomes_global (43)
+    à esquerda: 9 10, à direita: 8 9
+indice (44)
+    à esquerda: 11 12, à direita: 9 10 19
+expressao (45)
+    à esquerda: 13 14 15, à direita: 11 13 14 16 17
+argumentos (46)
+    à esquerda: 16 17, à direita: 18 31
+chamada_funcao (47)
+    à esquerda: 18, à direita: 24
+operando (48)
+    à esquerda: 19 20 21 22 23 24, à direita: 15
+tipo (49)
+    à esquerda: 25 26 27 28, à direita: 8 31
+funcoes (50)
+    à esquerda: 29 30, à direita: 3 4 29
+funcao (51)
+    à esquerda: 31, à direita: 29 30
+corpo (52)
+    à esquerda: 32, à direita: 31
+
+
+Estado 0
+
+    0 $accept: . programa $end
+
+    TK_PR_INT    deslocar, e ir ao estado 1
+    TK_PR_FLOAT  deslocar, e ir ao estado 2
+    TK_PR_BOOL   deslocar, e ir ao estado 3
+    TK_PR_CHAR   deslocar, e ir ao estado 4
+
+    $padrão  reduzir usando a regra 1 (programa)
+
+    programa           ir ao estado 5
+    variaveis_globais  ir ao estado 6
+    tipo               ir ao estado 7
+    funcoes            ir ao estado 8
+    funcao             ir ao estado 9
+
+
+Estado 1
+
+   25 tipo: TK_PR_INT .
+
+    $padrão  reduzir usando a regra 25 (tipo)
+
+
+Estado 2
+
+   26 tipo: TK_PR_FLOAT .
+
+    $padrão  reduzir usando a regra 26 (tipo)
+
+
+Estado 3
+
+   27 tipo: TK_PR_BOOL .
+
+    $padrão  reduzir usando a regra 27 (tipo)
+
+
+Estado 4
+
+   28 tipo: TK_PR_CHAR .
+
+    $padrão  reduzir usando a regra 28 (tipo)
+
+
+Estado 5
+
+    0 $accept: programa . $end
+
+    $end  deslocar, e ir ao estado 10
+
+
+Estado 6
+
+    2 programa: variaveis_globais . funcoes_
+
+    TK_PR_INT    deslocar, e ir ao estado 1
+    TK_PR_FLOAT  deslocar, e ir ao estado 2
+    TK_PR_BOOL   deslocar, e ir ao estado 3
+    TK_PR_CHAR   deslocar, e ir ao estado 4
+
+    $padrão  reduzir usando a regra 5 (funcoes_)
+
+    funcoes_  ir ao estado 11
+    tipo      ir ao estado 12
+    funcoes   ir ao estado 13
+    funcao    ir ao estado 9
+
+
+Estado 7
+
+    8 variaveis_globais: tipo . lista_nomes_global ';'
+   31 funcao: tipo . TK_IDENTIFICADOR '(' argumentos ')' corpo
+
+    TK_IDENTIFICADOR  deslocar, e ir ao estado 14
+
+    lista_nomes_global  ir ao estado 15
+
+
+Estado 8
+
+    3 programa: funcoes . variaveis_globais_
+   29 funcoes: funcoes . funcao
+
+    TK_PR_INT    deslocar, e ir ao estado 1
+    TK_PR_FLOAT  deslocar, e ir ao estado 2
+    TK_PR_BOOL   deslocar, e ir ao estado 3
+    TK_PR_CHAR   deslocar, e ir ao estado 4
+
+    $padrão  reduzir usando a regra 7 (variaveis_globais_)
+
+    variaveis_globais_  ir ao estado 16
+    variaveis_globais   ir ao estado 17
+    tipo                ir ao estado 7
+    funcao              ir ao estado 18
+
+
+Estado 9
+
+   30 funcoes: funcao .
+
+    $padrão  reduzir usando a regra 30 (funcoes)
+
+
+Estado 10
+
+    0 $accept: programa $end .
+
+    $padrão  aceitar
+
+
+Estado 11
+
+    2 programa: variaveis_globais funcoes_ .
+
+    $padrão  reduzir usando a regra 2 (programa)
+
+
+Estado 12
+
+   31 funcao: tipo . TK_IDENTIFICADOR '(' argumentos ')' corpo
+
+    TK_IDENTIFICADOR  deslocar, e ir ao estado 19
+
+
+Estado 13
+
+    4 funcoes_: funcoes .
+   29 funcoes: funcoes . funcao
+
+    TK_PR_INT    deslocar, e ir ao estado 1
+    TK_PR_FLOAT  deslocar, e ir ao estado 2
+    TK_PR_BOOL   deslocar, e ir ao estado 3
+    TK_PR_CHAR   deslocar, e ir ao estado 4
+
+    $padrão  reduzir usando a regra 4 (funcoes_)
+
+    tipo    ir ao estado 12
+    funcao  ir ao estado 18
+
+
+Estado 14
+
+   10 lista_nomes_global: TK_IDENTIFICADOR . indice
+   31 funcao: tipo TK_IDENTIFICADOR . '(' argumentos ')' corpo
+
+    ':'  deslocar, e ir ao estado 20
+    '('  deslocar, e ir ao estado 21
+
+    $padrão  reduzir usando a regra 12 (indice)
+
+    indice  ir ao estado 22
+
+
+Estado 15
+
+    8 variaveis_globais: tipo lista_nomes_global . ';'
+    9 lista_nomes_global: lista_nomes_global . ',' TK_IDENTIFICADOR indice
+
+    ';'  deslocar, e ir ao estado 23
+    ','  deslocar, e ir ao estado 24
+
+
+Estado 16
+
+    3 programa: funcoes variaveis_globais_ .
+
+    $padrão  reduzir usando a regra 3 (programa)
+
+
+Estado 17
+
+    6 variaveis_globais_: variaveis_globais .
+
+    $padrão  reduzir usando a regra 6 (variaveis_globais_)
+
+
+Estado 18
+
+   29 funcoes: funcoes funcao .
+
+    $padrão  reduzir usando a regra 29 (funcoes)
+
+
+Estado 19
+
+   31 funcao: tipo TK_IDENTIFICADOR . '(' argumentos ')' corpo
+
+    '('  deslocar, e ir ao estado 21
+
+
+Estado 20
+
+   11 indice: ':' . expressao
+
+    TK_LIT_INT        deslocar, e ir ao estado 25
+    TK_LIT_FLOAT      deslocar, e ir ao estado 26
+    TK_LIT_FALSE      deslocar, e ir ao estado 27
+    TK_LIT_TRUE       deslocar, e ir ao estado 28
+    TK_IDENTIFICADOR  deslocar, e ir ao estado 29
+
+    expressao       ir ao estado 30
+    chamada_funcao  ir ao estado 31
+    operando        ir ao estado 32
+
+
+Estado 21
+
+   31 funcao: tipo TK_IDENTIFICADOR '(' . argumentos ')' corpo
+
+    TK_LIT_INT        deslocar, e ir ao estado 25
+    TK_LIT_FLOAT      deslocar, e ir ao estado 26
+    TK_LIT_FALSE      deslocar, e ir ao estado 27
+    TK_LIT_TRUE       deslocar, e ir ao estado 28
+    TK_IDENTIFICADOR  deslocar, e ir ao estado 29
+
+    expressao       ir ao estado 33
+    argumentos      ir ao estado 34
+    chamada_funcao  ir ao estado 31
+    operando        ir ao estado 32
+
+
+Estado 22
+
+   10 lista_nomes_global: TK_IDENTIFICADOR indice .
+
+    $padrão  reduzir usando a regra 10 (lista_nomes_global)
+
+
+Estado 23
+
+    8 variaveis_globais: tipo lista_nomes_global ';' .
+
+    $padrão  reduzir usando a regra 8 (variaveis_globais)
+
+
+Estado 24
+
+    9 lista_nomes_global: lista_nomes_global ',' . TK_IDENTIFICADOR indice
+
+    TK_IDENTIFICADOR  deslocar, e ir ao estado 35
+
+
+Estado 25
+
+   20 operando: TK_LIT_INT .
+
+    $padrão  reduzir usando a regra 20 (operando)
+
+
+Estado 26
+
+   21 operando: TK_LIT_FLOAT .
+
+    $padrão  reduzir usando a regra 21 (operando)
+
+
+Estado 27
+
+   22 operando: TK_LIT_FALSE .
+
+    $padrão  reduzir usando a regra 22 (operando)
+
+
+Estado 28
+
+   23 operando: TK_LIT_TRUE .
+
+    $padrão  reduzir usando a regra 23 (operando)
+
+
+Estado 29
+
+   18 chamada_funcao: TK_IDENTIFICADOR . '(' argumentos ')'
+   19 operando: TK_IDENTIFICADOR . indice
+
+    ':'  deslocar, e ir ao estado 20
+    '('  deslocar, e ir ao estado 36
+
+    $padrão  reduzir usando a regra 12 (indice)
+
+    indice  ir ao estado 37
+
+
+Estado 30
+
+   11 indice: ':' expressao .
+   13 expressao: expressao . '^' expressao
+   14          | expressao .
+
+    '^'  deslocar, e ir ao estado 38
+
+    ';'       reduzir usando a regra 11 (indice)
+    ';'       [reduzir usando a regra 14 (expressao)]
+    ','       reduzir usando a regra 11 (indice)
+    ','       [reduzir usando a regra 14 (expressao)]
+    '^'       [reduzir usando a regra 11 (indice)]
+    '^'       [reduzir usando a regra 14 (expressao)]
+    ')'       reduzir usando a regra 11 (indice)
+    ')'       [reduzir usando a regra 14 (expressao)]
+    $padrão  reduzir usando a regra 11 (indice)
+
+
+Estado 31
+
+   24 operando: chamada_funcao .
+
+    $padrão  reduzir usando a regra 24 (operando)
+
+
+Estado 32
+
+   15 expressao: operando .
+
+    $padrão  reduzir usando a regra 15 (expressao)
+
+
+Estado 33
+
+   13 expressao: expressao . '^' expressao
+   14          | expressao .
+   16 argumentos: expressao . ',' expressao
+   17           | expressao .
+
+    ','  deslocar, e ir ao estado 39
+    '^'  deslocar, e ir ao estado 38
+
+    ','       [reduzir usando a regra 14 (expressao)]
+    '^'       [reduzir usando a regra 14 (expressao)]
+    ')'       reduzir usando a regra 14 (expressao)
+    ')'       [reduzir usando a regra 17 (argumentos)]
+    $padrão  reduzir usando a regra 14 (expressao)
+
+
+Estado 34
+
+   31 funcao: tipo TK_IDENTIFICADOR '(' argumentos . ')' corpo
+
+    ')'  deslocar, e ir ao estado 40
+
+
+Estado 35
+
+    9 lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR . indice
+
+    ':'  deslocar, e ir ao estado 20
+
+    $padrão  reduzir usando a regra 12 (indice)
+
+    indice  ir ao estado 41
+
+
+Estado 36
+
+   18 chamada_funcao: TK_IDENTIFICADOR '(' . argumentos ')'
+
+    TK_LIT_INT        deslocar, e ir ao estado 25
+    TK_LIT_FLOAT      deslocar, e ir ao estado 26
+    TK_LIT_FALSE      deslocar, e ir ao estado 27
+    TK_LIT_TRUE       deslocar, e ir ao estado 28
+    TK_IDENTIFICADOR  deslocar, e ir ao estado 29
+
+    expressao       ir ao estado 33
+    argumentos      ir ao estado 42
+    chamada_funcao  ir ao estado 31
+    operando        ir ao estado 32
+
+
+Estado 37
+
+   19 operando: TK_IDENTIFICADOR indice .
+
+    $padrão  reduzir usando a regra 19 (operando)
+
+
+Estado 38
+
+   13 expressao: expressao '^' . expressao
+
+    TK_LIT_INT        deslocar, e ir ao estado 25
+    TK_LIT_FLOAT      deslocar, e ir ao estado 26
+    TK_LIT_FALSE      deslocar, e ir ao estado 27
+    TK_LIT_TRUE       deslocar, e ir ao estado 28
+    TK_IDENTIFICADOR  deslocar, e ir ao estado 29
+
+    expressao       ir ao estado 43
+    chamada_funcao  ir ao estado 31
+    operando        ir ao estado 32
+
+
+Estado 39
+
+   16 argumentos: expressao ',' . expressao
+
+    TK_LIT_INT        deslocar, e ir ao estado 25
+    TK_LIT_FLOAT      deslocar, e ir ao estado 26
+    TK_LIT_FALSE      deslocar, e ir ao estado 27
+    TK_LIT_TRUE       deslocar, e ir ao estado 28
+    TK_IDENTIFICADOR  deslocar, e ir ao estado 29
+
+    expressao       ir ao estado 44
+    chamada_funcao  ir ao estado 31
+    operando        ir ao estado 32
+
+
+Estado 40
+
+   31 funcao: tipo TK_IDENTIFICADOR '(' argumentos ')' . corpo
+
+    '{'  deslocar, e ir ao estado 45
+
+    corpo  ir ao estado 46
+
+
+Estado 41
+
+    9 lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR indice .
+
+    $padrão  reduzir usando a regra 9 (lista_nomes_global)
+
+
+Estado 42
+
+   18 chamada_funcao: TK_IDENTIFICADOR '(' argumentos . ')'
+
+    ')'  deslocar, e ir ao estado 47
+
+
+Estado 43
+
+   13 expressao: expressao . '^' expressao
+   13          | expressao '^' expressao .
+   14          | expressao .
+
+    '^'  deslocar, e ir ao estado 38
+
+    ';'       reduzir usando a regra 13 (expressao)
+    ';'       [reduzir usando a regra 14 (expressao)]
+    ','       reduzir usando a regra 13 (expressao)
+    ','       [reduzir usando a regra 14 (expressao)]
+    '^'       [reduzir usando a regra 13 (expressao)]
+    '^'       [reduzir usando a regra 14 (expressao)]
+    ')'       reduzir usando a regra 13 (expressao)
+    ')'       [reduzir usando a regra 14 (expressao)]
+    $padrão  reduzir usando a regra 13 (expressao)
+
+
+Estado 44
+
+   13 expressao: expressao . '^' expressao
+   14          | expressao .
+   16 argumentos: expressao ',' expressao .
+
+    '^'  deslocar, e ir ao estado 38
+
+    '^'       [reduzir usando a regra 14 (expressao)]
+    ')'       reduzir usando a regra 14 (expressao)
+    ')'       [reduzir usando a regra 16 (argumentos)]
+    $padrão  reduzir usando a regra 14 (expressao)
+
+
+Estado 45
+
+   32 corpo: '{' . '}'
+
+    '}'  deslocar, e ir ao estado 48
+
+
+Estado 46
+
+   31 funcao: tipo TK_IDENTIFICADOR '(' argumentos ')' corpo .
+
+    $padrão  reduzir usando a regra 31 (funcao)
+
+
+Estado 47
+
+   18 chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' .
+
+    $padrão  reduzir usando a regra 18 (chamada_funcao)
+
+
+Estado 48
+
+   32 corpo: '{' '}' .
+
+    $padrão  reduzir usando a regra 32 (corpo)

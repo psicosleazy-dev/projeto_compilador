@@ -1,9 +1,11 @@
 %{
+#include <stdio.h>
 int yylex(void);
 void yyerror (char const *s);
 extern int get_line_number();
 %}
-
+/* Nomes: Lucas Brum e Arthur Oliveira */
+%define parser.error detailed
 %token TK_PR_INT
 %token TK_PR_FLOAT
 %token TK_PR_BOOL
@@ -29,29 +31,31 @@ extern int get_line_number();
 %token TK_LIT_CHAR
 %token TK_IDENTIFICADOR
 %token TK_ERRO
+%start programa
 
 %%
 
 programa: 
-	| variaveis_globais funcoes_
-	| funcoes variaveis_globais_;
-funcoes_: funcoes
-	| ;
-variaveis_globais_: variaveis_globais
-	| ;
-variaveis_globais: tipo lista_nomes_global ';';
+	| lista;
+lista: funcao
+	| variaveis_globais
+	| lista funcao
+	| lista declaracao_global;
+declaracao_global: tipo lista_nomes_global ';';
 init_variavel_local: '<' '=' TK_LIT_INT | ;
-variaveis_locais: tipo lista_nomes_local ';';
+declaracao_local: tipo lista_nomes_local ';';
 lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR indice init_variavel_local
 	| TK_IDENTIFICADOR indice init_variavel_local;
-lista_nomes: lista_nomes_global ',' TK_IDENTIFICADOR indice
+lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR indice
 	| TK_IDENTIFICADOR indice;
 indice: ':' expressao
 	| ;
+/* arrumar
 expressao: expressao '^' expressao
 	| expressao
 	| operando;
 argumentos: expressao ',' expressao | expressao;
+ arrumar*/
 chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')';
 operando: TK_IDENTIFICADOR indice
 	| TK_LIT_INT
@@ -65,9 +69,17 @@ tipo: TK_PR_INT
 	| TK_PR_CHAR;
 funcoes: funcoes funcao
 	| funcao;
-funcao: tipo corpo;
+funcao: tipo TK_IDENTIFICADOR '(' argumentos ')' bloco;
+bloco: '{' comandos_simples '}';
+comandos_simples: comandos_simples ';' comando_simples 
+	| comando_simples;
+comando_simples: declaracao_local
+	| atribuicao
+	| retorno
+	| if
+	| while;
 retorno: TK_PR_RETURN expressao;
 %%
 void yyerror (char const *s){
-	fprintf(stderr, "%s\n in line %d",s,get_line_number());
+	fprintf(stderr, "Syntax error: %s\n in line %d",s,get_line_number());
 }
