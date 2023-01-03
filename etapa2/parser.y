@@ -44,11 +44,14 @@ lista: funcao
 declaracao_global: tipo lista_nomes_global ';';
 init_variavel_local: '<' '=' TK_LIT_INT | ;
 declaracao_local: tipo lista_nomes_local ';';
-lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR indice init_variavel_local
-	| TK_IDENTIFICADOR indice init_variavel_local;
-lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR indice
-	| TK_IDENTIFICADOR indice;
-indice: ':' expressao
+lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR arranjo init_variavel_local
+	| TK_IDENTIFICADOR arranjo init_variavel_local;
+lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR arranjo
+	| TK_IDENTIFICADOR arranjo ';';
+arranjo: '[' lista_inteiros ']'
+	| ;
+lista_inteiros: lista_inteiros '^' TK_LIT_INT | TK_LIT_INT;
+indice: '[' expressao ']'
 	| ;
 /* arrumar
 expressao: expressao '^' expressao
@@ -79,6 +82,8 @@ comando_simples: declaracao_local
 	| if
 	| while;
 retorno: TK_PR_RETURN expressao;
+atribuicao: TK_IDENTIFICADOR indice '=' expressao;
+
 %%
 void yyerror (char const *s){
 	fprintf(stderr, "Syntax error: %s\n in line %d",s,get_line_number());
