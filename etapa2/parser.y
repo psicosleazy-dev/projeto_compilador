@@ -61,6 +61,7 @@ argumentos: expressao ',' expressao | expressao;
  arrumar*/
 chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')';
 operando: TK_IDENTIFICADOR indice
+	| TK_IDENTIFICADOR [ expressao ]
 	| TK_LIT_INT
 	| TK_LIT_FLOAT
 	| TK_LIT_FALSE
