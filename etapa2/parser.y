@@ -71,9 +71,8 @@ expressao: expressao '^' expressao
 	| expressao TK_OC_AND expressao
 	| expressao TK_OC_OR expressao
 	| operando;
-/* arrumar
-argumentos: expressao ',' expressao | expressao;
- arrumar*/
+argumentos: expressao ',' argumentos
+	| expressao;
 chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')';
 operando: TK_IDENTIFICADOR indice
 	| TK_IDENTIFICADOR [ expressao ]
