@@ -53,10 +53,25 @@ arranjo: '[' lista_inteiros ']'
 lista_inteiros: lista_inteiros '^' TK_LIT_INT | TK_LIT_INT;
 indice: '[' expressao ']'
 	| ;
-/* arrumar
 expressao: expressao '^' expressao
-	| expressao
+	| '(' expressao ')'
+	| '!' expressao
+	| '-' expressao
+	| expressao '+' expressao
+	| expressao '-' expressao
+	| expressao '*' expressao
+	| expressao '/' expressao
+	| expressao '%' expressao
+	| expressao '>' expressao
+	| expressao '<' expressao
+	| expressao TK_OC_EQ expressao
+	| expressao TK_OC_NE expressao
+	| expressao TK_OC_LE expressao
+	| expressao TK_OC_GE expressao
+	| expressao TK_OC_AND expressao
+	| expressao TK_OC_OR expressao
 	| operando;
+/* arrumar
 argumentos: expressao ',' expressao | expressao;
  arrumar*/
 chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')';
