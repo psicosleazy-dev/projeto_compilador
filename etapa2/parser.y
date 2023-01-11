@@ -53,23 +53,33 @@ arranjo: '[' lista_inteiros ']'
 lista_inteiros: lista_inteiros '^' TK_LIT_INT | TK_LIT_INT;
 indice: '[' expressao ']'
 	| ;
-expressao: '(' expressao ')'
-	| '!' expressao
-	| '-' expressao
-	| expressao '+' expressao
-	| expressao '-' expressao
-	| expressao '*' expressao
-	| expressao '/' expressao
-	| expressao '%' expressao
-	| expressao '>' expressao
-	| expressao '<' expressao
-	| expressao TK_OC_EQ expressao
-	| expressao TK_OC_NE expressao
-	| expressao TK_OC_LE expressao
-	| expressao TK_OC_GE expressao
-	| expressao TK_OC_AND expressao
-	| expressao TK_OC_OR expressao
-	| operando;
+
+expressao: expressao TK_OC_OR prec_six
+	| prec_six;
+prec_six: prec_six TK_OC_AND prec_five
+	| prec_five;
+prec_five: prec_five TK_OC_EQ prec_four
+	| prec_five TK_OC_NE prec_four
+	| prec_four;
+prec_four: prec_four '>' prec_three
+	| prec_four '<' prec_three
+	| prec_four TK_OC_LE prec_three
+	| prec_four TK_OC_GE prec_three
+	| prec_three;
+prec_three: prec_three '+' prec_two
+	| prec_three '-' prec_two
+	| prec_two;
+prec_two: prec_two '*' prec_one
+	| prec_two '/' prec_one
+	| prec_two '%' prec_one
+	| prec_one;
+prec_one: '!' prec_one
+	| '-' prec_one
+	| prec_zero;
+prec_zero: '(' prec_zero ')'
+	| operando
+	| expressao;
+	
 expressoes: expressao '^' expressoes
 	| expressao;
 argumentos: expressao ',' argumentos
