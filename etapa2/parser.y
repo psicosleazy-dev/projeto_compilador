@@ -75,9 +75,9 @@ prec_two: prec_two '*' prec_one
 	| prec_one;
 prec_one: '!' prec_one
 	| '-' prec_one
+	| operando
 	| prec_zero;
 prec_zero: '(' prec_zero ')'
-	| operando
 	| expressao;
 	
 expressoes: expressao '^' expressoes
