@@ -73,8 +73,8 @@ prec_two: prec_two '*' prec_one
 	| prec_two '/' prec_one
 	| prec_two '%' prec_one
 	| prec_one;
-prec_one: '!' prec_one
-	| '-' prec_one
+prec_one: '!' prec_zero
+	| '-' prec_zero
 	| operando
 	| prec_zero;
 prec_zero: '(' prec_zero ')'
