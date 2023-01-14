@@ -1,0 +1,4618 @@
+Terminals unused in grammar
+
+    TK_PR_INPUT
+    TK_PR_OUTPUT
+    TK_PR_FOR
+    TK_LIT_CHAR
+    TK_ERRO
+
+
+Rules useless in parser due to conflicts
+
+   40 prec_one: '!' prec_one
+   41         | '-' prec_one
+
+   46 expressoes: expressoes '^' expressao
+   47           | expressao
+
+   48 argumentos: argumentos ',' expressao
+   49           | expressao
+
+   52 operando: TK_IDENTIFICADOR '[' expressoes ']'
+
+   73 retorno: TK_PR_RETURN expressao
+
+   74 atribuicao: TK_IDENTIFICADOR indice '=' expressao
+
+
+State 30 conflicts: 1 shift/reduce, 2 reduce/reduce
+State 31 conflicts: 1 shift/reduce
+State 32 conflicts: 2 shift/reduce
+State 33 conflicts: 4 shift/reduce
+State 34 conflicts: 2 shift/reduce
+State 35 conflicts: 3 shift/reduce
+State 48 conflicts: 1 shift/reduce
+State 49 conflicts: 19 reduce/reduce
+State 50 conflicts: 19 reduce/reduce
+State 51 conflicts: 1 shift/reduce
+State 69 conflicts: 1 shift/reduce, 2 reduce/reduce
+State 73 conflicts: 1 shift/reduce, 19 reduce/reduce
+State 74 conflicts: 2 shift/reduce, 19 reduce/reduce
+State 75 conflicts: 4 shift/reduce, 19 reduce/reduce
+State 76 conflicts: 4 shift/reduce, 19 reduce/reduce
+State 77 conflicts: 2 shift/reduce, 19 reduce/reduce
+State 78 conflicts: 2 shift/reduce, 19 reduce/reduce
+State 79 conflicts: 2 shift/reduce, 19 reduce/reduce
+State 80 conflicts: 2 shift/reduce, 19 reduce/reduce
+State 81 conflicts: 3 shift/reduce, 19 reduce/reduce
+State 82 conflicts: 3 shift/reduce, 19 reduce/reduce
+State 83 conflicts: 19 reduce/reduce
+State 84 conflicts: 19 reduce/reduce
+State 85 conflicts: 19 reduce/reduce
+State 86 conflicts: 1 shift/reduce, 2 reduce/reduce
+State 89 conflicts: 19 reduce/reduce
+State 106 conflicts: 1 shift/reduce, 2 reduce/reduce
+State 109 conflicts: 1 shift/reduce, 2 reduce/reduce
+State 116 conflicts: 2 shift/reduce
+State 117 conflicts: 2 shift/reduce
+State 127 conflicts: 1 shift/reduce, 2 reduce/reduce
+
+
+Grammar
+
+    0 $accept: programa $end
+
+    1 programa: ε
+    2         | lista
+
+    3 lista: funcao
+    4      | declaracao_global
+    5      | lista funcao
+    6      | lista declaracao_global
+
+    7 declaracao_global: tipo lista_nomes_global ';'
+
+    8 init_variavel_local: '<' '=' TK_LIT_INT
+    9                    | ε
+
+   10 declaracao_local: tipo lista_nomes_local ';'
+
+   11 lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR arranjo init_variavel_local
+   12                  | TK_IDENTIFICADOR arranjo init_variavel_local
+
+   13 lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR arranjo
+   14                   | TK_IDENTIFICADOR arranjo ';'
+
+   15 arranjo: '[' lista_inteiros ']'
+   16        | ε
+
+   17 lista_inteiros: lista_inteiros '^' TK_LIT_INT
+   18               | TK_LIT_INT
+
+   19 indice: '[' expressoes ']'
+   20       | ε
+
+   21 expressao: expressao TK_OC_OR prec_six
+   22          | prec_six
+
+   23 prec_six: prec_six TK_OC_AND prec_five
+   24         | prec_five
+
+   25 prec_five: prec_five TK_OC_EQ prec_four
+   26          | prec_five TK_OC_NE prec_four
+   27          | prec_four
+
+   28 prec_four: prec_four '>' prec_three
+   29          | prec_four '<' prec_three
+   30          | prec_four TK_OC_LE prec_three
+   31          | prec_four TK_OC_GE prec_three
+   32          | prec_three
+
+   33 prec_three: prec_three '+' prec_two
+   34           | prec_three '-' prec_two
+   35           | prec_two
+
+   36 prec_two: prec_two '*' prec_one
+   37         | prec_two '/' prec_one
+   38         | prec_two '%' prec_one
+   39         | prec_one
+
+   40 prec_one: '!' prec_one
+   41         | '-' prec_one
+   42         | operando
+   43         | prec_zero
+
+   44 prec_zero: '(' prec_zero ')'
+   45          | expressao
+
+   46 expressoes: expressoes '^' expressao
+   47           | expressao
+
+   48 argumentos: argumentos ',' expressao
+   49           | expressao
+
+   50 chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')'
+
+   51 operando: TK_IDENTIFICADOR indice
+   52         | TK_IDENTIFICADOR '[' expressoes ']'
+   53         | TK_LIT_INT
+   54         | TK_LIT_FLOAT
+   55         | TK_LIT_FALSE
+   56         | TK_LIT_TRUE
+   57         | chamada_funcao
+
+   58 tipo: TK_PR_INT
+   59     | TK_PR_FLOAT
+   60     | TK_PR_BOOL
+   61     | TK_PR_CHAR
+
+   62 funcao: tipo TK_IDENTIFICADOR '(' argumentos ')' bloco
+
+   63 bloco: '{' comandos_simples '}'
+
+   64 comandos_simples: comandos_simples ';' comando_simples
+   65                 | comando_simples
+
+   66 comando_simples: declaracao_local
+   67                | bloco
+   68                | chamada_funcao
+   69                | atribuicao
+   70                | retorno
+   71                | if
+   72                | while
+
+   73 retorno: TK_PR_RETURN expressao
+
+   74 atribuicao: TK_IDENTIFICADOR indice '=' expressao
+
+   75 if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco else
+
+   76 else: TK_PR_ELSE bloco
+   77     | ε
+
+   78 while: TK_PR_WHILE '(' expressao ')' bloco
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '!' (33) 40
+    '%' (37) 38
+    '(' (40) 44 50 62 75 78
+    ')' (41) 44 50 62 75 78
+    '*' (42) 36
+    '+' (43) 33
+    ',' (44) 11 13 48
+    '-' (45) 34 41
+    '/' (47) 37
+    ';' (59) 7 10 14 64
+    '<' (60) 8 29
+    '=' (61) 8 74
+    '>' (62) 28
+    '[' (91) 15 19 52
+    ']' (93) 15 19 52
+    '^' (94) 17 46
+    '{' (123) 63
+    '}' (125) 63
+    error (256)
+    TK_PR_INT (258) 58
+    TK_PR_FLOAT (259) 59
+    TK_PR_BOOL (260) 60
+    TK_PR_CHAR (261) 61
+    TK_PR_IF (262) 75
+    TK_PR_THEN (263) 75
+    TK_PR_ELSE (264) 76
+    TK_PR_WHILE (265) 78
+    TK_PR_INPUT (266)
+    TK_PR_OUTPUT (267)
+    TK_PR_RETURN (268) 73
+    TK_PR_FOR (269)
+    TK_OC_LE (270) 30
+    TK_OC_GE (271) 31
+    TK_OC_EQ (272) 25
+    TK_OC_NE (273) 26
+    TK_OC_AND (274) 23
+    TK_OC_OR (275) 21
+    TK_LIT_INT (276) 8 17 18 53
+    TK_LIT_FLOAT (277) 54
+    TK_LIT_FALSE (278) 55
+    TK_LIT_TRUE (279) 56
+    TK_LIT_CHAR (280)
+    TK_IDENTIFICADOR (281) 11 12 13 14 50 51 52 62 74
+    TK_ERRO (282)
+
+
+Nonterminals, with rules where they appear
+
+    $accept (46)
+        on left: 0
+    programa (47)
+        on left: 1 2
+        on right: 0
+    lista (48)
+        on left: 3 4 5 6
+        on right: 2 5 6
+    declaracao_global (49)
+        on left: 7
+        on right: 4 6
+    init_variavel_local (50)
+        on left: 8 9
+        on right: 11 12
+    declaracao_local (51)
+        on left: 10
+        on right: 66
+    lista_nomes_local (52)
+        on left: 11 12
+        on right: 10 11
+    lista_nomes_global (53)
+        on left: 13 14
+        on right: 7 13
+    arranjo (54)
+        on left: 15 16
+        on right: 11 12 13 14
+    lista_inteiros (55)
+        on left: 17 18
+        on right: 15 17
+    indice (56)
+        on left: 19 20
+        on right: 51 74
+    expressao (57)
+        on left: 21 22
+        on right: 21 45 46 47 48 49 73 74 75 78
+    prec_six (58)
+        on left: 23 24
+        on right: 21 22 23
+    prec_five (59)
+        on left: 25 26 27
+        on right: 23 24 25 26
+    prec_four (60)
+        on left: 28 29 30 31 32
+        on right: 25 26 27 28 29 30 31
+    prec_three (61)
+        on left: 33 34 35
+        on right: 28 29 30 31 32 33 34
+    prec_two (62)
+        on left: 36 37 38 39
+        on right: 33 34 35 36 37 38
+    prec_one (63)
+        on left: 40 41 42 43
+        on right: 36 37 38 39 40 41
+    prec_zero (64)
+        on left: 44 45
+        on right: 43 44
+    expressoes (65)
+        on left: 46 47
+        on right: 19 46 52
+    argumentos (66)
+        on left: 48 49
+        on right: 48 50 62
+    chamada_funcao (67)
+        on left: 50
+        on right: 57 68
+    operando (68)
+        on left: 51 52 53 54 55 56 57
+        on right: 42
+    tipo (69)
+        on left: 58 59 60 61
+        on right: 7 10 62
+    funcao (70)
+        on left: 62
+        on right: 3 5
+    bloco (71)
+        on left: 63
+        on right: 62 67 75 76 78
+    comandos_simples (72)
+        on left: 64 65
+        on right: 63 64
+    comando_simples (73)
+        on left: 66 67 68 69 70 71 72
+        on right: 64 65
+    retorno (74)
+        on left: 73
+        on right: 70
+    atribuicao (75)
+        on left: 74
+        on right: 69
+    if (76)
+        on left: 75
+        on right: 71
+    else (77)
+        on left: 76 77
+        on right: 75
+    while (78)
+        on left: 78
+        on right: 72
+
+
+State 0
+
+    0 $accept: • programa $end
+
+    TK_PR_INT    shift, and go to state 1
+    TK_PR_FLOAT  shift, and go to state 2
+    TK_PR_BOOL   shift, and go to state 3
+    TK_PR_CHAR   shift, and go to state 4
+
+    $default  reduce using rule 1 (programa)
+
+    programa           go to state 5
+    lista              go to state 6
+    declaracao_global  go to state 7
+    tipo               go to state 8
+    funcao             go to state 9
+
+
+State 1
+
+   58 tipo: TK_PR_INT •
+
+    $default  reduce using rule 58 (tipo)
+
+
+State 2
+
+   59 tipo: TK_PR_FLOAT •
+
+    $default  reduce using rule 59 (tipo)
+
+
+State 3
+
+   60 tipo: TK_PR_BOOL •
+
+    $default  reduce using rule 60 (tipo)
+
+
+State 4
+
+   61 tipo: TK_PR_CHAR •
+
+    $default  reduce using rule 61 (tipo)
+
+
+State 5
+
+    0 $accept: programa • $end
+
+    $end  shift, and go to state 10
+
+
+State 6
+
+    2 programa: lista •
+    5 lista: lista • funcao
+    6      | lista • declaracao_global
+
+    TK_PR_INT    shift, and go to state 1
+    TK_PR_FLOAT  shift, and go to state 2
+    TK_PR_BOOL   shift, and go to state 3
+    TK_PR_CHAR   shift, and go to state 4
+
+    $default  reduce using rule 2 (programa)
+
+    declaracao_global  go to state 11
+    tipo               go to state 8
+    funcao             go to state 12
+
+
+State 7
+
+    4 lista: declaracao_global •
+
+    $default  reduce using rule 4 (lista)
+
+
+State 8
+
+    7 declaracao_global: tipo • lista_nomes_global ';'
+   62 funcao: tipo • TK_IDENTIFICADOR '(' argumentos ')' bloco
+
+    TK_IDENTIFICADOR  shift, and go to state 13
+
+    lista_nomes_global  go to state 14
+
+
+State 9
+
+    3 lista: funcao •
+
+    $default  reduce using rule 3 (lista)
+
+
+State 10
+
+    0 $accept: programa $end •
+
+    $default  accept
+
+
+State 11
+
+    6 lista: lista declaracao_global •
+
+    $default  reduce using rule 6 (lista)
+
+
+State 12
+
+    5 lista: lista funcao •
+
+    $default  reduce using rule 5 (lista)
+
+
+State 13
+
+   14 lista_nomes_global: TK_IDENTIFICADOR • arranjo ';'
+   62 funcao: tipo TK_IDENTIFICADOR • '(' argumentos ')' bloco
+
+    '['  shift, and go to state 15
+    '('  shift, and go to state 16
+
+    $default  reduce using rule 16 (arranjo)
+
+    arranjo  go to state 17
+
+
+State 14
+
+    7 declaracao_global: tipo lista_nomes_global • ';'
+   13 lista_nomes_global: lista_nomes_global • ',' TK_IDENTIFICADOR arranjo
+
+    ';'  shift, and go to state 18
+    ','  shift, and go to state 19
+
+
+State 15
+
+   15 arranjo: '[' • lista_inteiros ']'
+
+    TK_LIT_INT  shift, and go to state 20
+
+    lista_inteiros  go to state 21
+
+
+State 16
+
+   62 funcao: tipo TK_IDENTIFICADOR '(' • argumentos ')' bloco
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 30
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    argumentos      go to state 38
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 17
+
+   14 lista_nomes_global: TK_IDENTIFICADOR arranjo • ';'
+
+    ';'  shift, and go to state 41
+
+
+State 18
+
+    7 declaracao_global: tipo lista_nomes_global ';' •
+
+    $default  reduce using rule 7 (declaracao_global)
+
+
+State 19
+
+   13 lista_nomes_global: lista_nomes_global ',' • TK_IDENTIFICADOR arranjo
+
+    TK_IDENTIFICADOR  shift, and go to state 42
+
+
+State 20
+
+   18 lista_inteiros: TK_LIT_INT •
+
+    $default  reduce using rule 18 (lista_inteiros)
+
+
+State 21
+
+   15 arranjo: '[' lista_inteiros • ']'
+   17 lista_inteiros: lista_inteiros • '^' TK_LIT_INT
+
+    ']'  shift, and go to state 43
+    '^'  shift, and go to state 44
+
+
+State 22
+
+   53 operando: TK_LIT_INT •
+
+    $default  reduce using rule 53 (operando)
+
+
+State 23
+
+   54 operando: TK_LIT_FLOAT •
+
+    $default  reduce using rule 54 (operando)
+
+
+State 24
+
+   55 operando: TK_LIT_FALSE •
+
+    $default  reduce using rule 55 (operando)
+
+
+State 25
+
+   56 operando: TK_LIT_TRUE •
+
+    $default  reduce using rule 56 (operando)
+
+
+State 26
+
+   50 chamada_funcao: TK_IDENTIFICADOR • '(' argumentos ')'
+   51 operando: TK_IDENTIFICADOR • indice
+   52         | TK_IDENTIFICADOR • '[' expressoes ']'
+
+    '['  shift, and go to state 45
+    '('  shift, and go to state 46
+
+    $default  reduce using rule 20 (indice)
+
+    indice  go to state 47
+
+
+State 27
+
+   41 prec_one: '-' • prec_one
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 49
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 28
+
+   40 prec_one: '!' • prec_one
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 50
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 29
+
+   44 prec_zero: '(' • prec_zero ')'
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 51
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 30
+
+   21 expressao: expressao • TK_OC_OR prec_six
+   45 prec_zero: expressao •
+   49 argumentos: expressao •
+
+    TK_OC_OR  shift, and go to state 52
+
+    TK_OC_OR  [reduce using rule 45 (prec_zero)]
+    ','       reduce using rule 45 (prec_zero)
+    ','       [reduce using rule 49 (argumentos)]
+    ')'       reduce using rule 45 (prec_zero)
+    ')'       [reduce using rule 49 (argumentos)]
+    $default  reduce using rule 45 (prec_zero)
+
+    shift/reduce conflict on token TK_OC_OR:
+       45 prec_zero: expressao •
+       21 expressao: expressao • TK_OC_OR prec_six
+      Example: expressao • TK_OC_OR prec_six
+      Shift derivation
+        expressao
+        ↳ 21: expressao • TK_OC_OR prec_six
+      Reduce derivation
+        expressao
+        ↳ 21: expressao                                                   TK_OC_OR prec_six
+              ↳ 22: prec_six
+                    ↳ 24: prec_five
+                          ↳ 27: prec_four
+                                ↳ 32: prec_three
+                                      ↳ 35: prec_two
+                                            ↳ 39: prec_one
+                                                  ↳ 43: prec_zero
+                                                        ↳ 45: expressao •
+
+    reduce/reduce conflict on tokens ',', ')':
+       45 prec_zero: expressao •
+       49 argumentos: expressao •
+      Example: expressao •
+      First reduce derivation
+        argumentos
+        ↳ 49: expressao
+              ↳ 22: prec_six
+                    ↳ 24: prec_five
+                          ↳ 27: prec_four
+                                ↳ 32: prec_three
+                                      ↳ 35: prec_two
+                                            ↳ 39: prec_one
+                                                  ↳ 43: prec_zero
+                                                        ↳ 45: expressao •
+      Second reduce derivation
+        argumentos
+        ↳ 49: expressao •
+
+
+
+State 31
+
+   22 expressao: prec_six •
+   23 prec_six: prec_six • TK_OC_AND prec_five
+
+    TK_OC_AND  shift, and go to state 53
+
+    TK_OC_AND  [reduce using rule 22 (expressao)]
+    $default   reduce using rule 22 (expressao)
+
+    shift/reduce conflict on token TK_OC_AND:
+       22 expressao: prec_six •
+       23 prec_six: prec_six • TK_OC_AND prec_five
+      Example: prec_six • TK_OC_AND prec_five
+      Shift derivation
+        prec_six
+        ↳ 23: prec_six • TK_OC_AND prec_five
+      Reduce derivation
+        prec_six
+        ↳ 23: prec_six                                                   TK_OC_AND prec_five
+              ↳ 24: prec_five
+                    ↳ 27: prec_four
+                          ↳ 32: prec_three
+                                ↳ 35: prec_two
+                                      ↳ 39: prec_one
+                                            ↳ 43: prec_zero
+                                                  ↳ 45: expressao
+                                                        ↳ 22: prec_six •
+
+
+
+State 32
+
+   24 prec_six: prec_five •
+   25 prec_five: prec_five • TK_OC_EQ prec_four
+   26          | prec_five • TK_OC_NE prec_four
+
+    TK_OC_EQ  shift, and go to state 54
+    TK_OC_NE  shift, and go to state 55
+
+    TK_OC_EQ  [reduce using rule 24 (prec_six)]
+    TK_OC_NE  [reduce using rule 24 (prec_six)]
+    $default  reduce using rule 24 (prec_six)
+
+    shift/reduce conflict on token TK_OC_EQ:
+       24 prec_six: prec_five •
+       25 prec_five: prec_five • TK_OC_EQ prec_four
+      Example: prec_five • TK_OC_EQ prec_four
+      Shift derivation
+        prec_five
+        ↳ 25: prec_five • TK_OC_EQ prec_four
+      Reduce derivation
+        prec_five
+        ↳ 25: prec_five                                                   TK_OC_EQ prec_four
+              ↳ 27: prec_four
+                    ↳ 32: prec_three
+                          ↳ 35: prec_two
+                                ↳ 39: prec_one
+                                      ↳ 43: prec_zero
+                                            ↳ 45: expressao
+                                                  ↳ 22: prec_six
+                                                        ↳ 24: prec_five •
+
+    shift/reduce conflict on token TK_OC_NE:
+       24 prec_six: prec_five •
+       26 prec_five: prec_five • TK_OC_NE prec_four
+      Example: prec_five • TK_OC_NE prec_four
+      Shift derivation
+        prec_five
+        ↳ 26: prec_five • TK_OC_NE prec_four
+      Reduce derivation
+        prec_five
+        ↳ 26: prec_five                                                   TK_OC_NE prec_four
+              ↳ 27: prec_four
+                    ↳ 32: prec_three
+                          ↳ 35: prec_two
+                                ↳ 39: prec_one
+                                      ↳ 43: prec_zero
+                                            ↳ 45: expressao
+                                                  ↳ 22: prec_six
+                                                        ↳ 24: prec_five •
+
+
+
+State 33
+
+   27 prec_five: prec_four •
+   28 prec_four: prec_four • '>' prec_three
+   29          | prec_four • '<' prec_three
+   30          | prec_four • TK_OC_LE prec_three
+   31          | prec_four • TK_OC_GE prec_three
+
+    TK_OC_LE  shift, and go to state 56
+    TK_OC_GE  shift, and go to state 57
+    '<'       shift, and go to state 58
+    '>'       shift, and go to state 59
+
+    TK_OC_LE  [reduce using rule 27 (prec_five)]
+    TK_OC_GE  [reduce using rule 27 (prec_five)]
+    '<'       [reduce using rule 27 (prec_five)]
+    '>'       [reduce using rule 27 (prec_five)]
+    $default  reduce using rule 27 (prec_five)
+
+    shift/reduce conflict on token '>':
+       27 prec_five: prec_four •
+       28 prec_four: prec_four • '>' prec_three
+      Example: prec_four • '>' prec_three
+      Shift derivation
+        prec_four
+        ↳ 28: prec_four • '>' prec_three
+      Reduce derivation
+        prec_four
+        ↳ 28: prec_four                                                   '>' prec_three
+              ↳ 32: prec_three
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four •
+
+    shift/reduce conflict on token '<':
+       27 prec_five: prec_four •
+       29 prec_four: prec_four • '<' prec_three
+      Example: prec_four • '<' prec_three
+      Shift derivation
+        prec_four
+        ↳ 29: prec_four • '<' prec_three
+      Reduce derivation
+        prec_four
+        ↳ 29: prec_four                                                   '<' prec_three
+              ↳ 32: prec_three
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four •
+
+    shift/reduce conflict on token TK_OC_LE:
+       27 prec_five: prec_four •
+       30 prec_four: prec_four • TK_OC_LE prec_three
+      Example: prec_four • TK_OC_LE prec_three
+      Shift derivation
+        prec_four
+        ↳ 30: prec_four • TK_OC_LE prec_three
+      Reduce derivation
+        prec_four
+        ↳ 30: prec_four                                                   TK_OC_LE prec_three
+              ↳ 32: prec_three
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four •
+
+    shift/reduce conflict on token TK_OC_GE:
+       27 prec_five: prec_four •
+       31 prec_four: prec_four • TK_OC_GE prec_three
+      Example: prec_four • TK_OC_GE prec_three
+      Shift derivation
+        prec_four
+        ↳ 31: prec_four • TK_OC_GE prec_three
+      Reduce derivation
+        prec_four
+        ↳ 31: prec_four                                                   TK_OC_GE prec_three
+              ↳ 32: prec_three
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four •
+
+
+
+State 34
+
+   32 prec_four: prec_three •
+   33 prec_three: prec_three • '+' prec_two
+   34           | prec_three • '-' prec_two
+
+    '+'  shift, and go to state 60
+    '-'  shift, and go to state 61
+
+    '+'       [reduce using rule 32 (prec_four)]
+    '-'       [reduce using rule 32 (prec_four)]
+    $default  reduce using rule 32 (prec_four)
+
+    shift/reduce conflict on token '+':
+       32 prec_four: prec_three •
+       33 prec_three: prec_three • '+' prec_two
+      Example: prec_three • '+' prec_two
+      Shift derivation
+        prec_three
+        ↳ 33: prec_three • '+' prec_two
+      Reduce derivation
+        prec_three
+        ↳ 33: prec_three                                                   '+' prec_two
+              ↳ 35: prec_two
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three •
+
+    shift/reduce conflict on token '-':
+       32 prec_four: prec_three •
+       34 prec_three: prec_three • '-' prec_two
+      Example: prec_three • '-' prec_two
+      Shift derivation
+        prec_three
+        ↳ 34: prec_three • '-' prec_two
+      Reduce derivation
+        prec_three
+        ↳ 34: prec_three                                                   '-' prec_two
+              ↳ 35: prec_two
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three •
+
+
+
+State 35
+
+   35 prec_three: prec_two •
+   36 prec_two: prec_two • '*' prec_one
+   37         | prec_two • '/' prec_one
+   38         | prec_two • '%' prec_one
+
+    '*'  shift, and go to state 62
+    '/'  shift, and go to state 63
+    '%'  shift, and go to state 64
+
+    '*'       [reduce using rule 35 (prec_three)]
+    '/'       [reduce using rule 35 (prec_three)]
+    '%'       [reduce using rule 35 (prec_three)]
+    $default  reduce using rule 35 (prec_three)
+
+    shift/reduce conflict on token '*':
+       35 prec_three: prec_two •
+       36 prec_two: prec_two • '*' prec_one
+      Example: prec_two • '*' prec_one
+      Shift derivation
+        prec_two
+        ↳ 36: prec_two • '*' prec_one
+      Reduce derivation
+        prec_two
+        ↳ 36: prec_two                                                   '*' prec_one
+              ↳ 39: prec_one
+                    ↳ 43: prec_zero
+                          ↳ 45: expressao
+                                ↳ 22: prec_six
+                                      ↳ 24: prec_five
+                                            ↳ 27: prec_four
+                                                  ↳ 32: prec_three
+                                                        ↳ 35: prec_two •
+
+    shift/reduce conflict on token '/':
+       35 prec_three: prec_two •
+       37 prec_two: prec_two • '/' prec_one
+      Example: prec_two • '/' prec_one
+      Shift derivation
+        prec_two
+        ↳ 37: prec_two • '/' prec_one
+      Reduce derivation
+        prec_two
+        ↳ 37: prec_two                                                   '/' prec_one
+              ↳ 39: prec_one
+                    ↳ 43: prec_zero
+                          ↳ 45: expressao
+                                ↳ 22: prec_six
+                                      ↳ 24: prec_five
+                                            ↳ 27: prec_four
+                                                  ↳ 32: prec_three
+                                                        ↳ 35: prec_two •
+
+    shift/reduce conflict on token '%':
+       35 prec_three: prec_two •
+       38 prec_two: prec_two • '%' prec_one
+      Example: prec_two • '%' prec_one
+      Shift derivation
+        prec_two
+        ↳ 38: prec_two • '%' prec_one
+      Reduce derivation
+        prec_two
+        ↳ 38: prec_two                                                   '%' prec_one
+              ↳ 39: prec_one
+                    ↳ 43: prec_zero
+                          ↳ 45: expressao
+                                ↳ 22: prec_six
+                                      ↳ 24: prec_five
+                                            ↳ 27: prec_four
+                                                  ↳ 32: prec_three
+                                                        ↳ 35: prec_two •
+
+
+
+State 36
+
+   39 prec_two: prec_one •
+
+    $default  reduce using rule 39 (prec_two)
+
+
+State 37
+
+   43 prec_one: prec_zero •
+
+    $default  reduce using rule 43 (prec_one)
+
+
+State 38
+
+   48 argumentos: argumentos • ',' expressao
+   62 funcao: tipo TK_IDENTIFICADOR '(' argumentos • ')' bloco
+
+    ','  shift, and go to state 65
+    ')'  shift, and go to state 66
+
+
+State 39
+
+   57 operando: chamada_funcao •
+
+    $default  reduce using rule 57 (operando)
+
+
+State 40
+
+   42 prec_one: operando •
+
+    $default  reduce using rule 42 (prec_one)
+
+
+State 41
+
+   14 lista_nomes_global: TK_IDENTIFICADOR arranjo ';' •
+
+    $default  reduce using rule 14 (lista_nomes_global)
+
+
+State 42
+
+   13 lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR • arranjo
+
+    '['  shift, and go to state 15
+
+    $default  reduce using rule 16 (arranjo)
+
+    arranjo  go to state 67
+
+
+State 43
+
+   15 arranjo: '[' lista_inteiros ']' •
+
+    $default  reduce using rule 15 (arranjo)
+
+
+State 44
+
+   17 lista_inteiros: lista_inteiros '^' • TK_LIT_INT
+
+    TK_LIT_INT  shift, and go to state 68
+
+
+State 45
+
+   19 indice: '[' • expressoes ']'
+   52 operando: TK_IDENTIFICADOR '[' • expressoes ']'
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 69
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    expressoes      go to state 70
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 46
+
+   50 chamada_funcao: TK_IDENTIFICADOR '(' • argumentos ')'
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 30
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    argumentos      go to state 71
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 47
+
+   51 operando: TK_IDENTIFICADOR indice •
+
+    $default  reduce using rule 51 (operando)
+
+
+State 48
+
+   21 expressao: expressao • TK_OC_OR prec_six
+   45 prec_zero: expressao •
+
+    TK_OC_OR  shift, and go to state 52
+
+    TK_OC_OR  [reduce using rule 45 (prec_zero)]
+    $default  reduce using rule 45 (prec_zero)
+
+    shift/reduce conflict on token TK_OC_OR:
+       45 prec_zero: expressao •
+       21 expressao: expressao • TK_OC_OR prec_six
+      Example: expressao • TK_OC_OR prec_six
+      Shift derivation
+        expressao
+        ↳ 21: expressao • TK_OC_OR prec_six
+      Reduce derivation
+        expressao
+        ↳ 21: expressao                                                   TK_OC_OR prec_six
+              ↳ 22: prec_six
+                    ↳ 24: prec_five
+                          ↳ 27: prec_four
+                                ↳ 32: prec_three
+                                      ↳ 35: prec_two
+                                            ↳ 39: prec_one
+                                                  ↳ 43: prec_zero
+                                                        ↳ 45: expressao •
+
+
+
+State 49
+
+   39 prec_two: prec_one •
+   41 prec_one: '-' prec_one •
+
+    TK_OC_LE   reduce using rule 39 (prec_two)
+    TK_OC_LE   [reduce using rule 41 (prec_one)]
+    TK_OC_GE   reduce using rule 39 (prec_two)
+    TK_OC_GE   [reduce using rule 41 (prec_one)]
+    TK_OC_EQ   reduce using rule 39 (prec_two)
+    TK_OC_EQ   [reduce using rule 41 (prec_one)]
+    TK_OC_NE   reduce using rule 39 (prec_two)
+    TK_OC_NE   [reduce using rule 41 (prec_one)]
+    TK_OC_AND  reduce using rule 39 (prec_two)
+    TK_OC_AND  [reduce using rule 41 (prec_one)]
+    TK_OC_OR   reduce using rule 39 (prec_two)
+    TK_OC_OR   [reduce using rule 41 (prec_one)]
+    ';'        reduce using rule 39 (prec_two)
+    ';'        [reduce using rule 41 (prec_one)]
+    '<'        reduce using rule 39 (prec_two)
+    '<'        [reduce using rule 41 (prec_one)]
+    ','        reduce using rule 39 (prec_two)
+    ','        [reduce using rule 41 (prec_one)]
+    ']'        reduce using rule 39 (prec_two)
+    ']'        [reduce using rule 41 (prec_one)]
+    '^'        reduce using rule 39 (prec_two)
+    '^'        [reduce using rule 41 (prec_one)]
+    '>'        reduce using rule 39 (prec_two)
+    '>'        [reduce using rule 41 (prec_one)]
+    '+'        reduce using rule 39 (prec_two)
+    '+'        [reduce using rule 41 (prec_one)]
+    '-'        reduce using rule 39 (prec_two)
+    '-'        [reduce using rule 41 (prec_one)]
+    '*'        reduce using rule 39 (prec_two)
+    '*'        [reduce using rule 41 (prec_one)]
+    '/'        reduce using rule 39 (prec_two)
+    '/'        [reduce using rule 41 (prec_one)]
+    '%'        reduce using rule 39 (prec_two)
+    '%'        [reduce using rule 41 (prec_one)]
+    ')'        reduce using rule 39 (prec_two)
+    ')'        [reduce using rule 41 (prec_one)]
+    '}'        reduce using rule 39 (prec_two)
+    '}'        [reduce using rule 41 (prec_one)]
+    $default   reduce using rule 39 (prec_two)
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       39 prec_two: prec_one •
+       41 prec_one: '-' prec_one •
+      Example: '-' prec_one •
+      First reduce derivation
+        prec_one
+        ↳ 41: '-' prec_one
+                  ↳ 43: prec_zero
+                        ↳ 45: expressao
+                              ↳ 22: prec_six
+                                    ↳ 24: prec_five
+                                          ↳ 27: prec_four
+                                                ↳ 32: prec_three
+                                                      ↳ 35: prec_two
+                                                            ↳ 39: prec_one •
+      Second reduce derivation
+        prec_one
+        ↳ 41: '-' prec_one •
+
+
+
+State 50
+
+   39 prec_two: prec_one •
+   40 prec_one: '!' prec_one •
+
+    TK_OC_LE   reduce using rule 39 (prec_two)
+    TK_OC_LE   [reduce using rule 40 (prec_one)]
+    TK_OC_GE   reduce using rule 39 (prec_two)
+    TK_OC_GE   [reduce using rule 40 (prec_one)]
+    TK_OC_EQ   reduce using rule 39 (prec_two)
+    TK_OC_EQ   [reduce using rule 40 (prec_one)]
+    TK_OC_NE   reduce using rule 39 (prec_two)
+    TK_OC_NE   [reduce using rule 40 (prec_one)]
+    TK_OC_AND  reduce using rule 39 (prec_two)
+    TK_OC_AND  [reduce using rule 40 (prec_one)]
+    TK_OC_OR   reduce using rule 39 (prec_two)
+    TK_OC_OR   [reduce using rule 40 (prec_one)]
+    ';'        reduce using rule 39 (prec_two)
+    ';'        [reduce using rule 40 (prec_one)]
+    '<'        reduce using rule 39 (prec_two)
+    '<'        [reduce using rule 40 (prec_one)]
+    ','        reduce using rule 39 (prec_two)
+    ','        [reduce using rule 40 (prec_one)]
+    ']'        reduce using rule 39 (prec_two)
+    ']'        [reduce using rule 40 (prec_one)]
+    '^'        reduce using rule 39 (prec_two)
+    '^'        [reduce using rule 40 (prec_one)]
+    '>'        reduce using rule 39 (prec_two)
+    '>'        [reduce using rule 40 (prec_one)]
+    '+'        reduce using rule 39 (prec_two)
+    '+'        [reduce using rule 40 (prec_one)]
+    '-'        reduce using rule 39 (prec_two)
+    '-'        [reduce using rule 40 (prec_one)]
+    '*'        reduce using rule 39 (prec_two)
+    '*'        [reduce using rule 40 (prec_one)]
+    '/'        reduce using rule 39 (prec_two)
+    '/'        [reduce using rule 40 (prec_one)]
+    '%'        reduce using rule 39 (prec_two)
+    '%'        [reduce using rule 40 (prec_one)]
+    ')'        reduce using rule 39 (prec_two)
+    ')'        [reduce using rule 40 (prec_one)]
+    '}'        reduce using rule 39 (prec_two)
+    '}'        [reduce using rule 40 (prec_one)]
+    $default   reduce using rule 39 (prec_two)
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       39 prec_two: prec_one •
+       40 prec_one: '!' prec_one •
+      Example: '!' prec_one •
+      First reduce derivation
+        prec_one
+        ↳ 40: '!' prec_one
+                  ↳ 43: prec_zero
+                        ↳ 45: expressao
+                              ↳ 22: prec_six
+                                    ↳ 24: prec_five
+                                          ↳ 27: prec_four
+                                                ↳ 32: prec_three
+                                                      ↳ 35: prec_two
+                                                            ↳ 39: prec_one •
+      Second reduce derivation
+        prec_one
+        ↳ 40: '!' prec_one •
+
+
+
+State 51
+
+   43 prec_one: prec_zero •
+   44 prec_zero: '(' prec_zero • ')'
+
+    ')'  shift, and go to state 72
+
+    ')'       [reduce using rule 43 (prec_one)]
+    $default  reduce using rule 43 (prec_one)
+
+    shift/reduce conflict on token ')':
+       43 prec_one: prec_zero •
+       44 prec_zero: '(' prec_zero • ')'
+      Example: '(' prec_zero • ')'
+      Shift derivation
+        prec_zero
+        ↳ 44: '(' prec_zero • ')'
+      Reduce derivation
+        prec_zero
+        ↳ 44: '(' prec_zero                                                   ')'
+                  ↳ 45: expressao
+                        ↳ 22: prec_six
+                              ↳ 24: prec_five
+                                    ↳ 27: prec_four
+                                          ↳ 32: prec_three
+                                                ↳ 35: prec_two
+                                                      ↳ 39: prec_one
+                                                            ↳ 43: prec_zero •
+
+
+
+State 52
+
+   21 expressao: expressao TK_OC_OR • prec_six
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 73
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 53
+
+   23 prec_six: prec_six TK_OC_AND • prec_five
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 74
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 54
+
+   25 prec_five: prec_five TK_OC_EQ • prec_four
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 75
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 55
+
+   26 prec_five: prec_five TK_OC_NE • prec_four
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 76
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 56
+
+   30 prec_four: prec_four TK_OC_LE • prec_three
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 77
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 57
+
+   31 prec_four: prec_four TK_OC_GE • prec_three
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 78
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 58
+
+   29 prec_four: prec_four '<' • prec_three
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 79
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 59
+
+   28 prec_four: prec_four '>' • prec_three
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 80
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 60
+
+   33 prec_three: prec_three '+' • prec_two
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 81
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 61
+
+   34 prec_three: prec_three '-' • prec_two
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 82
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 62
+
+   36 prec_two: prec_two '*' • prec_one
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 83
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 63
+
+   37 prec_two: prec_two '/' • prec_one
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 84
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 64
+
+   38 prec_two: prec_two '%' • prec_one
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 48
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 85
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 65
+
+   48 argumentos: argumentos ',' • expressao
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 86
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 66
+
+   62 funcao: tipo TK_IDENTIFICADOR '(' argumentos ')' • bloco
+
+    '{'  shift, and go to state 87
+
+    bloco  go to state 88
+
+
+State 67
+
+   13 lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR arranjo •
+
+    $default  reduce using rule 13 (lista_nomes_global)
+
+
+State 68
+
+   17 lista_inteiros: lista_inteiros '^' TK_LIT_INT •
+
+    $default  reduce using rule 17 (lista_inteiros)
+
+
+State 69
+
+   21 expressao: expressao • TK_OC_OR prec_six
+   45 prec_zero: expressao •
+   47 expressoes: expressao •
+
+    TK_OC_OR  shift, and go to state 52
+
+    TK_OC_OR  [reduce using rule 45 (prec_zero)]
+    ']'       reduce using rule 45 (prec_zero)
+    ']'       [reduce using rule 47 (expressoes)]
+    '^'       reduce using rule 45 (prec_zero)
+    '^'       [reduce using rule 47 (expressoes)]
+    $default  reduce using rule 45 (prec_zero)
+
+    shift/reduce conflict on token TK_OC_OR:
+       45 prec_zero: expressao •
+       21 expressao: expressao • TK_OC_OR prec_six
+      Example: expressao • TK_OC_OR prec_six
+      Shift derivation
+        expressao
+        ↳ 21: expressao • TK_OC_OR prec_six
+      Reduce derivation
+        expressao
+        ↳ 21: expressao                                                   TK_OC_OR prec_six
+              ↳ 22: prec_six
+                    ↳ 24: prec_five
+                          ↳ 27: prec_four
+                                ↳ 32: prec_three
+                                      ↳ 35: prec_two
+                                            ↳ 39: prec_one
+                                                  ↳ 43: prec_zero
+                                                        ↳ 45: expressao •
+
+    reduce/reduce conflict on tokens ']', '^':
+       45 prec_zero: expressao •
+       47 expressoes: expressao •
+      Example: expressao •
+      First reduce derivation
+        expressoes
+        ↳ 47: expressao
+              ↳ 22: prec_six
+                    ↳ 24: prec_five
+                          ↳ 27: prec_four
+                                ↳ 32: prec_three
+                                      ↳ 35: prec_two
+                                            ↳ 39: prec_one
+                                                  ↳ 43: prec_zero
+                                                        ↳ 45: expressao •
+      Second reduce derivation
+        expressoes
+        ↳ 47: expressao •
+
+
+
+State 70
+
+   19 indice: '[' expressoes • ']'
+   46 expressoes: expressoes • '^' expressao
+   52 operando: TK_IDENTIFICADOR '[' expressoes • ']'
+
+    ']'  shift, and go to state 89
+    '^'  shift, and go to state 90
+
+
+State 71
+
+   48 argumentos: argumentos • ',' expressao
+   50 chamada_funcao: TK_IDENTIFICADOR '(' argumentos • ')'
+
+    ','  shift, and go to state 65
+    ')'  shift, and go to state 91
+
+
+State 72
+
+   44 prec_zero: '(' prec_zero ')' •
+
+    $default  reduce using rule 44 (prec_zero)
+
+
+State 73
+
+   21 expressao: expressao TK_OC_OR prec_six •
+   22          | prec_six •
+   23 prec_six: prec_six • TK_OC_AND prec_five
+
+    TK_OC_AND  shift, and go to state 53
+
+    TK_OC_LE   reduce using rule 21 (expressao)
+    TK_OC_LE   [reduce using rule 22 (expressao)]
+    TK_OC_GE   reduce using rule 21 (expressao)
+    TK_OC_GE   [reduce using rule 22 (expressao)]
+    TK_OC_EQ   reduce using rule 21 (expressao)
+    TK_OC_EQ   [reduce using rule 22 (expressao)]
+    TK_OC_NE   reduce using rule 21 (expressao)
+    TK_OC_NE   [reduce using rule 22 (expressao)]
+    TK_OC_AND  [reduce using rule 21 (expressao)]
+    TK_OC_AND  [reduce using rule 22 (expressao)]
+    TK_OC_OR   reduce using rule 21 (expressao)
+    TK_OC_OR   [reduce using rule 22 (expressao)]
+    ';'        reduce using rule 21 (expressao)
+    ';'        [reduce using rule 22 (expressao)]
+    '<'        reduce using rule 21 (expressao)
+    '<'        [reduce using rule 22 (expressao)]
+    ','        reduce using rule 21 (expressao)
+    ','        [reduce using rule 22 (expressao)]
+    ']'        reduce using rule 21 (expressao)
+    ']'        [reduce using rule 22 (expressao)]
+    '^'        reduce using rule 21 (expressao)
+    '^'        [reduce using rule 22 (expressao)]
+    '>'        reduce using rule 21 (expressao)
+    '>'        [reduce using rule 22 (expressao)]
+    '+'        reduce using rule 21 (expressao)
+    '+'        [reduce using rule 22 (expressao)]
+    '-'        reduce using rule 21 (expressao)
+    '-'        [reduce using rule 22 (expressao)]
+    '*'        reduce using rule 21 (expressao)
+    '*'        [reduce using rule 22 (expressao)]
+    '/'        reduce using rule 21 (expressao)
+    '/'        [reduce using rule 22 (expressao)]
+    '%'        reduce using rule 21 (expressao)
+    '%'        [reduce using rule 22 (expressao)]
+    ')'        reduce using rule 21 (expressao)
+    ')'        [reduce using rule 22 (expressao)]
+    '}'        reduce using rule 21 (expressao)
+    '}'        [reduce using rule 22 (expressao)]
+    $default   reduce using rule 21 (expressao)
+
+    shift/reduce conflict on token TK_OC_AND:
+       21 expressao: expressao TK_OC_OR prec_six •
+       23 prec_six: prec_six • TK_OC_AND prec_five
+      Example: expressao TK_OC_OR prec_six • TK_OC_AND prec_five
+      Shift derivation
+        expressao
+        ↳ 21: expressao TK_OC_OR prec_six
+                                 ↳ 23: prec_six • TK_OC_AND prec_five
+      Reduce derivation
+        expressao
+        ↳ 22: prec_six
+              ↳ 23: prec_six                                                                      TK_OC_AND prec_five
+                    ↳ 24: prec_five
+                          ↳ 27: prec_four
+                                ↳ 32: prec_three
+                                      ↳ 35: prec_two
+                                            ↳ 39: prec_one
+                                                  ↳ 43: prec_zero
+                                                        ↳ 45: expressao
+                                                              ↳ 21: expressao TK_OC_OR prec_six •
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       21 expressao: expressao TK_OC_OR prec_six •
+       22 expressao: prec_six •
+      Example: expressao TK_OC_OR prec_six •
+      First reduce derivation
+        expressao
+        ↳ 21: expressao TK_OC_OR prec_six •
+      Second reduce derivation
+        expressao
+        ↳ 21: expressao TK_OC_OR prec_six
+                                 ↳ 24: prec_five
+                                       ↳ 27: prec_four
+                                             ↳ 32: prec_three
+                                                   ↳ 35: prec_two
+                                                         ↳ 39: prec_one
+                                                               ↳ 43: prec_zero
+                                                                     ↳ 45: expressao
+                                                                           ↳ 22: prec_six •
+
+    shift/reduce conflict on token TK_OC_AND:
+       22 expressao: prec_six •
+       23 prec_six: prec_six • TK_OC_AND prec_five
+      Example: prec_six • TK_OC_AND prec_five
+      Shift derivation
+        prec_six
+        ↳ 23: prec_six • TK_OC_AND prec_five
+      Reduce derivation
+        prec_six
+        ↳ 23: prec_six                                                   TK_OC_AND prec_five
+              ↳ 24: prec_five
+                    ↳ 27: prec_four
+                          ↳ 32: prec_three
+                                ↳ 35: prec_two
+                                      ↳ 39: prec_one
+                                            ↳ 43: prec_zero
+                                                  ↳ 45: expressao
+                                                        ↳ 22: prec_six •
+
+
+
+State 74
+
+   23 prec_six: prec_six TK_OC_AND prec_five •
+   24         | prec_five •
+   25 prec_five: prec_five • TK_OC_EQ prec_four
+   26          | prec_five • TK_OC_NE prec_four
+
+    TK_OC_EQ  shift, and go to state 54
+    TK_OC_NE  shift, and go to state 55
+
+    TK_OC_LE   reduce using rule 23 (prec_six)
+    TK_OC_LE   [reduce using rule 24 (prec_six)]
+    TK_OC_GE   reduce using rule 23 (prec_six)
+    TK_OC_GE   [reduce using rule 24 (prec_six)]
+    TK_OC_EQ   [reduce using rule 23 (prec_six)]
+    TK_OC_EQ   [reduce using rule 24 (prec_six)]
+    TK_OC_NE   [reduce using rule 23 (prec_six)]
+    TK_OC_NE   [reduce using rule 24 (prec_six)]
+    TK_OC_AND  reduce using rule 23 (prec_six)
+    TK_OC_AND  [reduce using rule 24 (prec_six)]
+    TK_OC_OR   reduce using rule 23 (prec_six)
+    TK_OC_OR   [reduce using rule 24 (prec_six)]
+    ';'        reduce using rule 23 (prec_six)
+    ';'        [reduce using rule 24 (prec_six)]
+    '<'        reduce using rule 23 (prec_six)
+    '<'        [reduce using rule 24 (prec_six)]
+    ','        reduce using rule 23 (prec_six)
+    ','        [reduce using rule 24 (prec_six)]
+    ']'        reduce using rule 23 (prec_six)
+    ']'        [reduce using rule 24 (prec_six)]
+    '^'        reduce using rule 23 (prec_six)
+    '^'        [reduce using rule 24 (prec_six)]
+    '>'        reduce using rule 23 (prec_six)
+    '>'        [reduce using rule 24 (prec_six)]
+    '+'        reduce using rule 23 (prec_six)
+    '+'        [reduce using rule 24 (prec_six)]
+    '-'        reduce using rule 23 (prec_six)
+    '-'        [reduce using rule 24 (prec_six)]
+    '*'        reduce using rule 23 (prec_six)
+    '*'        [reduce using rule 24 (prec_six)]
+    '/'        reduce using rule 23 (prec_six)
+    '/'        [reduce using rule 24 (prec_six)]
+    '%'        reduce using rule 23 (prec_six)
+    '%'        [reduce using rule 24 (prec_six)]
+    ')'        reduce using rule 23 (prec_six)
+    ')'        [reduce using rule 24 (prec_six)]
+    '}'        reduce using rule 23 (prec_six)
+    '}'        [reduce using rule 24 (prec_six)]
+    $default   reduce using rule 23 (prec_six)
+
+    shift/reduce conflict on token TK_OC_EQ:
+       23 prec_six: prec_six TK_OC_AND prec_five •
+       25 prec_five: prec_five • TK_OC_EQ prec_four
+      Example: prec_six TK_OC_AND prec_five • TK_OC_EQ prec_four
+      Shift derivation
+        prec_six
+        ↳ 23: prec_six TK_OC_AND prec_five
+                                 ↳ 25: prec_five • TK_OC_EQ prec_four
+      Reduce derivation
+        prec_six
+        ↳ 24: prec_five
+              ↳ 25: prec_five                                                                      TK_OC_EQ prec_four
+                    ↳ 27: prec_four
+                          ↳ 32: prec_three
+                                ↳ 35: prec_two
+                                      ↳ 39: prec_one
+                                            ↳ 43: prec_zero
+                                                  ↳ 45: expressao
+                                                        ↳ 22: prec_six
+                                                              ↳ 23: prec_six TK_OC_AND prec_five •
+
+    shift/reduce conflict on token TK_OC_NE:
+       23 prec_six: prec_six TK_OC_AND prec_five •
+       26 prec_five: prec_five • TK_OC_NE prec_four
+      Example: prec_six TK_OC_AND prec_five • TK_OC_NE prec_four
+      Shift derivation
+        prec_six
+        ↳ 23: prec_six TK_OC_AND prec_five
+                                 ↳ 26: prec_five • TK_OC_NE prec_four
+      Reduce derivation
+        prec_six
+        ↳ 24: prec_five
+              ↳ 26: prec_five                                                                      TK_OC_NE prec_four
+                    ↳ 27: prec_four
+                          ↳ 32: prec_three
+                                ↳ 35: prec_two
+                                      ↳ 39: prec_one
+                                            ↳ 43: prec_zero
+                                                  ↳ 45: expressao
+                                                        ↳ 22: prec_six
+                                                              ↳ 23: prec_six TK_OC_AND prec_five •
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       23 prec_six: prec_six TK_OC_AND prec_five •
+       24 prec_six: prec_five •
+      Example: prec_six TK_OC_AND prec_five •
+      First reduce derivation
+        prec_six
+        ↳ 23: prec_six TK_OC_AND prec_five •
+      Second reduce derivation
+        prec_six
+        ↳ 23: prec_six TK_OC_AND prec_five
+                                 ↳ 27: prec_four
+                                       ↳ 32: prec_three
+                                             ↳ 35: prec_two
+                                                   ↳ 39: prec_one
+                                                         ↳ 43: prec_zero
+                                                               ↳ 45: expressao
+                                                                     ↳ 22: prec_six
+                                                                           ↳ 24: prec_five •
+
+    shift/reduce conflict on token TK_OC_EQ:
+       24 prec_six: prec_five •
+       25 prec_five: prec_five • TK_OC_EQ prec_four
+      Example: prec_five • TK_OC_EQ prec_four
+      Shift derivation
+        prec_five
+        ↳ 25: prec_five • TK_OC_EQ prec_four
+      Reduce derivation
+        prec_five
+        ↳ 25: prec_five                                                   TK_OC_EQ prec_four
+              ↳ 27: prec_four
+                    ↳ 32: prec_three
+                          ↳ 35: prec_two
+                                ↳ 39: prec_one
+                                      ↳ 43: prec_zero
+                                            ↳ 45: expressao
+                                                  ↳ 22: prec_six
+                                                        ↳ 24: prec_five •
+
+    shift/reduce conflict on token TK_OC_NE:
+       24 prec_six: prec_five •
+       26 prec_five: prec_five • TK_OC_NE prec_four
+      Example: prec_five • TK_OC_NE prec_four
+      Shift derivation
+        prec_five
+        ↳ 26: prec_five • TK_OC_NE prec_four
+      Reduce derivation
+        prec_five
+        ↳ 26: prec_five                                                   TK_OC_NE prec_four
+              ↳ 27: prec_four
+                    ↳ 32: prec_three
+                          ↳ 35: prec_two
+                                ↳ 39: prec_one
+                                      ↳ 43: prec_zero
+                                            ↳ 45: expressao
+                                                  ↳ 22: prec_six
+                                                        ↳ 24: prec_five •
+
+
+
+State 75
+
+   25 prec_five: prec_five TK_OC_EQ prec_four •
+   27          | prec_four •
+   28 prec_four: prec_four • '>' prec_three
+   29          | prec_four • '<' prec_three
+   30          | prec_four • TK_OC_LE prec_three
+   31          | prec_four • TK_OC_GE prec_three
+
+    TK_OC_LE  shift, and go to state 56
+    TK_OC_GE  shift, and go to state 57
+    '<'       shift, and go to state 58
+    '>'       shift, and go to state 59
+
+    TK_OC_LE   [reduce using rule 25 (prec_five)]
+    TK_OC_LE   [reduce using rule 27 (prec_five)]
+    TK_OC_GE   [reduce using rule 25 (prec_five)]
+    TK_OC_GE   [reduce using rule 27 (prec_five)]
+    TK_OC_EQ   reduce using rule 25 (prec_five)
+    TK_OC_EQ   [reduce using rule 27 (prec_five)]
+    TK_OC_NE   reduce using rule 25 (prec_five)
+    TK_OC_NE   [reduce using rule 27 (prec_five)]
+    TK_OC_AND  reduce using rule 25 (prec_five)
+    TK_OC_AND  [reduce using rule 27 (prec_five)]
+    TK_OC_OR   reduce using rule 25 (prec_five)
+    TK_OC_OR   [reduce using rule 27 (prec_five)]
+    ';'        reduce using rule 25 (prec_five)
+    ';'        [reduce using rule 27 (prec_five)]
+    '<'        [reduce using rule 25 (prec_five)]
+    '<'        [reduce using rule 27 (prec_five)]
+    ','        reduce using rule 25 (prec_five)
+    ','        [reduce using rule 27 (prec_five)]
+    ']'        reduce using rule 25 (prec_five)
+    ']'        [reduce using rule 27 (prec_five)]
+    '^'        reduce using rule 25 (prec_five)
+    '^'        [reduce using rule 27 (prec_five)]
+    '>'        [reduce using rule 25 (prec_five)]
+    '>'        [reduce using rule 27 (prec_five)]
+    '+'        reduce using rule 25 (prec_five)
+    '+'        [reduce using rule 27 (prec_five)]
+    '-'        reduce using rule 25 (prec_five)
+    '-'        [reduce using rule 27 (prec_five)]
+    '*'        reduce using rule 25 (prec_five)
+    '*'        [reduce using rule 27 (prec_five)]
+    '/'        reduce using rule 25 (prec_five)
+    '/'        [reduce using rule 27 (prec_five)]
+    '%'        reduce using rule 25 (prec_five)
+    '%'        [reduce using rule 27 (prec_five)]
+    ')'        reduce using rule 25 (prec_five)
+    ')'        [reduce using rule 27 (prec_five)]
+    '}'        reduce using rule 25 (prec_five)
+    '}'        [reduce using rule 27 (prec_five)]
+    $default   reduce using rule 25 (prec_five)
+
+    shift/reduce conflict on token '>':
+       25 prec_five: prec_five TK_OC_EQ prec_four •
+       28 prec_four: prec_four • '>' prec_three
+      Example: prec_five TK_OC_EQ prec_four • '>' prec_three
+      Shift derivation
+        prec_five
+        ↳ 25: prec_five TK_OC_EQ prec_four
+                                 ↳ 28: prec_four • '>' prec_three
+      Reduce derivation
+        prec_five
+        ↳ 27: prec_four
+              ↳ 28: prec_four                                                                      '>' prec_three
+                    ↳ 32: prec_three
+                          ↳ 35: prec_two
+                                ↳ 39: prec_one
+                                      ↳ 43: prec_zero
+                                            ↳ 45: expressao
+                                                  ↳ 22: prec_six
+                                                        ↳ 24: prec_five
+                                                              ↳ 25: prec_five TK_OC_EQ prec_four •
+
+    shift/reduce conflict on token '<':
+       25 prec_five: prec_five TK_OC_EQ prec_four •
+       29 prec_four: prec_four • '<' prec_three
+      Example: prec_five TK_OC_EQ prec_four • '<' prec_three
+      Shift derivation
+        prec_five
+        ↳ 25: prec_five TK_OC_EQ prec_four
+                                 ↳ 29: prec_four • '<' prec_three
+      Reduce derivation
+        prec_five
+        ↳ 27: prec_four
+              ↳ 29: prec_four                                                                      '<' prec_three
+                    ↳ 32: prec_three
+                          ↳ 35: prec_two
+                                ↳ 39: prec_one
+                                      ↳ 43: prec_zero
+                                            ↳ 45: expressao
+                                                  ↳ 22: prec_six
+                                                        ↳ 24: prec_five
+                                                              ↳ 25: prec_five TK_OC_EQ prec_four •
+
+    shift/reduce conflict on token TK_OC_LE:
+       25 prec_five: prec_five TK_OC_EQ prec_four •
+       30 prec_four: prec_four • TK_OC_LE prec_three
+      Example: prec_five TK_OC_EQ prec_four • TK_OC_LE prec_three
+      Shift derivation
+        prec_five
+        ↳ 25: prec_five TK_OC_EQ prec_four
+                                 ↳ 30: prec_four • TK_OC_LE prec_three
+      Reduce derivation
+        prec_five
+        ↳ 27: prec_four
+              ↳ 30: prec_four                                                                      TK_OC_LE prec_three
+                    ↳ 32: prec_three
+                          ↳ 35: prec_two
+                                ↳ 39: prec_one
+                                      ↳ 43: prec_zero
+                                            ↳ 45: expressao
+                                                  ↳ 22: prec_six
+                                                        ↳ 24: prec_five
+                                                              ↳ 25: prec_five TK_OC_EQ prec_four •
+
+    shift/reduce conflict on token TK_OC_GE:
+       25 prec_five: prec_five TK_OC_EQ prec_four •
+       31 prec_four: prec_four • TK_OC_GE prec_three
+      Example: prec_five TK_OC_EQ prec_four • TK_OC_GE prec_three
+      Shift derivation
+        prec_five
+        ↳ 25: prec_five TK_OC_EQ prec_four
+                                 ↳ 31: prec_four • TK_OC_GE prec_three
+      Reduce derivation
+        prec_five
+        ↳ 27: prec_four
+              ↳ 31: prec_four                                                                      TK_OC_GE prec_three
+                    ↳ 32: prec_three
+                          ↳ 35: prec_two
+                                ↳ 39: prec_one
+                                      ↳ 43: prec_zero
+                                            ↳ 45: expressao
+                                                  ↳ 22: prec_six
+                                                        ↳ 24: prec_five
+                                                              ↳ 25: prec_five TK_OC_EQ prec_four •
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       25 prec_five: prec_five TK_OC_EQ prec_four •
+       27 prec_five: prec_four •
+      Example: prec_five TK_OC_EQ prec_four •
+      First reduce derivation
+        prec_five
+        ↳ 25: prec_five TK_OC_EQ prec_four •
+      Second reduce derivation
+        prec_five
+        ↳ 25: prec_five TK_OC_EQ prec_four
+                                 ↳ 32: prec_three
+                                       ↳ 35: prec_two
+                                             ↳ 39: prec_one
+                                                   ↳ 43: prec_zero
+                                                         ↳ 45: expressao
+                                                               ↳ 22: prec_six
+                                                                     ↳ 24: prec_five
+                                                                           ↳ 27: prec_four •
+
+    shift/reduce conflict on token '>':
+       27 prec_five: prec_four •
+       28 prec_four: prec_four • '>' prec_three
+      Example: prec_four • '>' prec_three
+      Shift derivation
+        prec_four
+        ↳ 28: prec_four • '>' prec_three
+      Reduce derivation
+        prec_four
+        ↳ 28: prec_four                                                   '>' prec_three
+              ↳ 32: prec_three
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four •
+
+    shift/reduce conflict on token '<':
+       27 prec_five: prec_four •
+       29 prec_four: prec_four • '<' prec_three
+      Example: prec_four • '<' prec_three
+      Shift derivation
+        prec_four
+        ↳ 29: prec_four • '<' prec_three
+      Reduce derivation
+        prec_four
+        ↳ 29: prec_four                                                   '<' prec_three
+              ↳ 32: prec_three
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four •
+
+    shift/reduce conflict on token TK_OC_LE:
+       27 prec_five: prec_four •
+       30 prec_four: prec_four • TK_OC_LE prec_three
+      Example: prec_four • TK_OC_LE prec_three
+      Shift derivation
+        prec_four
+        ↳ 30: prec_four • TK_OC_LE prec_three
+      Reduce derivation
+        prec_four
+        ↳ 30: prec_four                                                   TK_OC_LE prec_three
+              ↳ 32: prec_three
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four •
+
+    shift/reduce conflict on token TK_OC_GE:
+       27 prec_five: prec_four •
+       31 prec_four: prec_four • TK_OC_GE prec_three
+      Example: prec_four • TK_OC_GE prec_three
+      Shift derivation
+        prec_four
+        ↳ 31: prec_four • TK_OC_GE prec_three
+      Reduce derivation
+        prec_four
+        ↳ 31: prec_four                                                   TK_OC_GE prec_three
+              ↳ 32: prec_three
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four •
+
+
+
+State 76
+
+   26 prec_five: prec_five TK_OC_NE prec_four •
+   27          | prec_four •
+   28 prec_four: prec_four • '>' prec_three
+   29          | prec_four • '<' prec_three
+   30          | prec_four • TK_OC_LE prec_three
+   31          | prec_four • TK_OC_GE prec_three
+
+    TK_OC_LE  shift, and go to state 56
+    TK_OC_GE  shift, and go to state 57
+    '<'       shift, and go to state 58
+    '>'       shift, and go to state 59
+
+    TK_OC_LE   [reduce using rule 26 (prec_five)]
+    TK_OC_LE   [reduce using rule 27 (prec_five)]
+    TK_OC_GE   [reduce using rule 26 (prec_five)]
+    TK_OC_GE   [reduce using rule 27 (prec_five)]
+    TK_OC_EQ   reduce using rule 26 (prec_five)
+    TK_OC_EQ   [reduce using rule 27 (prec_five)]
+    TK_OC_NE   reduce using rule 26 (prec_five)
+    TK_OC_NE   [reduce using rule 27 (prec_five)]
+    TK_OC_AND  reduce using rule 26 (prec_five)
+    TK_OC_AND  [reduce using rule 27 (prec_five)]
+    TK_OC_OR   reduce using rule 26 (prec_five)
+    TK_OC_OR   [reduce using rule 27 (prec_five)]
+    ';'        reduce using rule 26 (prec_five)
+    ';'        [reduce using rule 27 (prec_five)]
+    '<'        [reduce using rule 26 (prec_five)]
+    '<'        [reduce using rule 27 (prec_five)]
+    ','        reduce using rule 26 (prec_five)
+    ','        [reduce using rule 27 (prec_five)]
+    ']'        reduce using rule 26 (prec_five)
+    ']'        [reduce using rule 27 (prec_five)]
+    '^'        reduce using rule 26 (prec_five)
+    '^'        [reduce using rule 27 (prec_five)]
+    '>'        [reduce using rule 26 (prec_five)]
+    '>'        [reduce using rule 27 (prec_five)]
+    '+'        reduce using rule 26 (prec_five)
+    '+'        [reduce using rule 27 (prec_five)]
+    '-'        reduce using rule 26 (prec_five)
+    '-'        [reduce using rule 27 (prec_five)]
+    '*'        reduce using rule 26 (prec_five)
+    '*'        [reduce using rule 27 (prec_five)]
+    '/'        reduce using rule 26 (prec_five)
+    '/'        [reduce using rule 27 (prec_five)]
+    '%'        reduce using rule 26 (prec_five)
+    '%'        [reduce using rule 27 (prec_five)]
+    ')'        reduce using rule 26 (prec_five)
+    ')'        [reduce using rule 27 (prec_five)]
+    '}'        reduce using rule 26 (prec_five)
+    '}'        [reduce using rule 27 (prec_five)]
+    $default   reduce using rule 26 (prec_five)
+
+    shift/reduce conflict on token '>':
+       26 prec_five: prec_five TK_OC_NE prec_four •
+       28 prec_four: prec_four • '>' prec_three
+      Example: prec_five TK_OC_NE prec_four • '>' prec_three
+      Shift derivation
+        prec_five
+        ↳ 26: prec_five TK_OC_NE prec_four
+                                 ↳ 28: prec_four • '>' prec_three
+      Reduce derivation
+        prec_five
+        ↳ 27: prec_four
+              ↳ 28: prec_four                                                                      '>' prec_three
+                    ↳ 32: prec_three
+                          ↳ 35: prec_two
+                                ↳ 39: prec_one
+                                      ↳ 43: prec_zero
+                                            ↳ 45: expressao
+                                                  ↳ 22: prec_six
+                                                        ↳ 24: prec_five
+                                                              ↳ 26: prec_five TK_OC_NE prec_four •
+
+    shift/reduce conflict on token '<':
+       26 prec_five: prec_five TK_OC_NE prec_four •
+       29 prec_four: prec_four • '<' prec_three
+      Example: prec_five TK_OC_NE prec_four • '<' prec_three
+      Shift derivation
+        prec_five
+        ↳ 26: prec_five TK_OC_NE prec_four
+                                 ↳ 29: prec_four • '<' prec_three
+      Reduce derivation
+        prec_five
+        ↳ 27: prec_four
+              ↳ 29: prec_four                                                                      '<' prec_three
+                    ↳ 32: prec_three
+                          ↳ 35: prec_two
+                                ↳ 39: prec_one
+                                      ↳ 43: prec_zero
+                                            ↳ 45: expressao
+                                                  ↳ 22: prec_six
+                                                        ↳ 24: prec_five
+                                                              ↳ 26: prec_five TK_OC_NE prec_four •
+
+    shift/reduce conflict on token TK_OC_LE:
+       26 prec_five: prec_five TK_OC_NE prec_four •
+       30 prec_four: prec_four • TK_OC_LE prec_three
+      Example: prec_five TK_OC_NE prec_four • TK_OC_LE prec_three
+      Shift derivation
+        prec_five
+        ↳ 26: prec_five TK_OC_NE prec_four
+                                 ↳ 30: prec_four • TK_OC_LE prec_three
+      Reduce derivation
+        prec_five
+        ↳ 27: prec_four
+              ↳ 30: prec_four                                                                      TK_OC_LE prec_three
+                    ↳ 32: prec_three
+                          ↳ 35: prec_two
+                                ↳ 39: prec_one
+                                      ↳ 43: prec_zero
+                                            ↳ 45: expressao
+                                                  ↳ 22: prec_six
+                                                        ↳ 24: prec_five
+                                                              ↳ 26: prec_five TK_OC_NE prec_four •
+
+    shift/reduce conflict on token TK_OC_GE:
+       26 prec_five: prec_five TK_OC_NE prec_four •
+       31 prec_four: prec_four • TK_OC_GE prec_three
+      Example: prec_five TK_OC_NE prec_four • TK_OC_GE prec_three
+      Shift derivation
+        prec_five
+        ↳ 26: prec_five TK_OC_NE prec_four
+                                 ↳ 31: prec_four • TK_OC_GE prec_three
+      Reduce derivation
+        prec_five
+        ↳ 27: prec_four
+              ↳ 31: prec_four                                                                      TK_OC_GE prec_three
+                    ↳ 32: prec_three
+                          ↳ 35: prec_two
+                                ↳ 39: prec_one
+                                      ↳ 43: prec_zero
+                                            ↳ 45: expressao
+                                                  ↳ 22: prec_six
+                                                        ↳ 24: prec_five
+                                                              ↳ 26: prec_five TK_OC_NE prec_four •
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       26 prec_five: prec_five TK_OC_NE prec_four •
+       27 prec_five: prec_four •
+      Example: prec_five TK_OC_NE prec_four •
+      First reduce derivation
+        prec_five
+        ↳ 26: prec_five TK_OC_NE prec_four •
+      Second reduce derivation
+        prec_five
+        ↳ 26: prec_five TK_OC_NE prec_four
+                                 ↳ 32: prec_three
+                                       ↳ 35: prec_two
+                                             ↳ 39: prec_one
+                                                   ↳ 43: prec_zero
+                                                         ↳ 45: expressao
+                                                               ↳ 22: prec_six
+                                                                     ↳ 24: prec_five
+                                                                           ↳ 27: prec_four •
+
+    shift/reduce conflict on token '>':
+       27 prec_five: prec_four •
+       28 prec_four: prec_four • '>' prec_three
+      Example: prec_four • '>' prec_three
+      Shift derivation
+        prec_four
+        ↳ 28: prec_four • '>' prec_three
+      Reduce derivation
+        prec_four
+        ↳ 28: prec_four                                                   '>' prec_three
+              ↳ 32: prec_three
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four •
+
+    shift/reduce conflict on token '<':
+       27 prec_five: prec_four •
+       29 prec_four: prec_four • '<' prec_three
+      Example: prec_four • '<' prec_three
+      Shift derivation
+        prec_four
+        ↳ 29: prec_four • '<' prec_three
+      Reduce derivation
+        prec_four
+        ↳ 29: prec_four                                                   '<' prec_three
+              ↳ 32: prec_three
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four •
+
+    shift/reduce conflict on token TK_OC_LE:
+       27 prec_five: prec_four •
+       30 prec_four: prec_four • TK_OC_LE prec_three
+      Example: prec_four • TK_OC_LE prec_three
+      Shift derivation
+        prec_four
+        ↳ 30: prec_four • TK_OC_LE prec_three
+      Reduce derivation
+        prec_four
+        ↳ 30: prec_four                                                   TK_OC_LE prec_three
+              ↳ 32: prec_three
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four •
+
+    shift/reduce conflict on token TK_OC_GE:
+       27 prec_five: prec_four •
+       31 prec_four: prec_four • TK_OC_GE prec_three
+      Example: prec_four • TK_OC_GE prec_three
+      Shift derivation
+        prec_four
+        ↳ 31: prec_four • TK_OC_GE prec_three
+      Reduce derivation
+        prec_four
+        ↳ 31: prec_four                                                   TK_OC_GE prec_three
+              ↳ 32: prec_three
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four •
+
+
+
+State 77
+
+   30 prec_four: prec_four TK_OC_LE prec_three •
+   32          | prec_three •
+   33 prec_three: prec_three • '+' prec_two
+   34           | prec_three • '-' prec_two
+
+    '+'  shift, and go to state 60
+    '-'  shift, and go to state 61
+
+    TK_OC_LE   reduce using rule 30 (prec_four)
+    TK_OC_LE   [reduce using rule 32 (prec_four)]
+    TK_OC_GE   reduce using rule 30 (prec_four)
+    TK_OC_GE   [reduce using rule 32 (prec_four)]
+    TK_OC_EQ   reduce using rule 30 (prec_four)
+    TK_OC_EQ   [reduce using rule 32 (prec_four)]
+    TK_OC_NE   reduce using rule 30 (prec_four)
+    TK_OC_NE   [reduce using rule 32 (prec_four)]
+    TK_OC_AND  reduce using rule 30 (prec_four)
+    TK_OC_AND  [reduce using rule 32 (prec_four)]
+    TK_OC_OR   reduce using rule 30 (prec_four)
+    TK_OC_OR   [reduce using rule 32 (prec_four)]
+    ';'        reduce using rule 30 (prec_four)
+    ';'        [reduce using rule 32 (prec_four)]
+    '<'        reduce using rule 30 (prec_four)
+    '<'        [reduce using rule 32 (prec_four)]
+    ','        reduce using rule 30 (prec_four)
+    ','        [reduce using rule 32 (prec_four)]
+    ']'        reduce using rule 30 (prec_four)
+    ']'        [reduce using rule 32 (prec_four)]
+    '^'        reduce using rule 30 (prec_four)
+    '^'        [reduce using rule 32 (prec_four)]
+    '>'        reduce using rule 30 (prec_four)
+    '>'        [reduce using rule 32 (prec_four)]
+    '+'        [reduce using rule 30 (prec_four)]
+    '+'        [reduce using rule 32 (prec_four)]
+    '-'        [reduce using rule 30 (prec_four)]
+    '-'        [reduce using rule 32 (prec_four)]
+    '*'        reduce using rule 30 (prec_four)
+    '*'        [reduce using rule 32 (prec_four)]
+    '/'        reduce using rule 30 (prec_four)
+    '/'        [reduce using rule 32 (prec_four)]
+    '%'        reduce using rule 30 (prec_four)
+    '%'        [reduce using rule 32 (prec_four)]
+    ')'        reduce using rule 30 (prec_four)
+    ')'        [reduce using rule 32 (prec_four)]
+    '}'        reduce using rule 30 (prec_four)
+    '}'        [reduce using rule 32 (prec_four)]
+    $default   reduce using rule 30 (prec_four)
+
+    shift/reduce conflict on token '+':
+       30 prec_four: prec_four TK_OC_LE prec_three •
+       33 prec_three: prec_three • '+' prec_two
+      Example: prec_four TK_OC_LE prec_three • '+' prec_two
+      Shift derivation
+        prec_four
+        ↳ 30: prec_four TK_OC_LE prec_three
+                                 ↳ 33: prec_three • '+' prec_two
+      Reduce derivation
+        prec_four
+        ↳ 32: prec_three
+              ↳ 33: prec_three                                                                      '+' prec_two
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four
+                                                              ↳ 30: prec_four TK_OC_LE prec_three •
+
+    shift/reduce conflict on token '-':
+       30 prec_four: prec_four TK_OC_LE prec_three •
+       34 prec_three: prec_three • '-' prec_two
+      Example: prec_four TK_OC_LE prec_three • '-' prec_two
+      Shift derivation
+        prec_four
+        ↳ 30: prec_four TK_OC_LE prec_three
+                                 ↳ 34: prec_three • '-' prec_two
+      Reduce derivation
+        prec_four
+        ↳ 32: prec_three
+              ↳ 34: prec_three                                                                      '-' prec_two
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four
+                                                              ↳ 30: prec_four TK_OC_LE prec_three •
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       30 prec_four: prec_four TK_OC_LE prec_three •
+       32 prec_four: prec_three •
+      Example: prec_four TK_OC_LE prec_three •
+      First reduce derivation
+        prec_four
+        ↳ 30: prec_four TK_OC_LE prec_three •
+      Second reduce derivation
+        prec_four
+        ↳ 30: prec_four TK_OC_LE prec_three
+                                 ↳ 35: prec_two
+                                       ↳ 39: prec_one
+                                             ↳ 43: prec_zero
+                                                   ↳ 45: expressao
+                                                         ↳ 22: prec_six
+                                                               ↳ 24: prec_five
+                                                                     ↳ 27: prec_four
+                                                                           ↳ 32: prec_three •
+
+    shift/reduce conflict on token '+':
+       32 prec_four: prec_three •
+       33 prec_three: prec_three • '+' prec_two
+      Example: prec_three • '+' prec_two
+      Shift derivation
+        prec_three
+        ↳ 33: prec_three • '+' prec_two
+      Reduce derivation
+        prec_three
+        ↳ 33: prec_three                                                   '+' prec_two
+              ↳ 35: prec_two
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three •
+
+    shift/reduce conflict on token '-':
+       32 prec_four: prec_three •
+       34 prec_three: prec_three • '-' prec_two
+      Example: prec_three • '-' prec_two
+      Shift derivation
+        prec_three
+        ↳ 34: prec_three • '-' prec_two
+      Reduce derivation
+        prec_three
+        ↳ 34: prec_three                                                   '-' prec_two
+              ↳ 35: prec_two
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three •
+
+
+
+State 78
+
+   31 prec_four: prec_four TK_OC_GE prec_three •
+   32          | prec_three •
+   33 prec_three: prec_three • '+' prec_two
+   34           | prec_three • '-' prec_two
+
+    '+'  shift, and go to state 60
+    '-'  shift, and go to state 61
+
+    TK_OC_LE   reduce using rule 31 (prec_four)
+    TK_OC_LE   [reduce using rule 32 (prec_four)]
+    TK_OC_GE   reduce using rule 31 (prec_four)
+    TK_OC_GE   [reduce using rule 32 (prec_four)]
+    TK_OC_EQ   reduce using rule 31 (prec_four)
+    TK_OC_EQ   [reduce using rule 32 (prec_four)]
+    TK_OC_NE   reduce using rule 31 (prec_four)
+    TK_OC_NE   [reduce using rule 32 (prec_four)]
+    TK_OC_AND  reduce using rule 31 (prec_four)
+    TK_OC_AND  [reduce using rule 32 (prec_four)]
+    TK_OC_OR   reduce using rule 31 (prec_four)
+    TK_OC_OR   [reduce using rule 32 (prec_four)]
+    ';'        reduce using rule 31 (prec_four)
+    ';'        [reduce using rule 32 (prec_four)]
+    '<'        reduce using rule 31 (prec_four)
+    '<'        [reduce using rule 32 (prec_four)]
+    ','        reduce using rule 31 (prec_four)
+    ','        [reduce using rule 32 (prec_four)]
+    ']'        reduce using rule 31 (prec_four)
+    ']'        [reduce using rule 32 (prec_four)]
+    '^'        reduce using rule 31 (prec_four)
+    '^'        [reduce using rule 32 (prec_four)]
+    '>'        reduce using rule 31 (prec_four)
+    '>'        [reduce using rule 32 (prec_four)]
+    '+'        [reduce using rule 31 (prec_four)]
+    '+'        [reduce using rule 32 (prec_four)]
+    '-'        [reduce using rule 31 (prec_four)]
+    '-'        [reduce using rule 32 (prec_four)]
+    '*'        reduce using rule 31 (prec_four)
+    '*'        [reduce using rule 32 (prec_four)]
+    '/'        reduce using rule 31 (prec_four)
+    '/'        [reduce using rule 32 (prec_four)]
+    '%'        reduce using rule 31 (prec_four)
+    '%'        [reduce using rule 32 (prec_four)]
+    ')'        reduce using rule 31 (prec_four)
+    ')'        [reduce using rule 32 (prec_four)]
+    '}'        reduce using rule 31 (prec_four)
+    '}'        [reduce using rule 32 (prec_four)]
+    $default   reduce using rule 31 (prec_four)
+
+    shift/reduce conflict on token '+':
+       31 prec_four: prec_four TK_OC_GE prec_three •
+       33 prec_three: prec_three • '+' prec_two
+      Example: prec_four TK_OC_GE prec_three • '+' prec_two
+      Shift derivation
+        prec_four
+        ↳ 31: prec_four TK_OC_GE prec_three
+                                 ↳ 33: prec_three • '+' prec_two
+      Reduce derivation
+        prec_four
+        ↳ 32: prec_three
+              ↳ 33: prec_three                                                                      '+' prec_two
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four
+                                                              ↳ 31: prec_four TK_OC_GE prec_three •
+
+    shift/reduce conflict on token '-':
+       31 prec_four: prec_four TK_OC_GE prec_three •
+       34 prec_three: prec_three • '-' prec_two
+      Example: prec_four TK_OC_GE prec_three • '-' prec_two
+      Shift derivation
+        prec_four
+        ↳ 31: prec_four TK_OC_GE prec_three
+                                 ↳ 34: prec_three • '-' prec_two
+      Reduce derivation
+        prec_four
+        ↳ 32: prec_three
+              ↳ 34: prec_three                                                                      '-' prec_two
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four
+                                                              ↳ 31: prec_four TK_OC_GE prec_three •
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       31 prec_four: prec_four TK_OC_GE prec_three •
+       32 prec_four: prec_three •
+      Example: prec_four TK_OC_GE prec_three •
+      First reduce derivation
+        prec_four
+        ↳ 31: prec_four TK_OC_GE prec_three •
+      Second reduce derivation
+        prec_four
+        ↳ 31: prec_four TK_OC_GE prec_three
+                                 ↳ 35: prec_two
+                                       ↳ 39: prec_one
+                                             ↳ 43: prec_zero
+                                                   ↳ 45: expressao
+                                                         ↳ 22: prec_six
+                                                               ↳ 24: prec_five
+                                                                     ↳ 27: prec_four
+                                                                           ↳ 32: prec_three •
+
+    shift/reduce conflict on token '+':
+       32 prec_four: prec_three •
+       33 prec_three: prec_three • '+' prec_two
+      Example: prec_three • '+' prec_two
+      Shift derivation
+        prec_three
+        ↳ 33: prec_three • '+' prec_two
+      Reduce derivation
+        prec_three
+        ↳ 33: prec_three                                                   '+' prec_two
+              ↳ 35: prec_two
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three •
+
+    shift/reduce conflict on token '-':
+       32 prec_four: prec_three •
+       34 prec_three: prec_three • '-' prec_two
+      Example: prec_three • '-' prec_two
+      Shift derivation
+        prec_three
+        ↳ 34: prec_three • '-' prec_two
+      Reduce derivation
+        prec_three
+        ↳ 34: prec_three                                                   '-' prec_two
+              ↳ 35: prec_two
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three •
+
+
+
+State 79
+
+   29 prec_four: prec_four '<' prec_three •
+   32          | prec_three •
+   33 prec_three: prec_three • '+' prec_two
+   34           | prec_three • '-' prec_two
+
+    '+'  shift, and go to state 60
+    '-'  shift, and go to state 61
+
+    TK_OC_LE   reduce using rule 29 (prec_four)
+    TK_OC_LE   [reduce using rule 32 (prec_four)]
+    TK_OC_GE   reduce using rule 29 (prec_four)
+    TK_OC_GE   [reduce using rule 32 (prec_four)]
+    TK_OC_EQ   reduce using rule 29 (prec_four)
+    TK_OC_EQ   [reduce using rule 32 (prec_four)]
+    TK_OC_NE   reduce using rule 29 (prec_four)
+    TK_OC_NE   [reduce using rule 32 (prec_four)]
+    TK_OC_AND  reduce using rule 29 (prec_four)
+    TK_OC_AND  [reduce using rule 32 (prec_four)]
+    TK_OC_OR   reduce using rule 29 (prec_four)
+    TK_OC_OR   [reduce using rule 32 (prec_four)]
+    ';'        reduce using rule 29 (prec_four)
+    ';'        [reduce using rule 32 (prec_four)]
+    '<'        reduce using rule 29 (prec_four)
+    '<'        [reduce using rule 32 (prec_four)]
+    ','        reduce using rule 29 (prec_four)
+    ','        [reduce using rule 32 (prec_four)]
+    ']'        reduce using rule 29 (prec_four)
+    ']'        [reduce using rule 32 (prec_four)]
+    '^'        reduce using rule 29 (prec_four)
+    '^'        [reduce using rule 32 (prec_four)]
+    '>'        reduce using rule 29 (prec_four)
+    '>'        [reduce using rule 32 (prec_four)]
+    '+'        [reduce using rule 29 (prec_four)]
+    '+'        [reduce using rule 32 (prec_four)]
+    '-'        [reduce using rule 29 (prec_four)]
+    '-'        [reduce using rule 32 (prec_four)]
+    '*'        reduce using rule 29 (prec_four)
+    '*'        [reduce using rule 32 (prec_four)]
+    '/'        reduce using rule 29 (prec_four)
+    '/'        [reduce using rule 32 (prec_four)]
+    '%'        reduce using rule 29 (prec_four)
+    '%'        [reduce using rule 32 (prec_four)]
+    ')'        reduce using rule 29 (prec_four)
+    ')'        [reduce using rule 32 (prec_four)]
+    '}'        reduce using rule 29 (prec_four)
+    '}'        [reduce using rule 32 (prec_four)]
+    $default   reduce using rule 29 (prec_four)
+
+    shift/reduce conflict on token '+':
+       29 prec_four: prec_four '<' prec_three •
+       33 prec_three: prec_three • '+' prec_two
+      Example: prec_four '<' prec_three • '+' prec_two
+      Shift derivation
+        prec_four
+        ↳ 29: prec_four '<' prec_three
+                            ↳ 33: prec_three • '+' prec_two
+      Reduce derivation
+        prec_four
+        ↳ 32: prec_three
+              ↳ 33: prec_three                                                                 '+' prec_two
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four
+                                                              ↳ 29: prec_four '<' prec_three •
+
+    shift/reduce conflict on token '-':
+       29 prec_four: prec_four '<' prec_three •
+       34 prec_three: prec_three • '-' prec_two
+      Example: prec_four '<' prec_three • '-' prec_two
+      Shift derivation
+        prec_four
+        ↳ 29: prec_four '<' prec_three
+                            ↳ 34: prec_three • '-' prec_two
+      Reduce derivation
+        prec_four
+        ↳ 32: prec_three
+              ↳ 34: prec_three                                                                 '-' prec_two
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four
+                                                              ↳ 29: prec_four '<' prec_three •
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       29 prec_four: prec_four '<' prec_three •
+       32 prec_four: prec_three •
+      Example: prec_four '<' prec_three •
+      First reduce derivation
+        prec_four
+        ↳ 29: prec_four '<' prec_three •
+      Second reduce derivation
+        prec_four
+        ↳ 29: prec_four '<' prec_three
+                            ↳ 35: prec_two
+                                  ↳ 39: prec_one
+                                        ↳ 43: prec_zero
+                                              ↳ 45: expressao
+                                                    ↳ 22: prec_six
+                                                          ↳ 24: prec_five
+                                                                ↳ 27: prec_four
+                                                                      ↳ 32: prec_three •
+
+    shift/reduce conflict on token '+':
+       32 prec_four: prec_three •
+       33 prec_three: prec_three • '+' prec_two
+      Example: prec_three • '+' prec_two
+      Shift derivation
+        prec_three
+        ↳ 33: prec_three • '+' prec_two
+      Reduce derivation
+        prec_three
+        ↳ 33: prec_three                                                   '+' prec_two
+              ↳ 35: prec_two
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three •
+
+    shift/reduce conflict on token '-':
+       32 prec_four: prec_three •
+       34 prec_three: prec_three • '-' prec_two
+      Example: prec_three • '-' prec_two
+      Shift derivation
+        prec_three
+        ↳ 34: prec_three • '-' prec_two
+      Reduce derivation
+        prec_three
+        ↳ 34: prec_three                                                   '-' prec_two
+              ↳ 35: prec_two
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three •
+
+
+
+State 80
+
+   28 prec_four: prec_four '>' prec_three •
+   32          | prec_three •
+   33 prec_three: prec_three • '+' prec_two
+   34           | prec_three • '-' prec_two
+
+    '+'  shift, and go to state 60
+    '-'  shift, and go to state 61
+
+    TK_OC_LE   reduce using rule 28 (prec_four)
+    TK_OC_LE   [reduce using rule 32 (prec_four)]
+    TK_OC_GE   reduce using rule 28 (prec_four)
+    TK_OC_GE   [reduce using rule 32 (prec_four)]
+    TK_OC_EQ   reduce using rule 28 (prec_four)
+    TK_OC_EQ   [reduce using rule 32 (prec_four)]
+    TK_OC_NE   reduce using rule 28 (prec_four)
+    TK_OC_NE   [reduce using rule 32 (prec_four)]
+    TK_OC_AND  reduce using rule 28 (prec_four)
+    TK_OC_AND  [reduce using rule 32 (prec_four)]
+    TK_OC_OR   reduce using rule 28 (prec_four)
+    TK_OC_OR   [reduce using rule 32 (prec_four)]
+    ';'        reduce using rule 28 (prec_four)
+    ';'        [reduce using rule 32 (prec_four)]
+    '<'        reduce using rule 28 (prec_four)
+    '<'        [reduce using rule 32 (prec_four)]
+    ','        reduce using rule 28 (prec_four)
+    ','        [reduce using rule 32 (prec_four)]
+    ']'        reduce using rule 28 (prec_four)
+    ']'        [reduce using rule 32 (prec_four)]
+    '^'        reduce using rule 28 (prec_four)
+    '^'        [reduce using rule 32 (prec_four)]
+    '>'        reduce using rule 28 (prec_four)
+    '>'        [reduce using rule 32 (prec_four)]
+    '+'        [reduce using rule 28 (prec_four)]
+    '+'        [reduce using rule 32 (prec_four)]
+    '-'        [reduce using rule 28 (prec_four)]
+    '-'        [reduce using rule 32 (prec_four)]
+    '*'        reduce using rule 28 (prec_four)
+    '*'        [reduce using rule 32 (prec_four)]
+    '/'        reduce using rule 28 (prec_four)
+    '/'        [reduce using rule 32 (prec_four)]
+    '%'        reduce using rule 28 (prec_four)
+    '%'        [reduce using rule 32 (prec_four)]
+    ')'        reduce using rule 28 (prec_four)
+    ')'        [reduce using rule 32 (prec_four)]
+    '}'        reduce using rule 28 (prec_four)
+    '}'        [reduce using rule 32 (prec_four)]
+    $default   reduce using rule 28 (prec_four)
+
+    shift/reduce conflict on token '+':
+       28 prec_four: prec_four '>' prec_three •
+       33 prec_three: prec_three • '+' prec_two
+      Example: prec_four '>' prec_three • '+' prec_two
+      Shift derivation
+        prec_four
+        ↳ 28: prec_four '>' prec_three
+                            ↳ 33: prec_three • '+' prec_two
+      Reduce derivation
+        prec_four
+        ↳ 32: prec_three
+              ↳ 33: prec_three                                                                 '+' prec_two
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four
+                                                              ↳ 28: prec_four '>' prec_three •
+
+    shift/reduce conflict on token '-':
+       28 prec_four: prec_four '>' prec_three •
+       34 prec_three: prec_three • '-' prec_two
+      Example: prec_four '>' prec_three • '-' prec_two
+      Shift derivation
+        prec_four
+        ↳ 28: prec_four '>' prec_three
+                            ↳ 34: prec_three • '-' prec_two
+      Reduce derivation
+        prec_four
+        ↳ 32: prec_three
+              ↳ 34: prec_three                                                                 '-' prec_two
+                    ↳ 35: prec_two
+                          ↳ 39: prec_one
+                                ↳ 43: prec_zero
+                                      ↳ 45: expressao
+                                            ↳ 22: prec_six
+                                                  ↳ 24: prec_five
+                                                        ↳ 27: prec_four
+                                                              ↳ 28: prec_four '>' prec_three •
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       28 prec_four: prec_four '>' prec_three •
+       32 prec_four: prec_three •
+      Example: prec_four '>' prec_three •
+      First reduce derivation
+        prec_four
+        ↳ 28: prec_four '>' prec_three •
+      Second reduce derivation
+        prec_four
+        ↳ 28: prec_four '>' prec_three
+                            ↳ 35: prec_two
+                                  ↳ 39: prec_one
+                                        ↳ 43: prec_zero
+                                              ↳ 45: expressao
+                                                    ↳ 22: prec_six
+                                                          ↳ 24: prec_five
+                                                                ↳ 27: prec_four
+                                                                      ↳ 32: prec_three •
+
+    shift/reduce conflict on token '+':
+       32 prec_four: prec_three •
+       33 prec_three: prec_three • '+' prec_two
+      Example: prec_three • '+' prec_two
+      Shift derivation
+        prec_three
+        ↳ 33: prec_three • '+' prec_two
+      Reduce derivation
+        prec_three
+        ↳ 33: prec_three                                                   '+' prec_two
+              ↳ 35: prec_two
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three •
+
+    shift/reduce conflict on token '-':
+       32 prec_four: prec_three •
+       34 prec_three: prec_three • '-' prec_two
+      Example: prec_three • '-' prec_two
+      Shift derivation
+        prec_three
+        ↳ 34: prec_three • '-' prec_two
+      Reduce derivation
+        prec_three
+        ↳ 34: prec_three                                                   '-' prec_two
+              ↳ 35: prec_two
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three •
+
+
+
+State 81
+
+   33 prec_three: prec_three '+' prec_two •
+   35           | prec_two •
+   36 prec_two: prec_two • '*' prec_one
+   37         | prec_two • '/' prec_one
+   38         | prec_two • '%' prec_one
+
+    '*'  shift, and go to state 62
+    '/'  shift, and go to state 63
+    '%'  shift, and go to state 64
+
+    TK_OC_LE   reduce using rule 33 (prec_three)
+    TK_OC_LE   [reduce using rule 35 (prec_three)]
+    TK_OC_GE   reduce using rule 33 (prec_three)
+    TK_OC_GE   [reduce using rule 35 (prec_three)]
+    TK_OC_EQ   reduce using rule 33 (prec_three)
+    TK_OC_EQ   [reduce using rule 35 (prec_three)]
+    TK_OC_NE   reduce using rule 33 (prec_three)
+    TK_OC_NE   [reduce using rule 35 (prec_three)]
+    TK_OC_AND  reduce using rule 33 (prec_three)
+    TK_OC_AND  [reduce using rule 35 (prec_three)]
+    TK_OC_OR   reduce using rule 33 (prec_three)
+    TK_OC_OR   [reduce using rule 35 (prec_three)]
+    ';'        reduce using rule 33 (prec_three)
+    ';'        [reduce using rule 35 (prec_three)]
+    '<'        reduce using rule 33 (prec_three)
+    '<'        [reduce using rule 35 (prec_three)]
+    ','        reduce using rule 33 (prec_three)
+    ','        [reduce using rule 35 (prec_three)]
+    ']'        reduce using rule 33 (prec_three)
+    ']'        [reduce using rule 35 (prec_three)]
+    '^'        reduce using rule 33 (prec_three)
+    '^'        [reduce using rule 35 (prec_three)]
+    '>'        reduce using rule 33 (prec_three)
+    '>'        [reduce using rule 35 (prec_three)]
+    '+'        reduce using rule 33 (prec_three)
+    '+'        [reduce using rule 35 (prec_three)]
+    '-'        reduce using rule 33 (prec_three)
+    '-'        [reduce using rule 35 (prec_three)]
+    '*'        [reduce using rule 33 (prec_three)]
+    '*'        [reduce using rule 35 (prec_three)]
+    '/'        [reduce using rule 33 (prec_three)]
+    '/'        [reduce using rule 35 (prec_three)]
+    '%'        [reduce using rule 33 (prec_three)]
+    '%'        [reduce using rule 35 (prec_three)]
+    ')'        reduce using rule 33 (prec_three)
+    ')'        [reduce using rule 35 (prec_three)]
+    '}'        reduce using rule 33 (prec_three)
+    '}'        [reduce using rule 35 (prec_three)]
+    $default   reduce using rule 33 (prec_three)
+
+    shift/reduce conflict on token '*':
+       33 prec_three: prec_three '+' prec_two •
+       36 prec_two: prec_two • '*' prec_one
+      Example: prec_three '+' prec_two • '*' prec_one
+      Shift derivation
+        prec_three
+        ↳ 33: prec_three '+' prec_two
+                             ↳ 36: prec_two • '*' prec_one
+      Reduce derivation
+        prec_three
+        ↳ 35: prec_two
+              ↳ 36: prec_two                                                                  '*' prec_one
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three
+                                                              ↳ 33: prec_three '+' prec_two •
+
+    shift/reduce conflict on token '/':
+       33 prec_three: prec_three '+' prec_two •
+       37 prec_two: prec_two • '/' prec_one
+      Example: prec_three '+' prec_two • '/' prec_one
+      Shift derivation
+        prec_three
+        ↳ 33: prec_three '+' prec_two
+                             ↳ 37: prec_two • '/' prec_one
+      Reduce derivation
+        prec_three
+        ↳ 35: prec_two
+              ↳ 37: prec_two                                                                  '/' prec_one
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three
+                                                              ↳ 33: prec_three '+' prec_two •
+
+    shift/reduce conflict on token '%':
+       33 prec_three: prec_three '+' prec_two •
+       38 prec_two: prec_two • '%' prec_one
+      Example: prec_three '+' prec_two • '%' prec_one
+      Shift derivation
+        prec_three
+        ↳ 33: prec_three '+' prec_two
+                             ↳ 38: prec_two • '%' prec_one
+      Reduce derivation
+        prec_three
+        ↳ 35: prec_two
+              ↳ 38: prec_two                                                                  '%' prec_one
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three
+                                                              ↳ 33: prec_three '+' prec_two •
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       33 prec_three: prec_three '+' prec_two •
+       35 prec_three: prec_two •
+      Example: prec_three '+' prec_two •
+      First reduce derivation
+        prec_three
+        ↳ 33: prec_three '+' prec_two •
+      Second reduce derivation
+        prec_three
+        ↳ 33: prec_three '+' prec_two
+                             ↳ 39: prec_one
+                                   ↳ 43: prec_zero
+                                         ↳ 45: expressao
+                                               ↳ 22: prec_six
+                                                     ↳ 24: prec_five
+                                                           ↳ 27: prec_four
+                                                                 ↳ 32: prec_three
+                                                                       ↳ 35: prec_two •
+
+    shift/reduce conflict on token '*':
+       35 prec_three: prec_two •
+       36 prec_two: prec_two • '*' prec_one
+      Example: prec_two • '*' prec_one
+      Shift derivation
+        prec_two
+        ↳ 36: prec_two • '*' prec_one
+      Reduce derivation
+        prec_two
+        ↳ 36: prec_two                                                   '*' prec_one
+              ↳ 39: prec_one
+                    ↳ 43: prec_zero
+                          ↳ 45: expressao
+                                ↳ 22: prec_six
+                                      ↳ 24: prec_five
+                                            ↳ 27: prec_four
+                                                  ↳ 32: prec_three
+                                                        ↳ 35: prec_two •
+
+    shift/reduce conflict on token '/':
+       35 prec_three: prec_two •
+       37 prec_two: prec_two • '/' prec_one
+      Example: prec_two • '/' prec_one
+      Shift derivation
+        prec_two
+        ↳ 37: prec_two • '/' prec_one
+      Reduce derivation
+        prec_two
+        ↳ 37: prec_two                                                   '/' prec_one
+              ↳ 39: prec_one
+                    ↳ 43: prec_zero
+                          ↳ 45: expressao
+                                ↳ 22: prec_six
+                                      ↳ 24: prec_five
+                                            ↳ 27: prec_four
+                                                  ↳ 32: prec_three
+                                                        ↳ 35: prec_two •
+
+    shift/reduce conflict on token '%':
+       35 prec_three: prec_two •
+       38 prec_two: prec_two • '%' prec_one
+      Example: prec_two • '%' prec_one
+      Shift derivation
+        prec_two
+        ↳ 38: prec_two • '%' prec_one
+      Reduce derivation
+        prec_two
+        ↳ 38: prec_two                                                   '%' prec_one
+              ↳ 39: prec_one
+                    ↳ 43: prec_zero
+                          ↳ 45: expressao
+                                ↳ 22: prec_six
+                                      ↳ 24: prec_five
+                                            ↳ 27: prec_four
+                                                  ↳ 32: prec_three
+                                                        ↳ 35: prec_two •
+
+
+
+State 82
+
+   34 prec_three: prec_three '-' prec_two •
+   35           | prec_two •
+   36 prec_two: prec_two • '*' prec_one
+   37         | prec_two • '/' prec_one
+   38         | prec_two • '%' prec_one
+
+    '*'  shift, and go to state 62
+    '/'  shift, and go to state 63
+    '%'  shift, and go to state 64
+
+    TK_OC_LE   reduce using rule 34 (prec_three)
+    TK_OC_LE   [reduce using rule 35 (prec_three)]
+    TK_OC_GE   reduce using rule 34 (prec_three)
+    TK_OC_GE   [reduce using rule 35 (prec_three)]
+    TK_OC_EQ   reduce using rule 34 (prec_three)
+    TK_OC_EQ   [reduce using rule 35 (prec_three)]
+    TK_OC_NE   reduce using rule 34 (prec_three)
+    TK_OC_NE   [reduce using rule 35 (prec_three)]
+    TK_OC_AND  reduce using rule 34 (prec_three)
+    TK_OC_AND  [reduce using rule 35 (prec_three)]
+    TK_OC_OR   reduce using rule 34 (prec_three)
+    TK_OC_OR   [reduce using rule 35 (prec_three)]
+    ';'        reduce using rule 34 (prec_three)
+    ';'        [reduce using rule 35 (prec_three)]
+    '<'        reduce using rule 34 (prec_three)
+    '<'        [reduce using rule 35 (prec_three)]
+    ','        reduce using rule 34 (prec_three)
+    ','        [reduce using rule 35 (prec_three)]
+    ']'        reduce using rule 34 (prec_three)
+    ']'        [reduce using rule 35 (prec_three)]
+    '^'        reduce using rule 34 (prec_three)
+    '^'        [reduce using rule 35 (prec_three)]
+    '>'        reduce using rule 34 (prec_three)
+    '>'        [reduce using rule 35 (prec_three)]
+    '+'        reduce using rule 34 (prec_three)
+    '+'        [reduce using rule 35 (prec_three)]
+    '-'        reduce using rule 34 (prec_three)
+    '-'        [reduce using rule 35 (prec_three)]
+    '*'        [reduce using rule 34 (prec_three)]
+    '*'        [reduce using rule 35 (prec_three)]
+    '/'        [reduce using rule 34 (prec_three)]
+    '/'        [reduce using rule 35 (prec_three)]
+    '%'        [reduce using rule 34 (prec_three)]
+    '%'        [reduce using rule 35 (prec_three)]
+    ')'        reduce using rule 34 (prec_three)
+    ')'        [reduce using rule 35 (prec_three)]
+    '}'        reduce using rule 34 (prec_three)
+    '}'        [reduce using rule 35 (prec_three)]
+    $default   reduce using rule 34 (prec_three)
+
+    shift/reduce conflict on token '*':
+       34 prec_three: prec_three '-' prec_two •
+       36 prec_two: prec_two • '*' prec_one
+      Example: prec_three '-' prec_two • '*' prec_one
+      Shift derivation
+        prec_three
+        ↳ 34: prec_three '-' prec_two
+                             ↳ 36: prec_two • '*' prec_one
+      Reduce derivation
+        prec_three
+        ↳ 35: prec_two
+              ↳ 36: prec_two                                                                  '*' prec_one
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three
+                                                              ↳ 34: prec_three '-' prec_two •
+
+    shift/reduce conflict on token '/':
+       34 prec_three: prec_three '-' prec_two •
+       37 prec_two: prec_two • '/' prec_one
+      Example: prec_three '-' prec_two • '/' prec_one
+      Shift derivation
+        prec_three
+        ↳ 34: prec_three '-' prec_two
+                             ↳ 37: prec_two • '/' prec_one
+      Reduce derivation
+        prec_three
+        ↳ 35: prec_two
+              ↳ 37: prec_two                                                                  '/' prec_one
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three
+                                                              ↳ 34: prec_three '-' prec_two •
+
+    shift/reduce conflict on token '%':
+       34 prec_three: prec_three '-' prec_two •
+       38 prec_two: prec_two • '%' prec_one
+      Example: prec_three '-' prec_two • '%' prec_one
+      Shift derivation
+        prec_three
+        ↳ 34: prec_three '-' prec_two
+                             ↳ 38: prec_two • '%' prec_one
+      Reduce derivation
+        prec_three
+        ↳ 35: prec_two
+              ↳ 38: prec_two                                                                  '%' prec_one
+                    ↳ 39: prec_one
+                          ↳ 43: prec_zero
+                                ↳ 45: expressao
+                                      ↳ 22: prec_six
+                                            ↳ 24: prec_five
+                                                  ↳ 27: prec_four
+                                                        ↳ 32: prec_three
+                                                              ↳ 34: prec_three '-' prec_two •
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       34 prec_three: prec_three '-' prec_two •
+       35 prec_three: prec_two •
+      Example: prec_three '-' prec_two •
+      First reduce derivation
+        prec_three
+        ↳ 34: prec_three '-' prec_two •
+      Second reduce derivation
+        prec_three
+        ↳ 34: prec_three '-' prec_two
+                             ↳ 39: prec_one
+                                   ↳ 43: prec_zero
+                                         ↳ 45: expressao
+                                               ↳ 22: prec_six
+                                                     ↳ 24: prec_five
+                                                           ↳ 27: prec_four
+                                                                 ↳ 32: prec_three
+                                                                       ↳ 35: prec_two •
+
+    shift/reduce conflict on token '*':
+       35 prec_three: prec_two •
+       36 prec_two: prec_two • '*' prec_one
+      Example: prec_two • '*' prec_one
+      Shift derivation
+        prec_two
+        ↳ 36: prec_two • '*' prec_one
+      Reduce derivation
+        prec_two
+        ↳ 36: prec_two                                                   '*' prec_one
+              ↳ 39: prec_one
+                    ↳ 43: prec_zero
+                          ↳ 45: expressao
+                                ↳ 22: prec_six
+                                      ↳ 24: prec_five
+                                            ↳ 27: prec_four
+                                                  ↳ 32: prec_three
+                                                        ↳ 35: prec_two •
+
+    shift/reduce conflict on token '/':
+       35 prec_three: prec_two •
+       37 prec_two: prec_two • '/' prec_one
+      Example: prec_two • '/' prec_one
+      Shift derivation
+        prec_two
+        ↳ 37: prec_two • '/' prec_one
+      Reduce derivation
+        prec_two
+        ↳ 37: prec_two                                                   '/' prec_one
+              ↳ 39: prec_one
+                    ↳ 43: prec_zero
+                          ↳ 45: expressao
+                                ↳ 22: prec_six
+                                      ↳ 24: prec_five
+                                            ↳ 27: prec_four
+                                                  ↳ 32: prec_three
+                                                        ↳ 35: prec_two •
+
+    shift/reduce conflict on token '%':
+       35 prec_three: prec_two •
+       38 prec_two: prec_two • '%' prec_one
+      Example: prec_two • '%' prec_one
+      Shift derivation
+        prec_two
+        ↳ 38: prec_two • '%' prec_one
+      Reduce derivation
+        prec_two
+        ↳ 38: prec_two                                                   '%' prec_one
+              ↳ 39: prec_one
+                    ↳ 43: prec_zero
+                          ↳ 45: expressao
+                                ↳ 22: prec_six
+                                      ↳ 24: prec_five
+                                            ↳ 27: prec_four
+                                                  ↳ 32: prec_three
+                                                        ↳ 35: prec_two •
+
+
+
+State 83
+
+   36 prec_two: prec_two '*' prec_one •
+   39         | prec_one •
+
+    TK_OC_LE   reduce using rule 36 (prec_two)
+    TK_OC_LE   [reduce using rule 39 (prec_two)]
+    TK_OC_GE   reduce using rule 36 (prec_two)
+    TK_OC_GE   [reduce using rule 39 (prec_two)]
+    TK_OC_EQ   reduce using rule 36 (prec_two)
+    TK_OC_EQ   [reduce using rule 39 (prec_two)]
+    TK_OC_NE   reduce using rule 36 (prec_two)
+    TK_OC_NE   [reduce using rule 39 (prec_two)]
+    TK_OC_AND  reduce using rule 36 (prec_two)
+    TK_OC_AND  [reduce using rule 39 (prec_two)]
+    TK_OC_OR   reduce using rule 36 (prec_two)
+    TK_OC_OR   [reduce using rule 39 (prec_two)]
+    ';'        reduce using rule 36 (prec_two)
+    ';'        [reduce using rule 39 (prec_two)]
+    '<'        reduce using rule 36 (prec_two)
+    '<'        [reduce using rule 39 (prec_two)]
+    ','        reduce using rule 36 (prec_two)
+    ','        [reduce using rule 39 (prec_two)]
+    ']'        reduce using rule 36 (prec_two)
+    ']'        [reduce using rule 39 (prec_two)]
+    '^'        reduce using rule 36 (prec_two)
+    '^'        [reduce using rule 39 (prec_two)]
+    '>'        reduce using rule 36 (prec_two)
+    '>'        [reduce using rule 39 (prec_two)]
+    '+'        reduce using rule 36 (prec_two)
+    '+'        [reduce using rule 39 (prec_two)]
+    '-'        reduce using rule 36 (prec_two)
+    '-'        [reduce using rule 39 (prec_two)]
+    '*'        reduce using rule 36 (prec_two)
+    '*'        [reduce using rule 39 (prec_two)]
+    '/'        reduce using rule 36 (prec_two)
+    '/'        [reduce using rule 39 (prec_two)]
+    '%'        reduce using rule 36 (prec_two)
+    '%'        [reduce using rule 39 (prec_two)]
+    ')'        reduce using rule 36 (prec_two)
+    ')'        [reduce using rule 39 (prec_two)]
+    '}'        reduce using rule 36 (prec_two)
+    '}'        [reduce using rule 39 (prec_two)]
+    $default   reduce using rule 36 (prec_two)
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       36 prec_two: prec_two '*' prec_one •
+       39 prec_two: prec_one •
+      Example: prec_two '*' prec_one •
+      First reduce derivation
+        prec_two
+        ↳ 36: prec_two '*' prec_one •
+      Second reduce derivation
+        prec_two
+        ↳ 36: prec_two '*' prec_one
+                           ↳ 43: prec_zero
+                                 ↳ 45: expressao
+                                       ↳ 22: prec_six
+                                             ↳ 24: prec_five
+                                                   ↳ 27: prec_four
+                                                         ↳ 32: prec_three
+                                                               ↳ 35: prec_two
+                                                                     ↳ 39: prec_one •
+
+
+
+State 84
+
+   37 prec_two: prec_two '/' prec_one •
+   39         | prec_one •
+
+    TK_OC_LE   reduce using rule 37 (prec_two)
+    TK_OC_LE   [reduce using rule 39 (prec_two)]
+    TK_OC_GE   reduce using rule 37 (prec_two)
+    TK_OC_GE   [reduce using rule 39 (prec_two)]
+    TK_OC_EQ   reduce using rule 37 (prec_two)
+    TK_OC_EQ   [reduce using rule 39 (prec_two)]
+    TK_OC_NE   reduce using rule 37 (prec_two)
+    TK_OC_NE   [reduce using rule 39 (prec_two)]
+    TK_OC_AND  reduce using rule 37 (prec_two)
+    TK_OC_AND  [reduce using rule 39 (prec_two)]
+    TK_OC_OR   reduce using rule 37 (prec_two)
+    TK_OC_OR   [reduce using rule 39 (prec_two)]
+    ';'        reduce using rule 37 (prec_two)
+    ';'        [reduce using rule 39 (prec_two)]
+    '<'        reduce using rule 37 (prec_two)
+    '<'        [reduce using rule 39 (prec_two)]
+    ','        reduce using rule 37 (prec_two)
+    ','        [reduce using rule 39 (prec_two)]
+    ']'        reduce using rule 37 (prec_two)
+    ']'        [reduce using rule 39 (prec_two)]
+    '^'        reduce using rule 37 (prec_two)
+    '^'        [reduce using rule 39 (prec_two)]
+    '>'        reduce using rule 37 (prec_two)
+    '>'        [reduce using rule 39 (prec_two)]
+    '+'        reduce using rule 37 (prec_two)
+    '+'        [reduce using rule 39 (prec_two)]
+    '-'        reduce using rule 37 (prec_two)
+    '-'        [reduce using rule 39 (prec_two)]
+    '*'        reduce using rule 37 (prec_two)
+    '*'        [reduce using rule 39 (prec_two)]
+    '/'        reduce using rule 37 (prec_two)
+    '/'        [reduce using rule 39 (prec_two)]
+    '%'        reduce using rule 37 (prec_two)
+    '%'        [reduce using rule 39 (prec_two)]
+    ')'        reduce using rule 37 (prec_two)
+    ')'        [reduce using rule 39 (prec_two)]
+    '}'        reduce using rule 37 (prec_two)
+    '}'        [reduce using rule 39 (prec_two)]
+    $default   reduce using rule 37 (prec_two)
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       37 prec_two: prec_two '/' prec_one •
+       39 prec_two: prec_one •
+      Example: prec_two '/' prec_one •
+      First reduce derivation
+        prec_two
+        ↳ 37: prec_two '/' prec_one •
+      Second reduce derivation
+        prec_two
+        ↳ 37: prec_two '/' prec_one
+                           ↳ 43: prec_zero
+                                 ↳ 45: expressao
+                                       ↳ 22: prec_six
+                                             ↳ 24: prec_five
+                                                   ↳ 27: prec_four
+                                                         ↳ 32: prec_three
+                                                               ↳ 35: prec_two
+                                                                     ↳ 39: prec_one •
+
+
+
+State 85
+
+   38 prec_two: prec_two '%' prec_one •
+   39         | prec_one •
+
+    TK_OC_LE   reduce using rule 38 (prec_two)
+    TK_OC_LE   [reduce using rule 39 (prec_two)]
+    TK_OC_GE   reduce using rule 38 (prec_two)
+    TK_OC_GE   [reduce using rule 39 (prec_two)]
+    TK_OC_EQ   reduce using rule 38 (prec_two)
+    TK_OC_EQ   [reduce using rule 39 (prec_two)]
+    TK_OC_NE   reduce using rule 38 (prec_two)
+    TK_OC_NE   [reduce using rule 39 (prec_two)]
+    TK_OC_AND  reduce using rule 38 (prec_two)
+    TK_OC_AND  [reduce using rule 39 (prec_two)]
+    TK_OC_OR   reduce using rule 38 (prec_two)
+    TK_OC_OR   [reduce using rule 39 (prec_two)]
+    ';'        reduce using rule 38 (prec_two)
+    ';'        [reduce using rule 39 (prec_two)]
+    '<'        reduce using rule 38 (prec_two)
+    '<'        [reduce using rule 39 (prec_two)]
+    ','        reduce using rule 38 (prec_two)
+    ','        [reduce using rule 39 (prec_two)]
+    ']'        reduce using rule 38 (prec_two)
+    ']'        [reduce using rule 39 (prec_two)]
+    '^'        reduce using rule 38 (prec_two)
+    '^'        [reduce using rule 39 (prec_two)]
+    '>'        reduce using rule 38 (prec_two)
+    '>'        [reduce using rule 39 (prec_two)]
+    '+'        reduce using rule 38 (prec_two)
+    '+'        [reduce using rule 39 (prec_two)]
+    '-'        reduce using rule 38 (prec_two)
+    '-'        [reduce using rule 39 (prec_two)]
+    '*'        reduce using rule 38 (prec_two)
+    '*'        [reduce using rule 39 (prec_two)]
+    '/'        reduce using rule 38 (prec_two)
+    '/'        [reduce using rule 39 (prec_two)]
+    '%'        reduce using rule 38 (prec_two)
+    '%'        [reduce using rule 39 (prec_two)]
+    ')'        reduce using rule 38 (prec_two)
+    ')'        [reduce using rule 39 (prec_two)]
+    '}'        reduce using rule 38 (prec_two)
+    '}'        [reduce using rule 39 (prec_two)]
+    $default   reduce using rule 38 (prec_two)
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       38 prec_two: prec_two '%' prec_one •
+       39 prec_two: prec_one •
+      Example: prec_two '%' prec_one •
+      First reduce derivation
+        prec_two
+        ↳ 38: prec_two '%' prec_one •
+      Second reduce derivation
+        prec_two
+        ↳ 38: prec_two '%' prec_one
+                           ↳ 43: prec_zero
+                                 ↳ 45: expressao
+                                       ↳ 22: prec_six
+                                             ↳ 24: prec_five
+                                                   ↳ 27: prec_four
+                                                         ↳ 32: prec_three
+                                                               ↳ 35: prec_two
+                                                                     ↳ 39: prec_one •
+
+
+
+State 86
+
+   21 expressao: expressao • TK_OC_OR prec_six
+   45 prec_zero: expressao •
+   48 argumentos: argumentos ',' expressao •
+
+    TK_OC_OR  shift, and go to state 52
+
+    TK_OC_OR  [reduce using rule 45 (prec_zero)]
+    ','       reduce using rule 45 (prec_zero)
+    ','       [reduce using rule 48 (argumentos)]
+    ')'       reduce using rule 45 (prec_zero)
+    ')'       [reduce using rule 48 (argumentos)]
+    $default  reduce using rule 45 (prec_zero)
+
+    shift/reduce conflict on token TK_OC_OR:
+       45 prec_zero: expressao •
+       21 expressao: expressao • TK_OC_OR prec_six
+      Example: expressao • TK_OC_OR prec_six
+      Shift derivation
+        expressao
+        ↳ 21: expressao • TK_OC_OR prec_six
+      Reduce derivation
+        expressao
+        ↳ 21: expressao                                                   TK_OC_OR prec_six
+              ↳ 22: prec_six
+                    ↳ 24: prec_five
+                          ↳ 27: prec_four
+                                ↳ 32: prec_three
+                                      ↳ 35: prec_two
+                                            ↳ 39: prec_one
+                                                  ↳ 43: prec_zero
+                                                        ↳ 45: expressao •
+
+    reduce/reduce conflict on tokens ',', ')':
+       45 prec_zero: expressao •
+       48 argumentos: argumentos ',' expressao •
+      Example: argumentos ',' expressao •
+      First reduce derivation
+        argumentos
+        ↳ 48: argumentos ',' expressao
+                             ↳ 22: prec_six
+                                   ↳ 24: prec_five
+                                         ↳ 27: prec_four
+                                               ↳ 32: prec_three
+                                                     ↳ 35: prec_two
+                                                           ↳ 39: prec_one
+                                                                 ↳ 43: prec_zero
+                                                                       ↳ 45: expressao •
+      Second reduce derivation
+        argumentos
+        ↳ 48: argumentos ',' expressao •
+
+
+
+State 87
+
+   63 bloco: '{' • comandos_simples '}'
+
+    TK_PR_INT         shift, and go to state 1
+    TK_PR_FLOAT       shift, and go to state 2
+    TK_PR_BOOL        shift, and go to state 3
+    TK_PR_CHAR        shift, and go to state 4
+    TK_PR_IF          shift, and go to state 92
+    TK_PR_WHILE       shift, and go to state 93
+    TK_PR_RETURN      shift, and go to state 94
+    TK_IDENTIFICADOR  shift, and go to state 95
+    '{'               shift, and go to state 87
+
+    declaracao_local  go to state 96
+    chamada_funcao    go to state 97
+    tipo              go to state 98
+    bloco             go to state 99
+    comandos_simples  go to state 100
+    comando_simples   go to state 101
+    retorno           go to state 102
+    atribuicao        go to state 103
+    if                go to state 104
+    while             go to state 105
+
+
+State 88
+
+   62 funcao: tipo TK_IDENTIFICADOR '(' argumentos ')' bloco •
+
+    $default  reduce using rule 62 (funcao)
+
+
+State 89
+
+   19 indice: '[' expressoes ']' •
+   52 operando: TK_IDENTIFICADOR '[' expressoes ']' •
+
+    TK_OC_LE   reduce using rule 19 (indice)
+    TK_OC_LE   [reduce using rule 52 (operando)]
+    TK_OC_GE   reduce using rule 19 (indice)
+    TK_OC_GE   [reduce using rule 52 (operando)]
+    TK_OC_EQ   reduce using rule 19 (indice)
+    TK_OC_EQ   [reduce using rule 52 (operando)]
+    TK_OC_NE   reduce using rule 19 (indice)
+    TK_OC_NE   [reduce using rule 52 (operando)]
+    TK_OC_AND  reduce using rule 19 (indice)
+    TK_OC_AND  [reduce using rule 52 (operando)]
+    TK_OC_OR   reduce using rule 19 (indice)
+    TK_OC_OR   [reduce using rule 52 (operando)]
+    ';'        reduce using rule 19 (indice)
+    ';'        [reduce using rule 52 (operando)]
+    '<'        reduce using rule 19 (indice)
+    '<'        [reduce using rule 52 (operando)]
+    ','        reduce using rule 19 (indice)
+    ','        [reduce using rule 52 (operando)]
+    ']'        reduce using rule 19 (indice)
+    ']'        [reduce using rule 52 (operando)]
+    '^'        reduce using rule 19 (indice)
+    '^'        [reduce using rule 52 (operando)]
+    '>'        reduce using rule 19 (indice)
+    '>'        [reduce using rule 52 (operando)]
+    '+'        reduce using rule 19 (indice)
+    '+'        [reduce using rule 52 (operando)]
+    '-'        reduce using rule 19 (indice)
+    '-'        [reduce using rule 52 (operando)]
+    '*'        reduce using rule 19 (indice)
+    '*'        [reduce using rule 52 (operando)]
+    '/'        reduce using rule 19 (indice)
+    '/'        [reduce using rule 52 (operando)]
+    '%'        reduce using rule 19 (indice)
+    '%'        [reduce using rule 52 (operando)]
+    ')'        reduce using rule 19 (indice)
+    ')'        [reduce using rule 52 (operando)]
+    '}'        reduce using rule 19 (indice)
+    '}'        [reduce using rule 52 (operando)]
+    $default   reduce using rule 19 (indice)
+
+    reduce/reduce conflict on tokens TK_OC_LE, TK_OC_GE, TK_OC_EQ, TK_OC_NE, TK_OC_AND, TK_OC_OR, ';', '<', ',', ']', '^', '>', '+', '-', '*', '/', '%', ')', '}':
+       19 indice: '[' expressoes ']' •
+       52 operando: TK_IDENTIFICADOR '[' expressoes ']' •
+      Example: TK_IDENTIFICADOR '[' expressoes ']' •
+      First reduce derivation
+        operando
+        ↳ 51: TK_IDENTIFICADOR indice
+                               ↳ 19: '[' expressoes ']' •
+      Second reduce derivation
+        operando
+        ↳ 52: TK_IDENTIFICADOR '[' expressoes ']' •
+
+
+
+State 90
+
+   46 expressoes: expressoes '^' • expressao
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 106
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 91
+
+   50 chamada_funcao: TK_IDENTIFICADOR '(' argumentos ')' •
+
+    $default  reduce using rule 50 (chamada_funcao)
+
+
+State 92
+
+   75 if: TK_PR_IF • '(' expressao ')' TK_PR_THEN bloco else
+
+    '('  shift, and go to state 107
+
+
+State 93
+
+   78 while: TK_PR_WHILE • '(' expressao ')' bloco
+
+    '('  shift, and go to state 108
+
+
+State 94
+
+   73 retorno: TK_PR_RETURN • expressao
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 109
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 95
+
+   50 chamada_funcao: TK_IDENTIFICADOR • '(' argumentos ')'
+   74 atribuicao: TK_IDENTIFICADOR • indice '=' expressao
+
+    '['  shift, and go to state 110
+    '('  shift, and go to state 46
+
+    $default  reduce using rule 20 (indice)
+
+    indice  go to state 111
+
+
+State 96
+
+   66 comando_simples: declaracao_local •
+
+    $default  reduce using rule 66 (comando_simples)
+
+
+State 97
+
+   68 comando_simples: chamada_funcao •
+
+    $default  reduce using rule 68 (comando_simples)
+
+
+State 98
+
+   10 declaracao_local: tipo • lista_nomes_local ';'
+
+    TK_IDENTIFICADOR  shift, and go to state 112
+
+    lista_nomes_local  go to state 113
+
+
+State 99
+
+   67 comando_simples: bloco •
+
+    $default  reduce using rule 67 (comando_simples)
+
+
+State 100
+
+   63 bloco: '{' comandos_simples • '}'
+   64 comandos_simples: comandos_simples • ';' comando_simples
+
+    ';'  shift, and go to state 114
+    '}'  shift, and go to state 115
+
+
+State 101
+
+   65 comandos_simples: comando_simples •
+
+    $default  reduce using rule 65 (comandos_simples)
+
+
+State 102
+
+   70 comando_simples: retorno •
+
+    $default  reduce using rule 70 (comando_simples)
+
+
+State 103
+
+   69 comando_simples: atribuicao •
+
+    $default  reduce using rule 69 (comando_simples)
+
+
+State 104
+
+   71 comando_simples: if •
+
+    $default  reduce using rule 71 (comando_simples)
+
+
+State 105
+
+   72 comando_simples: while •
+
+    $default  reduce using rule 72 (comando_simples)
+
+
+State 106
+
+   21 expressao: expressao • TK_OC_OR prec_six
+   45 prec_zero: expressao •
+   46 expressoes: expressoes '^' expressao •
+
+    TK_OC_OR  shift, and go to state 52
+
+    TK_OC_OR  [reduce using rule 45 (prec_zero)]
+    ']'       reduce using rule 45 (prec_zero)
+    ']'       [reduce using rule 46 (expressoes)]
+    '^'       reduce using rule 45 (prec_zero)
+    '^'       [reduce using rule 46 (expressoes)]
+    $default  reduce using rule 45 (prec_zero)
+
+    shift/reduce conflict on token TK_OC_OR:
+       45 prec_zero: expressao •
+       21 expressao: expressao • TK_OC_OR prec_six
+      Example: expressao • TK_OC_OR prec_six
+      Shift derivation
+        expressao
+        ↳ 21: expressao • TK_OC_OR prec_six
+      Reduce derivation
+        expressao
+        ↳ 21: expressao                                                   TK_OC_OR prec_six
+              ↳ 22: prec_six
+                    ↳ 24: prec_five
+                          ↳ 27: prec_four
+                                ↳ 32: prec_three
+                                      ↳ 35: prec_two
+                                            ↳ 39: prec_one
+                                                  ↳ 43: prec_zero
+                                                        ↳ 45: expressao •
+
+    reduce/reduce conflict on tokens ']', '^':
+       45 prec_zero: expressao •
+       46 expressoes: expressoes '^' expressao •
+      Example: expressoes '^' expressao •
+      First reduce derivation
+        expressoes
+        ↳ 46: expressoes '^' expressao
+                             ↳ 22: prec_six
+                                   ↳ 24: prec_five
+                                         ↳ 27: prec_four
+                                               ↳ 32: prec_three
+                                                     ↳ 35: prec_two
+                                                           ↳ 39: prec_one
+                                                                 ↳ 43: prec_zero
+                                                                       ↳ 45: expressao •
+      Second reduce derivation
+        expressoes
+        ↳ 46: expressoes '^' expressao •
+
+
+
+State 107
+
+   75 if: TK_PR_IF '(' • expressao ')' TK_PR_THEN bloco else
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 116
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 108
+
+   78 while: TK_PR_WHILE '(' • expressao ')' bloco
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 117
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 109
+
+   21 expressao: expressao • TK_OC_OR prec_six
+   45 prec_zero: expressao •
+   73 retorno: TK_PR_RETURN expressao •
+
+    TK_OC_OR  shift, and go to state 52
+
+    TK_OC_OR  [reduce using rule 45 (prec_zero)]
+    ';'       reduce using rule 45 (prec_zero)
+    ';'       [reduce using rule 73 (retorno)]
+    '}'       reduce using rule 45 (prec_zero)
+    '}'       [reduce using rule 73 (retorno)]
+    $default  reduce using rule 45 (prec_zero)
+
+    shift/reduce conflict on token TK_OC_OR:
+       45 prec_zero: expressao •
+       21 expressao: expressao • TK_OC_OR prec_six
+      Example: expressao • TK_OC_OR prec_six
+      Shift derivation
+        expressao
+        ↳ 21: expressao • TK_OC_OR prec_six
+      Reduce derivation
+        expressao
+        ↳ 21: expressao                                                   TK_OC_OR prec_six
+              ↳ 22: prec_six
+                    ↳ 24: prec_five
+                          ↳ 27: prec_four
+                                ↳ 32: prec_three
+                                      ↳ 35: prec_two
+                                            ↳ 39: prec_one
+                                                  ↳ 43: prec_zero
+                                                        ↳ 45: expressao •
+
+    reduce/reduce conflict on tokens ';', '}':
+       45 prec_zero: expressao •
+       73 retorno: TK_PR_RETURN expressao •
+      Example: TK_PR_RETURN expressao •
+      First reduce derivation
+        retorno
+        ↳ 73: TK_PR_RETURN expressao
+                           ↳ 22: prec_six
+                                 ↳ 24: prec_five
+                                       ↳ 27: prec_four
+                                             ↳ 32: prec_three
+                                                   ↳ 35: prec_two
+                                                         ↳ 39: prec_one
+                                                               ↳ 43: prec_zero
+                                                                     ↳ 45: expressao •
+      Second reduce derivation
+        retorno
+        ↳ 73: TK_PR_RETURN expressao •
+
+
+
+State 110
+
+   19 indice: '[' • expressoes ']'
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 69
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    expressoes      go to state 118
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 111
+
+   74 atribuicao: TK_IDENTIFICADOR indice • '=' expressao
+
+    '='  shift, and go to state 119
+
+
+State 112
+
+   12 lista_nomes_local: TK_IDENTIFICADOR • arranjo init_variavel_local
+
+    '['  shift, and go to state 15
+
+    $default  reduce using rule 16 (arranjo)
+
+    arranjo  go to state 120
+
+
+State 113
+
+   10 declaracao_local: tipo lista_nomes_local • ';'
+   11 lista_nomes_local: lista_nomes_local • ',' TK_IDENTIFICADOR arranjo init_variavel_local
+
+    ';'  shift, and go to state 121
+    ','  shift, and go to state 122
+
+
+State 114
+
+   64 comandos_simples: comandos_simples ';' • comando_simples
+
+    TK_PR_INT         shift, and go to state 1
+    TK_PR_FLOAT       shift, and go to state 2
+    TK_PR_BOOL        shift, and go to state 3
+    TK_PR_CHAR        shift, and go to state 4
+    TK_PR_IF          shift, and go to state 92
+    TK_PR_WHILE       shift, and go to state 93
+    TK_PR_RETURN      shift, and go to state 94
+    TK_IDENTIFICADOR  shift, and go to state 95
+    '{'               shift, and go to state 87
+
+    declaracao_local  go to state 96
+    chamada_funcao    go to state 97
+    tipo              go to state 98
+    bloco             go to state 99
+    comando_simples   go to state 123
+    retorno           go to state 102
+    atribuicao        go to state 103
+    if                go to state 104
+    while             go to state 105
+
+
+State 115
+
+   63 bloco: '{' comandos_simples '}' •
+
+    $default  reduce using rule 63 (bloco)
+
+
+State 116
+
+   21 expressao: expressao • TK_OC_OR prec_six
+   45 prec_zero: expressao •
+   75 if: TK_PR_IF '(' expressao • ')' TK_PR_THEN bloco else
+
+    TK_OC_OR  shift, and go to state 52
+    ')'       shift, and go to state 124
+
+    TK_OC_OR  [reduce using rule 45 (prec_zero)]
+    ')'       [reduce using rule 45 (prec_zero)]
+    $default  reduce using rule 45 (prec_zero)
+
+    shift/reduce conflict on token TK_OC_OR:
+       45 prec_zero: expressao •
+       21 expressao: expressao • TK_OC_OR prec_six
+      Example: expressao • TK_OC_OR prec_six
+      Shift derivation
+        expressao
+        ↳ 21: expressao • TK_OC_OR prec_six
+      Reduce derivation
+        expressao
+        ↳ 21: expressao                                                   TK_OC_OR prec_six
+              ↳ 22: prec_six
+                    ↳ 24: prec_five
+                          ↳ 27: prec_four
+                                ↳ 32: prec_three
+                                      ↳ 35: prec_two
+                                            ↳ 39: prec_one
+                                                  ↳ 43: prec_zero
+                                                        ↳ 45: expressao •
+
+    shift/reduce conflict on token ')':
+       45 prec_zero: expressao •
+       75 if: TK_PR_IF '(' expressao • ')' TK_PR_THEN bloco else
+      Example: TK_PR_IF '(' expressao • ')' TK_PR_THEN bloco
+      Shift derivation
+        if
+        ↳ 75: TK_PR_IF '(' expressao • ')' TK_PR_THEN bloco else
+                                                            ↳ 75: ε
+      Reduce derivation
+        if
+        ↳ 75: TK_PR_IF '(' expressao                                                   ')' TK_PR_THEN bloco else
+                           ↳ 22: prec_six                                                                   ↳ 75: ε
+                                 ↳ 24: prec_five
+                                       ↳ 27: prec_four
+                                             ↳ 32: prec_three
+                                                   ↳ 35: prec_two
+                                                         ↳ 39: prec_one
+                                                               ↳ 43: prec_zero
+                                                                     ↳ 45: expressao •
+
+
+
+State 117
+
+   21 expressao: expressao • TK_OC_OR prec_six
+   45 prec_zero: expressao •
+   78 while: TK_PR_WHILE '(' expressao • ')' bloco
+
+    TK_OC_OR  shift, and go to state 52
+    ')'       shift, and go to state 125
+
+    TK_OC_OR  [reduce using rule 45 (prec_zero)]
+    ')'       [reduce using rule 45 (prec_zero)]
+    $default  reduce using rule 45 (prec_zero)
+
+    shift/reduce conflict on token TK_OC_OR:
+       45 prec_zero: expressao •
+       21 expressao: expressao • TK_OC_OR prec_six
+      Example: expressao • TK_OC_OR prec_six
+      Shift derivation
+        expressao
+        ↳ 21: expressao • TK_OC_OR prec_six
+      Reduce derivation
+        expressao
+        ↳ 21: expressao                                                   TK_OC_OR prec_six
+              ↳ 22: prec_six
+                    ↳ 24: prec_five
+                          ↳ 27: prec_four
+                                ↳ 32: prec_three
+                                      ↳ 35: prec_two
+                                            ↳ 39: prec_one
+                                                  ↳ 43: prec_zero
+                                                        ↳ 45: expressao •
+
+    shift/reduce conflict on token ')':
+       45 prec_zero: expressao •
+       78 while: TK_PR_WHILE '(' expressao • ')' bloco
+      Example: TK_PR_WHILE '(' expressao • ')' bloco
+      Shift derivation
+        while
+        ↳ 78: TK_PR_WHILE '(' expressao • ')' bloco
+      Reduce derivation
+        while
+        ↳ 78: TK_PR_WHILE '(' expressao                                                   ')' bloco
+                              ↳ 22: prec_six
+                                    ↳ 24: prec_five
+                                          ↳ 27: prec_four
+                                                ↳ 32: prec_three
+                                                      ↳ 35: prec_two
+                                                            ↳ 39: prec_one
+                                                                  ↳ 43: prec_zero
+                                                                        ↳ 45: expressao •
+
+
+
+State 118
+
+   19 indice: '[' expressoes • ']'
+   46 expressoes: expressoes • '^' expressao
+
+    ']'  shift, and go to state 126
+    '^'  shift, and go to state 90
+
+
+State 119
+
+   74 atribuicao: TK_IDENTIFICADOR indice '=' • expressao
+
+    TK_LIT_INT        shift, and go to state 22
+    TK_LIT_FLOAT      shift, and go to state 23
+    TK_LIT_FALSE      shift, and go to state 24
+    TK_LIT_TRUE       shift, and go to state 25
+    TK_IDENTIFICADOR  shift, and go to state 26
+    '-'               shift, and go to state 27
+    '!'               shift, and go to state 28
+    '('               shift, and go to state 29
+
+    expressao       go to state 127
+    prec_six        go to state 31
+    prec_five       go to state 32
+    prec_four       go to state 33
+    prec_three      go to state 34
+    prec_two        go to state 35
+    prec_one        go to state 36
+    prec_zero       go to state 37
+    chamada_funcao  go to state 39
+    operando        go to state 40
+
+
+State 120
+
+   12 lista_nomes_local: TK_IDENTIFICADOR arranjo • init_variavel_local
+
+    '<'  shift, and go to state 128
+
+    $default  reduce using rule 9 (init_variavel_local)
+
+    init_variavel_local  go to state 129
+
+
+State 121
+
+   10 declaracao_local: tipo lista_nomes_local ';' •
+
+    $default  reduce using rule 10 (declaracao_local)
+
+
+State 122
+
+   11 lista_nomes_local: lista_nomes_local ',' • TK_IDENTIFICADOR arranjo init_variavel_local
+
+    TK_IDENTIFICADOR  shift, and go to state 130
+
+
+State 123
+
+   64 comandos_simples: comandos_simples ';' comando_simples •
+
+    $default  reduce using rule 64 (comandos_simples)
+
+
+State 124
+
+   75 if: TK_PR_IF '(' expressao ')' • TK_PR_THEN bloco else
+
+    TK_PR_THEN  shift, and go to state 131
+
+
+State 125
+
+   78 while: TK_PR_WHILE '(' expressao ')' • bloco
+
+    '{'  shift, and go to state 87
+
+    bloco  go to state 132
+
+
+State 126
+
+   19 indice: '[' expressoes ']' •
+
+    $default  reduce using rule 19 (indice)
+
+
+State 127
+
+   21 expressao: expressao • TK_OC_OR prec_six
+   45 prec_zero: expressao •
+   74 atribuicao: TK_IDENTIFICADOR indice '=' expressao •
+
+    TK_OC_OR  shift, and go to state 52
+
+    TK_OC_OR  [reduce using rule 45 (prec_zero)]
+    ';'       reduce using rule 45 (prec_zero)
+    ';'       [reduce using rule 74 (atribuicao)]
+    '}'       reduce using rule 45 (prec_zero)
+    '}'       [reduce using rule 74 (atribuicao)]
+    $default  reduce using rule 45 (prec_zero)
+
+    shift/reduce conflict on token TK_OC_OR:
+       45 prec_zero: expressao •
+       21 expressao: expressao • TK_OC_OR prec_six
+      Example: expressao • TK_OC_OR prec_six
+      Shift derivation
+        expressao
+        ↳ 21: expressao • TK_OC_OR prec_six
+      Reduce derivation
+        expressao
+        ↳ 21: expressao                                                   TK_OC_OR prec_six
+              ↳ 22: prec_six
+                    ↳ 24: prec_five
+                          ↳ 27: prec_four
+                                ↳ 32: prec_three
+                                      ↳ 35: prec_two
+                                            ↳ 39: prec_one
+                                                  ↳ 43: prec_zero
+                                                        ↳ 45: expressao •
+
+    reduce/reduce conflict on tokens ';', '}':
+       45 prec_zero: expressao •
+       74 atribuicao: TK_IDENTIFICADOR indice '=' expressao •
+      Example: TK_IDENTIFICADOR indice '=' expressao •
+      First reduce derivation
+        atribuicao
+        ↳ 74: TK_IDENTIFICADOR indice '=' expressao
+                                          ↳ 22: prec_six
+                                                ↳ 24: prec_five
+                                                      ↳ 27: prec_four
+                                                            ↳ 32: prec_three
+                                                                  ↳ 35: prec_two
+                                                                        ↳ 39: prec_one
+                                                                              ↳ 43: prec_zero
+                                                                                    ↳ 45: expressao •
+      Second reduce derivation
+        atribuicao
+        ↳ 74: TK_IDENTIFICADOR indice '=' expressao •
+
+
+
+State 128
+
+    8 init_variavel_local: '<' • '=' TK_LIT_INT
+
+    '='  shift, and go to state 133
+
+
+State 129
+
+   12 lista_nomes_local: TK_IDENTIFICADOR arranjo init_variavel_local •
+
+    $default  reduce using rule 12 (lista_nomes_local)
+
+
+State 130
+
+   11 lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR • arranjo init_variavel_local
+
+    '['  shift, and go to state 15
+
+    $default  reduce using rule 16 (arranjo)
+
+    arranjo  go to state 134
+
+
+State 131
+
+   75 if: TK_PR_IF '(' expressao ')' TK_PR_THEN • bloco else
+
+    '{'  shift, and go to state 87
+
+    bloco  go to state 135
+
+
+State 132
+
+   78 while: TK_PR_WHILE '(' expressao ')' bloco •
+
+    $default  reduce using rule 78 (while)
+
+
+State 133
+
+    8 init_variavel_local: '<' '=' • TK_LIT_INT
+
+    TK_LIT_INT  shift, and go to state 136
+
+
+State 134
+
+   11 lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR arranjo • init_variavel_local
+
+    '<'  shift, and go to state 128
+
+    $default  reduce using rule 9 (init_variavel_local)
+
+    init_variavel_local  go to state 137
+
+
+State 135
+
+   75 if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco • else
+
+    TK_PR_ELSE  shift, and go to state 138
+
+    $default  reduce using rule 77 (else)
+
+    else  go to state 139
+
+
+State 136
+
+    8 init_variavel_local: '<' '=' TK_LIT_INT •
+
+    $default  reduce using rule 8 (init_variavel_local)
+
+
+State 137
+
+   11 lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR arranjo init_variavel_local •
+
+    $default  reduce using rule 11 (lista_nomes_local)
+
+
+State 138
+
+   76 else: TK_PR_ELSE • bloco
+
+    '{'  shift, and go to state 87
+
+    bloco  go to state 140
+
+
+State 139
+
+   75 if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco else •
+
+    $default  reduce using rule 75 (if)
+
+
+State 140
+
+   76 else: TK_PR_ELSE bloco •
+
+    $default  reduce using rule 76 (else)
