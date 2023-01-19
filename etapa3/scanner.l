@@ -7,6 +7,13 @@ int count_line = 1;
 int get_line_number(){
      return count_line;
 }
+
+union Literal{
+ int type;
+ int value_i;
+ float value_f;
+ char value_c;
+}literal;
 %}
 
 white [ \t\r]+
@@ -56,7 +63,7 @@ float {integer}["."]?{integer}+{exponent}?
 "!=" return TK_OC_NE;
 "&&" return TK_OC_AND;
 "||" return TK_OC_OR;
-{id} return TK_IDENTIFICADOR;
+{id} return TK_IDENTIFICADOR {yylval.valor_lexico = create_value(count_line, TK_IDENTIFICADOR, yytext);};
 [\n] count_line++;
 . return TK_ERRO;
 %%
