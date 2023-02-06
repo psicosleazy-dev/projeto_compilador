@@ -1,19 +1,15 @@
 /* Nomes: Lucas Brum e Arthur Oliveira*/
 
 %{
-#include<stdio.h>
+#include <stdio.h>
+#include <string.h>
 #include "parser.tab.h"
+extern void *arvore;
 int count_line = 1;
 int get_line_number(){
      return count_line;
 }
 
-union Literal{
- int type;
- int value_i;
- float value_f;
- char value_c;
-}literal;
 %}
 
 white [ \t\r]+
