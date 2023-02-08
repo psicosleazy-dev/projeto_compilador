@@ -26,26 +26,23 @@ void add_child(node_t *tree, node_t *child){
         printf("\nErro ao adicionar filho!");
 }
 
-static void ast_print(node_t *tree)
-{
+static void ast_print(node_t *tree){
   if (tree != NULL)
 	printf("\n%p [label =\"%s\"];",tree,tree->label);
-  else{
-     printf("\nErro print: %s recebeu parâmetro tree = %p.\n",  __FUNCTION__, tree);
-  }
+  else
+     printf("\nErro print: %s recebeu parÃ¢metro tree = %p.\n",  __FUNCTION__, tree);
 }
 
-void exporta(void *arvore)
-{
+void exporta(void *arvore){
   node_t *tree = (node_t *) arvore;
   if (tree != NULL){
     ast_print(tree);
     int i;
     for (i = 0; i < tree->number_of_children; i++)
       ast_print(tree->children[i]);
-  }else{
-    printf("\nErro exporta: %s recebeu parâmetro tree = %p.\n", __FUNCTION__, tree);
   }
+  else
+    printf("\nErro exporta: %s recebeu parÃ¢metro tree = %p.\n", __FUNCTION__, tree);
   ast_print_graphviz(tree);
 }
 
@@ -61,24 +58,21 @@ void libera(void *arvore){
     printf("\nErro!");
 }
 
-void ast_print_graphviz(node_t *tree)
-{
+void ast_print_graphviz(node_t *tree){
   FILE *foutput = fopen(ARQUIVO_SAIDA, "w+");
-  if(foutput == NULL){
-    printf("\nErro: %s não pode abrir o arquivo [%s] para escrita.\n", __FUNCTION__, ARQUIVO_SAIDA);
-  }
+  if(foutput == NULL)
+    printf("\nErro: %s nÃ£o pode abrir o arquivo [%s] para escrita.\n", __FUNCTION__, ARQUIVO_SAIDA);
   if (tree != NULL){
     fprintf(foutput, "digraph grafo {\n");
     _ast_print_graphviz(foutput, tree);
     fprintf(foutput, "}\n");
     fclose(foutput);
-  }else{
-    printf("\nErro graphviz: %s recebeu parâmetro tree = %p.\n", __FUNCTION__, tree);
   }
+  else
+    printf("\nErro graphviz: %s recebeu parÃ¢metro tree = %p.\n", __FUNCTION__, tree);
 }
 
-static void _ast_print_graphviz (FILE *foutput, node_t *tree)
-{
+static void _ast_print_graphviz (FILE *foutput, node_t *tree){
   int i;
   if (tree != NULL){
     fprintf(foutput, "  %ld [ label=\"%s\" ];\n", (long)tree, tree->label);
@@ -86,7 +80,7 @@ static void _ast_print_graphviz (FILE *foutput, node_t *tree)
       fprintf(foutput, "  %ld -> %ld;\n", (long)tree, (long)tree->filhos[i]);
       _ast_print_graphviz(foutput, tree->children[i]);
     }
-  }else{
-    printf("\nErro graphviz: %s recebeu parâmetro tree = %p.\n", __FUNCTION__, tree);
   }
+  else
+    printf("\nErro graphviz: %s recebeu parÃ¢metro tree = %p.\n", __FUNCTION__, tree);
 }
