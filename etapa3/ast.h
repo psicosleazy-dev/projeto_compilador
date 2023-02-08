@@ -29,6 +29,7 @@
 #define AST_ADD 326
 #define AST_SUB 327
 #define AST_MINUS 328
+
 typedef struct node{
   char* label;
   int type;
