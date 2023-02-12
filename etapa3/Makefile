@@ -1,7 +1,7 @@
-etapa2: parser.y scanner.l
+etap3: parser.y scanner.l
 	bison -d parser.y
 	flex scanner.l
-	gcc -c lex.yy.c main.c parser.tab.c
-	gcc -o etapa2 lex.yy.o parser.tab.o main.o -lfl
+	gcc -c lex.yy.c main.c ast.c parser.tab.c
+	gcc -o etapa3 lex.yy.o parser.tab.o main.o ast.o -lfl
 clean:
-	rm -rf etapa2
+	rm -rf etapa3

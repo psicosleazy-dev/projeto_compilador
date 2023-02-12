@@ -5,11 +5,13 @@
 #define ARQUIVO_SAIDA "saida.dot"
 extern void *arvore;
 
-node_t* create_node(int type,char* label){
+node_t* create_node(int type,char* label,valor_t value){
     node_t *ret = NULL;
     new_node = calloc(1,sizeof(node_t));
     if(new_node != NULL){
         new_node->label = strdup(label);
+        new_node->type = type;
+        new_node->value = value;
         new_node->number_of_children = 0;
         new_node->children = NULL;
     }
@@ -59,6 +61,12 @@ void libera(void *arvore){
   free(tree);
   else
     printf("\nErro!");
+}
+
+valor_t create_value(){
+}
+char* create_leaf(valor_t valor){
+    return valor.value;
 }
 
 void ast_print_graphviz(node_t *tree)

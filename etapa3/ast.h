@@ -18,8 +18,6 @@
 #define AST_WHILE 315
 #define AST_LIT_FLOAT 316
 #define AST_ARRAY 317
-#define AST_OR 318
-#define AST_AND 319
 #define AST_EQ 320
 #define AST_NE 321
 #define AST_G 322
@@ -29,21 +27,36 @@
 #define AST_ADD 326
 #define AST_SUB 327
 #define AST_MINUS 328
-typedef struct node{
+#define AST_LIT_TRUE 329
+#define AST_LIT_FALSE 330
+
+union Literal{
+ int int_value;
+ float float_value;
+ char *c_value; // String ou char simples
+}literal;
+
+struct valor{
+  int line;
+  char* type;
+  Literal literal value;
+  //char* token;
+};
+
+typedef struct valor valor_t;
+
+struct node{
   char* label;
   int type;
+  valor_t value;
   int number_of_children;
   struct node **children;
-}node_t;
+};
 
-typedef struct valor{
-  int line;
-  int type;
-  char* value;
-}valor_t;
+typedef struct node node_t;
 
-node_t* create_node(int,char*);
-valor_t create_value(int,int,char*);
+node_t* create_node(int,char*,valor_t);
+//valor_t create_value(int,int,char*);
 char* create_leaf(valor_t);
 void add_child(node_t*,node_t*);
 void ast_print(node_t*);
