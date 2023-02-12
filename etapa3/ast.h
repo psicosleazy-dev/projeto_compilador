@@ -59,6 +59,24 @@ node_t* create_node(int,char*,valor_t);
 //valor_t create_value(int,int,char*);
 char* create_leaf(valor_t);
 void add_child(node_t*,node_t*);
+
+typedef struct node{
+  char* label;
+  int type;
+  int number_of_children;
+  struct node **children;
+}node_t;
+
+typedef struct valor{
+  int line;
+  int type;
+  char* value;
+}valor_t;
+
+node_t* create_node(int,char*);
+valor_t create_value(int,int,char*);
+char* create_leaf(valor_t);
+void add_child(node_t*,node_t*);
 void ast_print(node_t*);
 void exporta(void*);
 void libera(void*);
