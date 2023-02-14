@@ -5,15 +5,20 @@
 #define ARQUIVO_SAIDA "saida.dot"
 extern void *arvore;
 
-node_t* create_node(int type,char* label){
+node_t* create_node(int type,char* label, valor_t value){
     node_t *ret = NULL;
     new_node = calloc(1,sizeof(node_t));
     if(new_node != NULL){
         new_node->label = strdup(label);
         new_node->number_of_children = 0;
         new_node->children = NULL;
+	new_node->value = value;
     }
     return new_node;
+}
+
+char* create_leaf(valor_t value){
+    return value->value.token;
 }
 
 void add_child(node_t *tree, node_t *child){
