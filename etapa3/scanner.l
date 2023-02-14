@@ -9,7 +9,6 @@ int count_line = 1;
 int get_line_number(){
      return count_line;
 }
-
 %}
 white [ \t\r]+
 digit [0-9]
@@ -36,29 +35,29 @@ float {integer}["."]?{integer}+{exponent}?
 \] return yytext[0];
 \^ return yytext[0];
 \'([^\']?)\' return TK_LIT_CHAR;
-{integer} {yylval.valor_lexico.literal.int_value = atoi(yytext); yylval.valor_lexico.type = strdup("literal int"); yylval.valor_lexico.line = get_line_number(); return TK_LIT_INT;}
-{float} {yylval.float_value = atof(yytext); yylval.valor_lexico.type = strdup("literal float"); yylval.valor_lexico.line = get_line_number(); return TK_LIT_FLOAT;}
-"int" {yylval.valor_lexico.literal.c_value = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_INT;}
-"float" {yylval.valor_lexico.literal.c_value = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_FLOAT;}
-"bool" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_BOOL;}
-"char" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_CHAR;}
-"if" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_IF;}
-"then" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_THEN;}
-"else" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_ELSE;}
-"while" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_WHILE;}
-"input" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_INPUT;}
-"output" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_OUTPUT;}
-"return" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_RETURN;}
-"for" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_FOR;}
-"true" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_LIT_TRUE;}
-"false" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_LIT_FALSE;}
-"<=" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("operador composto"); yylval.valor_lexico.line = get_line_number(); return TK_OC_LE;}
-">=" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("operador composto"); yylval.valor_lexico.line = get_line_number(); return TK_OC_GE;}
-"==" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("operador composto"); yylval.valor_lexico.line = get_line_number(); return TK_OC_EQ;}
-"!=" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("operador composto"); yylval.valor_lexico.line = get_line_number(); return TK_OC_NE;}
-"&&" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("operador composto"); yylval.valor_lexico.line = get_line_number(); return TK_OC_AND;}
-"||" {yylval.valor_lexico.token = atof(yytext); yylval.valor_lexico.type = strdup("operador composto"); yylval.valor_lexico.line = get_line_number(); return TK_OC_OR;}
-{id} return TK_IDENTIFICADOR {yylval.valor_lexico = create_value(count_line, TK_IDENTIFICADOR, yytext);};
+{integer} {yylval.valor_lexico.value.int_value = atoi(yytext); yylval.valor_lexico.type = strdup("literal int"); yylval.valor_lexico.line = get_line_number(); return TK_LIT_INT;}
+{float} {yylval.valor_lexico.value.float_value = atof(yytext); yylval.valor_lexico.type = strdup("literal float"); yylval.valor_lexico.line = get_line_number(); return TK_LIT_FLOAT;}
+"int" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_INT;}
+"float" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_FLOAT;}
+"bool" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_BOOL;}
+"char" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_CHAR;}
+"if" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_IF;}
+"then" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_THEN;}
+"else" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_ELSE;}
+"while" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_WHILE;}
+"input" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_INPUT;}
+"output" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_OUTPUT;}
+"return" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_RETURN;}
+"for" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_FOR;}
+"true" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_LIT_TRUE;}
+"false" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_LIT_FALSE;}
+"<=" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("operador composto"); yylval.valor_lexico.line = get_line_number(); return TK_OC_LE;}
+">=" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("operador composto"); yylval.valor_lexico.line = get_line_number(); return TK_OC_GE;}
+"==" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("operador composto"); yylval.valor_lexico.line = get_line_number(); return TK_OC_EQ;}
+"!=" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("operador composto"); yylval.valor_lexico.line = get_line_number(); return TK_OC_NE;}
+"&&" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("operador composto"); yylval.valor_lexico.line = get_line_number(); return TK_OC_AND;}
+"||" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("operador composto"); yylval.valor_lexico.line = get_line_number(); return TK_OC_OR;}
+{id} {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("id"); yylval.valor_lexico.line = get_line_number(); return TK_IDENTIFICADOR;}
 [\n] count_line++;
 . return TK_ERRO;
 %%

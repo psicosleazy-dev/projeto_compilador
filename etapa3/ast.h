@@ -17,7 +17,7 @@
 #define AST_IF 314
 #define AST_WHILE 315
 #define AST_LIT_FLOAT 316
-#define AST_ARRAY 317
+#define AST_ARR 317
 #define AST_EQ 320
 #define AST_NE 321
 #define AST_G 322
@@ -34,13 +34,12 @@ union Literal{
  int int_value;
  float float_value;
  char *token; // String ou char simples
-}literal;
+};
 
 struct valor{
   int line;
   char* type;
-  Literal literal value;
-  //char* token;
+  union Literal value;
 };
 
 typedef struct valor valor_t;
@@ -58,7 +57,8 @@ typedef struct node node_t;
 node_t* create_node(int,char*,valor_t);
 char* create_leaf(valor_t);
 void add_child(node_t*,node_t*);
-void ast_print(node_t*);
+static void ast_print(node_t*);
+static void _ast_print_graphviz (FILE*, node_t*);
 void exporta(void*);
 void libera(void*);
 #endif

@@ -1,4 +1,4 @@
-etap3: parser.y scanner.l
+etapa3: parser.y scanner.l
 	bison -d parser.y
 	flex scanner.l
 	gcc -c lex.yy.c main.c ast.c parser.tab.c
