@@ -142,7 +142,6 @@ tipo: TK_PR_INT
 funcao: tipo identificador '(' parametros ')' bloco {$$ = create_node(AST_FUNC,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$6);};
 bloco: '{' comandos_simples '}' {$$ = $2;} 
 	| '{' '}' {$$ = NULL;};
-//bloco_vazio: '{' '}' {$$ = NULL;};
 parametros: parametros ',' tipo identificador
 	| tipo identificador;
 atribuicao: identificador '[' expressoes ']' '=' expressao {node_t *new_node; new_node = calloc(1,sizeof(node_t)); $$ = create_node(AST_ATT,"=",yylval.valor_lexico); add_child($$,$1); add_child($$,$6); new_node = create_node(AST_ARR,"[]",yylval.valor_lexico); add_child(new_node,$3); add_child($$,new_node);}
