@@ -113,10 +113,7 @@ prec_three: prec_three '+' prec_two {$$ = create_node(AST_ADD, "+",yylval.valor_
 	| prec_two {$$ = $1;};
 prec_two: prec_two '*' prec_one
 	| prec_two '/' prec_one
-	| prec_two '%' prec_one
-	{$$ = create_node(AST_MOD, "%",yylval.valor_lexico);
-	add_child($$,$1);
-	add_child($$,$3);}
+	| prec_two '%' prec_one {$$ = create_node(AST_MOD, "%",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| prec_one;
 prec_one: '!' prec_one {
 	$$ = create_node(AST_NOT, "!",yylval.valor_lexico);
