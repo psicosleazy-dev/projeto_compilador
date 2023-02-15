@@ -127,8 +127,7 @@ argumentos: argumentos ',' expressao {$$ = $3;}
 args: argumentos {$$ = $1;}
 	| {$$ = NULL;};
 chamada_funcao: identificador '(' args ')' {char label[100] = "call "; strcat(label,create_leaf(yylval.valor_lexico)); $$ = create_node(AST_CALL,label,yylval.valor_lexico); add_child($$,$3); };
-operando: identificador '[' expressoes ']' {$$ = create_node(AST_INDEX,"[]",yylval.valor_lexico);
-	add_child($$,$1); add_child($$,$3);}
+operando: identificador '[' expressoes ']' {$$ = create_node(AST_INDEX,"[]",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| identificador
 	| TK_LIT_INT {$1 = create_node(AST_LIT_INT,yylval.valor_lexico.value.token,yylval.valor_lexico);}
 	| TK_LIT_FLOAT {$1 = create_node(AST_LIT_FLOAT,yylval.valor_lexico.value.token,yylval.valor_lexico);}
