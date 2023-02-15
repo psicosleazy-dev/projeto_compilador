@@ -101,7 +101,7 @@ expressao: expressao TK_OC_OR prec_six {$$ = create_node(AST_OR, "||",yylval.val
 	| prec_six {$$ = $1;};
 prec_six: prec_six TK_OC_AND prec_five {$$ = create_node(AST_AND, "&&",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| prec_five {$$ = $1;};
-prec_five: prec_five TK_OC_EQ prec_four {$$ = create_node(AST_EQ, "=",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
+prec_five: prec_five TK_OC_EQ prec_four {$$ = create_node(AST_EQ, "==",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| prec_five TK_OC_NE prec_four {$$ = create_node(AST_NE, "!=",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| prec_four {$$ = $1;};
 prec_four: prec_four '>' prec_three {$$ = create_node(AST_G, ">",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
@@ -112,20 +112,13 @@ prec_four: prec_four '>' prec_three {$$ = create_node(AST_G, ">",yylval.valor_le
 prec_three: prec_three '+' prec_two {$$ = create_node(AST_ADD, "+",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| prec_three '-' prec_two {$$ = create_node(AST_SUB, "-",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| prec_two {$$ = $1;};
-prec_two: prec_two '*' prec_one
-	| prec_two '/' prec_one
-	| prec_two '%' prec_one
-	{$$ = create_node(AST_MOD, "%",yylval.valor_lexico);
-	add_child($$,$1);
-	add_child($$,$3);}
-	| prec_one;
-prec_one: '!' prec_one {
-	$$ = create_node(AST_NOT, "!",yylval.valor_lexico);
-	add_child($$,$2);}
-	| '-' prec_one {
-	$$ = create_node(AST_MINUS, "-",yylval.valor_lexico);
-	add_child($$,$2);}
-	| prec_zero;
+prec_two: prec_two '*' prec_one {$$ = create_node(AST_MUL, "*",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
+	| prec_two '/' prec_one {$$ = create_node(AST_DIV, "/",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
+	| prec_two '%' prec_one {$$ = create_node(AST_MOD, "%",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
+	| prec_one {$$ = $1;};
+prec_one: '!' prec_one {$$ = create_node(AST_NOT, "!",yylval.valor_lexico); add_child($$,$2);}
+	| '-' prec_one {$$ = create_node(AST_MINUS, "-",yylval.valor_lexico); add_child($$,$2);}
+	| prec_zero {$$ = $1;};
 prec_zero: '(' expressao ')' {$$ = $2;}
 	| operando {$$ = $1;};
 expressoes: expressoes '^' expressao {$$ = create_node(AST_CIRC,"^",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
@@ -147,14 +140,12 @@ tipo: TK_PR_INT
 	| TK_PR_FLOAT
 	| TK_PR_BOOL
 	| TK_PR_CHAR;
-funcao: tipo identificador '(' params ')' bloco {$$ = create_node(AST_FUNC,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$6);};
+funcao: tipo identificador '(' parametros ')' bloco {$$ = create_node(AST_FUNC,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$6);};
 bloco: '{' comandos_simples '}' {$$ = $2;} 
 	| '{' '}' {$$ = NULL;};
 //bloco_vazio: '{' '}' {$$ = NULL;};
 parametros: parametros ',' tipo identificador
 	| tipo identificador;
-params: parametros
-	| ;
 atribuicao: identificador '[' expressoes ']' '=' expressao {node_t *new_node; new_node = calloc(1,sizeof(node_t)); $$ = create_node(AST_ATT,"=",yylval.valor_lexico); add_child($$,$1); add_child($$,$6); new_node = create_node(AST_ARR,"[]",yylval.valor_lexico); add_child(new_node,$3); add_child($$,new_node);}
 	| identificador '=' expressao {$$ = create_node(AST_ATT, "=",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);};
 comandos_simples: comando_simples ';' comandos_simples {$$ = $1; add_child($$,$3);}
