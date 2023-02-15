@@ -100,7 +100,7 @@ expressao: expressao TK_OC_OR prec_six {$$ = create_node(AST_OR, "||",yylval.val
 	| prec_six {$$ = $1;};
 prec_six: prec_six TK_OC_AND prec_five {$$ = create_node(AST_AND, "&&",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| prec_five {$$ = $1;};
-prec_five: prec_five TK_OC_EQ prec_four {$$ = create_node(AST_EQ, "=",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
+prec_five: prec_five TK_OC_EQ prec_four {$$ = create_node(AST_EQ, "==",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| prec_five TK_OC_NE prec_four {$$ = create_node(AST_NE, "!=",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| prec_four {$$ = $1;};
 prec_four: prec_four '>' prec_three {$$ = create_node(AST_G, ">",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
