@@ -115,13 +115,9 @@ prec_two: prec_two '*' prec_one {$$ = create_node(AST_MUL, "*",yylval.valor_lexi
 	| prec_two '/' prec_one {$$ = create_node(AST_DIV, "/",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| prec_two '%' prec_one {$$ = create_node(AST_MOD, "%",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| prec_one {$$ = $1;};
-prec_one: '!' prec_one {
-	$$ = create_node(AST_NOT, "!",yylval.valor_lexico);
-	add_child($$,$2);}
-	| '-' prec_one {
-	$$ = create_node(AST_MINUS, "-",yylval.valor_lexico);
-	add_child($$,$2);}
-	| prec_zero;
+prec_one: '!' prec_one {$$ = create_node(AST_NOT, "!",yylval.valor_lexico); add_child($$,$2);}
+	| '-' prec_one {$$ = create_node(AST_MINUS, "-",yylval.valor_lexico); add_child($$,$2);}
+	| prec_zero {$$ = $1;};
 prec_zero: '(' expressao ')' {$$ = $2;}
 	| operando {$$ = $1;};
 expressoes: expressoes '^' expressao {$$ = create_node(AST_CIRC,"^",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
