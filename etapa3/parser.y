@@ -138,14 +138,12 @@ tipo: TK_PR_INT
 	| TK_PR_FLOAT
 	| TK_PR_BOOL
 	| TK_PR_CHAR;
-funcao: tipo identificador '(' params ')' bloco {$$ = create_node(AST_FUNC,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$6);};
+funcao: tipo identificador '(' parametros ')' bloco {$$ = create_node(AST_FUNC,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$6);};
 bloco: '{' comandos_simples '}' {$$ = $2;} 
 	| bloco_vazio {$$ = NULL;};
 bloco_vazio: '{''}';
 parametros: parametros ',' tipo identificador
 	| tipo identificador;
-params: parametros
-	| ;
 atribuicao: identificador '[' expressoes ']' '=' expressao {node_t *new_node; $$ = create_node(AST_ATT,"=",yylval.valor_lexico); add_child($$,$1); add_child($$,$6); new_node = create_node(AST_ARR,"[]",yylval.valor_lexico); add_child(new_node,$3); add_child($$,new_node);}
 	| identificador '=' expressao {$$ = create_node(AST_ATT, "=",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);};
 comandos_simples: comando_simples ';' comandos_simples {$$ = $1; add_child($$,$3);}
