@@ -29,6 +29,8 @@
 #define AST_MINUS 328
 #define AST_LIT_TRUE 329
 #define AST_LIT_FALSE 330
+#define AST_MUL 331
+#define AST_DIV 332
 
 union Literal{
  int int_value;
