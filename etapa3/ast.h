@@ -47,7 +47,7 @@ struct valor{
 typedef struct valor valor_t;
 
 struct node{
-  char* label;
+  char *label;
   int type;
   valor_t value;
   int number_of_children;

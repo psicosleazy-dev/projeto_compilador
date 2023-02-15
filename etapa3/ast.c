@@ -27,13 +27,15 @@ void add_child(node_t *tree, node_t *child){
         tree->children = realloc(tree->children, tree->number_of_children * sizeof(node_t*));
         tree->children[tree->number_of_children-1] = child;
     }
-    else
-        printf("\nErro ao adicionar filho!");
 }
 
 static void ast_print(node_t *tree){
-  if (tree != NULL)
-	printf("\n%p [label =\"%s\"];",tree,tree->label);
+  if (tree != NULL){
+     printf("\n%p [label =\"%s\"];\n",tree,tree->label);
+     for (int i = 0; i < tree->number_of_children; i++)
+	ast_print(tree->children[i]);
+  }
+	
   else
      printf("\nErro print: %s recebeu parâmetro tree = %p.\n",  __FUNCTION__, tree);
 }
@@ -70,13 +72,10 @@ void exporta(void *arvore){
   node_t *tree = (node_t *) arvore;
   if (tree != NULL){
     ast_print(tree);
-    int i;
-    for (i = 0; i < tree->number_of_children; i++)
-      ast_print(tree->children[i]);
+    ast_print_graphviz(tree);
   }
   else
     printf("\nErro exporta: %s recebeu parâmetro tree = %p.\n", __FUNCTION__, tree);
-  ast_print_graphviz(tree);
 }
 
 void libera(void *arvore){

@@ -35,8 +35,8 @@ float {integer}["."]?{integer}+{exponent}?
 \] return yytext[0];
 \^ return yytext[0];
 \'([^\']?)\' return TK_LIT_CHAR;
-{integer} {yylval.valor_lexico.value.int_value = atoi(yytext); yylval.valor_lexico.type = strdup("literal int"); yylval.valor_lexico.line = get_line_number(); return TK_LIT_INT;}
-{float} {yylval.valor_lexico.value.float_value = atof(yytext); yylval.valor_lexico.type = strdup("literal float"); yylval.valor_lexico.line = get_line_number(); return TK_LIT_FLOAT;}
+{integer} {yylval.valor_lexico.value.int_value = atoi(yytext); yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("literal int"); yylval.valor_lexico.line = get_line_number(); return TK_LIT_INT;}
+{float} {yylval.valor_lexico.value.float_value = atof(yytext); yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("literal float"); yylval.valor_lexico.line = get_line_number(); return TK_LIT_FLOAT;}
 "int" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_INT;}
 "float" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_FLOAT;}
 "bool" {yylval.valor_lexico.value.token = strdup(yytext); yylval.valor_lexico.type = strdup("palavra reservada"); yylval.valor_lexico.line = get_line_number(); return TK_PR_BOOL;}
