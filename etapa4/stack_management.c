@@ -4,8 +4,7 @@
 #include "stack_management.h"
 #include "errors.h"
 
-int empty_stack(Stack* stack)
-{
+int empty_stack(Stack* stack){
      if(stack->head == NULL)
         return 1;
      else
@@ -34,9 +33,9 @@ HASH_TABLE* pop(Stack* stack){
         exit(4);
     }
     else{
-        HASH_TABLE* table;
-        table = stack->head->data;
         stack_node* temp = stack->head->next;
+        HASH_TABLE* table = stack->head->data;
+        free(stack);
         stack->head = temp;
         stack->size-=1;
         return table;
@@ -56,12 +55,14 @@ stack_node* retrieve(Stack* stack, int level){
 } //get something below
 
 void delete_stack(Stack* stack){
-    stack_node *atual, *prox;
+    /*stack_node *atual, *prox;
     atual = stack->head->next;
     while(atual != NULL){
         prox = atual->next;
         free(atual);
-        atual = prox;
+        atual = prox;*/
+     while(!empty_stack(stack))
+        pop(stack);
     }
 } //free all
 
