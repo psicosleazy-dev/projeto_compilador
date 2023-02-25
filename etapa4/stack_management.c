@@ -1,4 +1,16 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include "hash.h"
 #include "stack_management.h"
+#include "errors.h"
+
+int empty_stack(Stack* stack)
+{
+     if(stack->head == NULL)
+        return 1;
+     else
+        return 0;
+}
 
 Stack* create_stack(){
     Stack* stack = malloc(sizeof(Stack));
@@ -7,20 +19,28 @@ Stack* create_stack(){
     return stack;
 }
 
-void push(Stack* stack, Table *data){
+void push(Stack* stack, HASH_TABLE* table){
     stack_node* new_element = malloc(sizeof(struct stack_node));
-    new_element->data = data;
+    new_element->data = table;
     new_element->next = stack->head;
     stack->head = new_element;
     stack->size+=1;
+    printf("\ninseriu na pilha!");
 }
 
-void pop(Stack* stack){
-    stack_node* temp = stack->head->next;
-    free(stack->head); //maybe unnecessary
-    free(stack);
-    stack->head = temp;
-    stack->size-=1;
+HASH_TABLE* pop(Stack* stack){
+    if(empty_stack(stack)){
+        printf("pilha vazia!\n");
+        exit(4);
+    }
+    else{
+        HASH_TABLE* table;
+        table = stack->head->data;
+        stack_node* temp = stack->head->next;
+        stack->head = temp;
+        stack->size-=1;
+        return table;
+    }
 }
 
 stack_node* retrieve(Stack* stack, int level){
@@ -36,8 +56,49 @@ stack_node* retrieve(Stack* stack, int level){
 } //get something below
 
 void delete_stack(Stack* stack){
-    while (stack->head->next != NULL){
-        pop(stack);
+    stack_node *atual, *prox;
+    atual = stack->head->next;
+    while(atual != NULL){
+        prox = atual->next;
+        free(atual);
+        atual = prox;
     }
-    free(stack);
 } //free all
+
+void print_stack(Stack* stack){
+    stack_node *atual;
+    atual = stack->head;
+    while(atual!=NULL){
+        print_table(atual->data);
+        atual = atual->next;
+    }
+}
+
+/*
+int main(){
+    Stack *stack = create_stack();
+    HASH_TABLE* table;
+    table = create_table(HASH_SIZE);
+    valor_t value;
+    value.linha = 1;
+    value.natureza = NAT_VARIABLE;
+    value.tamanho = 1;
+    value.tipo = INT_TYPE;
+    value.value.token = "valor";
+
+    insert_item(table,value);
+
+    push(stack,table);
+
+    print_stack(stack);
+
+    HASH_TABLE* table2 = pop(stack);
+
+    printf("\npilha depois do pop\n");
+
+    print_stack(stack);
+
+    delete_stack(stack);
+
+    return 0;
+}*/

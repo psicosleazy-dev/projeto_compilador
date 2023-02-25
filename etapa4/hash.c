@@ -121,7 +121,7 @@ HASH_TABLE* create_table(int size)
 
     for (int i = 0; i < table->size_table; i++)
         table->items[i] = NULL;
-
+    //printf("criou");
     return table;
 }
 

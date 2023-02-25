@@ -14,7 +14,7 @@ typedef struct hash_table{
 }HASH_TABLE;
 
 int hashAddress(char*);
-void init_table(HASH_TABLE*);
+//void init_table(HASH_TABLE*);
 HASH_TABLE* create_table(int);
 HASH_ENT* create_item(valor_t);
 void insert_item(HASH_TABLE*,valor_t);

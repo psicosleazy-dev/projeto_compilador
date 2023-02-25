@@ -52,13 +52,14 @@ extern int yydebug;
 #include "ast.h"
 #include "hash.h"
 #include "errors.h"
+#include "stack_management.h"
 int yylex(void);
 void yyerror (char const *s);
 extern int get_line_number();
 extern void* arvore;
-HASH_TABLE* table;
+extern Stack* stack;
 
-#line 62 "parser.tab.h"
+#line 63 "parser.tab.h"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -97,12 +98,12 @@ HASH_TABLE* table;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 18 "parser.y"
+#line 19 "parser.y"
 
  node_t *no;
  valor_t valor_lexico;
 
-#line 106 "parser.tab.h"
+#line 107 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

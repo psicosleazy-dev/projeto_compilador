@@ -1,3 +1,3 @@
 int myfunction(){
-//myfunction(4+2);
+myfunction(2+2);
 }
