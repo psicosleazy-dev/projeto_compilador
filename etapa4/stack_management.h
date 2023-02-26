@@ -14,6 +14,8 @@ typedef struct Stack{
     int size;
 }Stack;
 
+Stack* stack;
+void init_stack(void);
 Stack* create_stack();
 void push(Stack* stack, HASH_TABLE* data);
 HASH_TABLE* pop(Stack* stack);

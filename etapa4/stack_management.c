@@ -11,6 +11,12 @@ int empty_stack(Stack* stack){
         return 0;
 }
 
+void init_stack(void){
+    stack = malloc(sizeof(Stack));
+    stack->head = NULL;
+    stack->size = 0;
+}
+
 Stack* create_stack(){
     Stack* stack = malloc(sizeof(Stack));
     stack->head = NULL;
@@ -61,9 +67,9 @@ void delete_stack(Stack* stack){
         prox = atual->next;
         free(atual);
         atual = prox;*/
-     while(!empty_stack(stack))
+     while(!empty_stack(stack)){
         pop(stack);
-    }
+     }
 } //free all
 
 void print_stack(Stack* stack){

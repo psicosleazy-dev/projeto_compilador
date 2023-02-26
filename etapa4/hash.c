@@ -34,7 +34,7 @@ void insert_item(HASH_TABLE* table, valor_t novo_simbolo)
 // Computes the index.
     int index = hashAddress(novo_simbolo.value.token);
 
-    HASH_ENT* current_item = (HASH_ENT*) malloc(sizeof(HASH_ENT));
+    HASH_ENT* current_item; /* = (HASH_ENT*) malloc(sizeof(HASH_ENT));*/
     current_item = table->items[index];
 
     if (current_item == NULL)
@@ -121,7 +121,7 @@ HASH_TABLE* create_table(int size)
 
     for (int i = 0; i < table->size_table; i++)
         table->items[i] = NULL;
-    //printf("criou");
+    printf("criou");
     return table;
 }
 

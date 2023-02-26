@@ -441,3 +441,7 @@ while: TK_PR_WHILE '(' expressao ')' bloco {$$ = create_node(AST_WHILE,"while");
 void yyerror (char const *s){
 	fprintf(stderr, "%s in line %d.\n",s,get_line_number());
 }
+
+void initMe(){
+	init_stack();
+}

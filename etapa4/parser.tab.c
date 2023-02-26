@@ -2476,3 +2476,7 @@ yyreturn:
 void yyerror (char const *s){
 	fprintf(stderr, "%s in line %d.\n",s,get_line_number());
 }
+
+void initMe(){
+	init_stack();
+}
