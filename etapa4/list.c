@@ -58,7 +58,6 @@ void insere_dec(LISTA* lista){
 LISTA_DEC* busca_dec(LISTA_DEC *pRecebido, valor_t valor_lexico){
     LISTA *aux = NULL, *elem = NULL;
     LISTA_DEC *aux2 = NULL, *elem2 = NULL;
-    printf("buscou aqui");
     for(aux2 = pRecebido; aux2!=NULL; aux2 = aux2->prox){
         aux = aux2->lista;
         while(aux && strcmp(aux->valor_lexico.value.token,valor_lexico.value.token)!=0)
@@ -66,7 +65,7 @@ LISTA_DEC* busca_dec(LISTA_DEC *pRecebido, valor_t valor_lexico){
     }
     if(aux)
     {
-        elem2 = (LISTA_DEC *)malloc(sizeof(LISTA_DEC));
+        //elem2 = (LISTA_DEC *)malloc(sizeof(LISTA_DEC));
         elem2->lista = aux;
         elem2->tipo = aux2->tipo;
         return elem2;

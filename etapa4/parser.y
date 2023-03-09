@@ -97,7 +97,7 @@ lista: funcao {$$ = $1;}
 	| funcao lista {$$ = $1; add_child($1,$2);}
 	| declaracao_global ';' {$$ = $1;}
 	| declaracao_global ';' lista {$$ = $1; add_child($$,$3);};
-funcao: tipo TK_IDENTIFICADOR '(' parametros ')' bloco {
+funcao: tipo TK_IDENTIFICADOR '(' parametros ')' bloco { // adicionar na tabela o label da funcao funcao: header body
 	char* leaf;
 	leaf = create_leaf($2);
 	$$ = create_node(AST_FUNC,leaf);
@@ -111,7 +111,7 @@ tipo: TK_PR_INT {inicia_lista();}
 	| TK_PR_FLOAT {inicia_lista();}
 	| TK_PR_BOOL {inicia_lista();}
 	| TK_PR_CHAR {inicia_lista();};
-declaracao_global: tipo lista_nomes_global {listadec = altera_tipo_dec(listadec,$1); $$ = $2;};
+declaracao_global: tipo lista_nomes_global {listadec = altera_tipo_dec(listadec,$1); $$ = $2; /* criar uma lista de declaracoes que posteriormente sera adicionada na tabela*/};
 declaracao_local: tipo lista_nomes_local {listadec = altera_tipo_dec(listadec,$1); $$ = $2;};
 /*
 nomes_local: TK_PR_INT TK_IDENTIFICADOR '[' lista_inteiros ']' TK_OC_LE TK_LIT_INT {node_t *new_node;

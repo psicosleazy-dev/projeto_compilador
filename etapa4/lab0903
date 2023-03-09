@@ -1,0 +1,17 @@
+int gera_rotulo(void){
+	static int contador = 0;
+	return contador++;
+}
+
+char *gera_temporario(){
+	char *retorno = malloc(200);
+	
+}
+
+tabela com valor desloc = 0;
+end = desloc
+incrementa o valor do desloc de acordo com o tamanho 
+rfp - desloc variavel local
+rbss - desloc variavel global
+ast ganha novo campo com codigo
+endereco cumulativo (baseado no anterior)
