@@ -30,8 +30,8 @@ void push(Stack* stack, HASH_TABLE* table){
     new_element->next = stack->head;
     stack->head = new_element;
     stack->size+=1;
-    printf("\ninseriu na pilha!");
 }
+
 
 HASH_TABLE* pop(Stack* stack){
     if(empty_stack(stack)){
@@ -41,7 +41,6 @@ HASH_TABLE* pop(Stack* stack){
     else{
         stack_node* temp = stack->head->next;
         HASH_TABLE* table = stack->head->data;
-        free(stack);
         stack->head = temp;
         stack->size-=1;
         return table;
@@ -61,15 +60,13 @@ stack_node* retrieve(Stack* stack, int level){
 } //get something below
 
 void delete_stack(Stack* stack){
-    /*stack_node *atual, *prox;
+    stack_node *atual, *prox;
     atual = stack->head->next;
     while(atual != NULL){
         prox = atual->next;
         free(atual);
-        atual = prox;*/
-     while(!empty_stack(stack)){
-        pop(stack);
-     }
+        atual = prox;
+    }
 } //free all
 
 void print_stack(Stack* stack){
@@ -79,6 +76,20 @@ void print_stack(Stack* stack){
         print_table(atual->data);
         atual = atual->next;
     }
+}
+
+HASH_ENT* search_stack(Stack* stack, char* simbolo){
+    stack_node* aux;
+    aux = stack->head;
+    HASH_ENT* achou;
+    while(aux){
+        achou = ht_search(aux->data,simbolo);
+        if(achou)
+            return achou;
+        aux = aux->next;
+    }
+
+    return NULL;
 }
 
 /*

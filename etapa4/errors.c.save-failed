@@ -6,7 +6,6 @@
 #include "hash.h"
 #include "errors.h"
 #include "list.h"
-#include "stack_management.h"
 extern int get_line_number(void);
 
 // perfumaria minha pra imprimir o erro bonitinho na tela
@@ -62,14 +61,13 @@ void printError(int error, char *nome, int tipo_orig)
 
 }
 
-void checkTableListDec(Stack* stack, LISTA_DEC* dec, valor_t novo_simbolo){
-    HASH_ENT* tmp = search_stack(stack,novo_simbolo.value.token);
+void checkTableDec(HASH_TABLE* table, LISTA_DEC** dec, valor_t novo_simbolo){
+    HASH_ENT* tmp = ht_search(table, novo_simbolo.value.token);
     LISTA_DEC* lista = busca_dec(dec,novo_simbolo);
     valor_t find;
 
     if(lista){
-        LISTA* achou = busca(lista->lista,novo_simbolo);
-        find = achou->valor_lexico;
+        find = busca(lista->lista,novo_simbolo);
         if(tmp || lista){
             if(tmp->valor_lexico.tipo != novo_simbolo.tipo || lista->tipo != novo_simbolo.tipo)
                 printError(ERR_DECLARED, novo_simbolo.value.token, tmp->valor_lexico.tipo);
@@ -79,28 +77,27 @@ void checkTableListDec(Stack* stack, LISTA_DEC* dec, valor_t novo_simbolo){
                 printError(ERR_ARRAY, novo_simbolo.value.token,0);
             if((tmp->valor_lexico.natureza == NAT_FUNCTION || find.natureza == NAT_FUNCTION) && ((novo_simbolo.natureza == NAT_VARIABLE) || (novo_simbolo.natureza == NAT_ARRAY)))
                 printError(ERR_FUNCTION, novo_simbolo.value.token,0);
-            if((tmp->valor_lexico.tipo == CHAR_TYPE || lista->tipo == CHAR_TYPE) && (novo_simbolo.tipo == INT_TYPE))
+            if((tmp->valor_lexico.tipo == CHAR_TYPE || lista.tipo == CHAR_TYPE) && (novo_simbolo.tipo == INT_TYPE))
                 printError(ERR_CHAR_TO_INT, novo_simbolo.value.token,0);
-            if((tmp->valor_lexico.tipo == CHAR_TYPE || lista->tipo == CHAR_TYPE) && (novo_simbolo.tipo == FLOAT_TYPE))
+            if((tmp->valor_lexico.tipo == CHAR_TYPE || lista.tipo == CHAR_TYPE) && (novo_simbolo.tipo == FLOAT_TYPE))
                 printError(ERR_CHAR_TO_FLOAT, novo_simbolo.value.token,0);
-            if((tmp->valor_lexico.tipo == CHAR_TYPE || lista->tipo == CHAR_TYPE) && (novo_simbolo.tipo == BOOL_TYPE))
+            if((tmp->valor_lexico.tipo == CHAR_TYPE || lista.tipo == CHAR_TYPE) && (novo_simbolo.tipo == BOOL_TYPE))
                 printError(ERR_CHAR_TO_BOOL, novo_simbolo.value.token,0);
-            if(((tmp->valor_lexico.tipo == INT_TYPE || lista->tipo == INT_TYPE) || (tmp->valor_lexico.tipo == FLOAT_TYPE || lista->tipo == FLOAT_TYPE) || (tmp->valor_lexico.tipo == BOOL_TYPE || lista->tipo == BOOL_TYPE)) && (novo_simbolo.tipo == CHAR_TYPE))
+            if(((tmp->valor_lexico.tipo == INT_TYPE || lista.tipo == INT_TYPE) || (tmp->valor_lexico.tipo == FLOAT_TYPE || lista.tipo == FLOAT_TYPE) || (tmp->valor_lexico.tipo == BOOL_TYPE || lista.tipo == BOOL_TYPE)) && (novo_simbolo.tipo == CHAR_TYPE))
                 printError(ERR_X_TO_CHAR, novo_simbolo.value.token,0);
-            if((tmp->valor_lexico.tipo == CHAR_TYPE || lista->tipo == CHAR_TYPE) && (novo_simbolo.natureza == NAT_ARRAY))
+            if((tmp->valor_lexico.tipo == CHAR_TYPE || lista.tipo == CHAR_TYPE) && (novo_simbolo.natureza == NAT_ARRAY))
                 printError(ERR_CHAR_VECTOR, novo_simbolo.value.token,0);
         }
     }
 }
 
-void checkTableListInUse(Stack* stack, LISTA_DEC* dec, valor_t novo_simbolo){
-    HASH_ENT* tmp = search_stack(stack,novo_simbolo.value.token);
-    LISTA_DEC* tmp_dec = busca_dec(dec,novo_simbolo);
+void checkTableInUse(HASH_TABLE *table, valor_t novo_simbolo){
+    HASH_ENT* tmp = ht_search(table,novo_simbolo.value.token);
 
-    if(!tmp || !tmp_dec)
+    if(!tmp)
         printError(ERR_UNDECLARED,novo_simbolo.value.token,0);
     else
-        checkTableListDec(stack,dec,novo_simbolo);
+        checkTableDec(table,novo_simbolo);
 }
 
 int get_result_type(int type_1, int type_2, int op_type)
@@ -368,11 +365,13 @@ int get_result_type(int type_1, int type_2, int op_type)
     }
 }
 
+
 void type_error(int type_1, int type_2, int op_type)  /* print type error */
 {
     fprintf(stderr, "Type conflict between %s and %s using op type %s\n", showType(type_1), showType(type_2), showType(op_type));
     exit(1);
 }
+
 
 valor_t altera_natureza(valor_t valor_lexico,int nova_natureza){
 	valor_lexico.natureza = nova_natureza;
@@ -419,7 +418,6 @@ node_t* altera_datatype(node_t* no){
         break;
     }
 }
-
 node_t* _altera_tipo(node_t* no, valor_t tipo){
 
     switch(tipo.tipo)
@@ -449,11 +447,6 @@ node_t* inf_tipo(node_t *no, node_t* op1, node_t* op2, int tipo_op){
     return no;
 }
 
-node_t* inf_tipo_lex(node_t *no, valor_t op1, node_t *op2, int tipo_op){
-    no->datatype = get_result_type(op1.tipo,op2->datatype,tipo_op);
-    return no;
-}
-
 valor_t altera_tipo(valor_t simbolo, valor_t tipo){
     switch(tipo.tipo){
     case TK_PR_INT:
@@ -473,24 +466,9 @@ valor_t altera_tipo(valor_t simbolo, valor_t tipo){
     return simbolo;
 }
 
-int recupera_tipo(valor_t s, Stack* stack, LISTA_DEC* listadec)
-{
-    HASH_ENT* achou_pilha = search_stack(stack,s.value.token);
-    LISTA_DEC* lista_d = busca_dec(listadec,s);
-    LISTA* achou_lista = busca(lista_d->lista,s);
-
-    if(achou_pilha)
-        return achou_pilha->valor_lexico.tipo;
-    else if(lista_d)
-    {
-        if(achou_lista)
-            return achou_lista->valor_lexico.tipo;
-        else
-            return 0;
-    }
-}
-int recupera_tipo_t(node_t* no){
-    return no->datatype;
+valor_t recupera_tipo(valor_t s, node_t* no){
+    s.tipo = no->datatype;
+    return s;
 }
 
 LISTA_DEC* altera_tipo_dec(LISTA_DEC* dec, valor_t tipo)
@@ -511,6 +489,5 @@ LISTA_DEC* altera_tipo_dec(LISTA_DEC* dec, valor_t tipo)
         break;
     }
     dec->tipo = tipo.tipo;
-    printf("alterou tipo");
     return dec;
 }

@@ -78,13 +78,11 @@ void exporta(void *arvore){
 
 void libera(void *arvore){
   node_t *tree = (node_t *) arvore;
-  //if(tree!=NULL){
+  if(tree!=NULL){
     for(int i=0;i<tree->number_of_children;i++)
         libera(tree->children[i]);
     free(tree->children);
     free(tree->label);
     free(tree);
-  //}
-  /*else
-    printf("\nErro!");*/
+  }
 }

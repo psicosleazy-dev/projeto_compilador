@@ -549,7 +549,7 @@ char *yytext;
 #include "errors.h"
 extern void *arvore;
 int count_line = 1;
-int get_line_number(){
+int get_line_number(void){
      return count_line;
 }
 #line 556 "lex.yy.c"

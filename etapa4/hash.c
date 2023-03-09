@@ -12,8 +12,6 @@ int hashAddress(char *text){
     for (int j = 0; text[j]; j++)
         i += text[j];
 
-    //printf("chegou ate aqui");
-
     return i % HASH_SIZE;
 }
 
@@ -105,8 +103,9 @@ HASH_ENT* ht_search(HASH_TABLE* table, char* token)
     // Provide only non-NULL values.
     if (item != NULL)
     {
-        if (strcmp(item->valor_lexico.value.token, token) == 0)
+        if (strcmp(item->valor_lexico.value.token, token) == 0){
             return item;
+        }
     }
 
     return NULL;
@@ -121,7 +120,6 @@ HASH_TABLE* create_table(int size)
 
     for (int i = 0; i < table->size_table; i++)
         table->items[i] = NULL;
-    printf("criou");
     return table;
 }
 

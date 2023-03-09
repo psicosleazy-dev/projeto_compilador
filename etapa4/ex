@@ -1,3 +1,2 @@
-int myfunction(){
-myfunction(2+2);
-}
+int a,x;
+float a;
