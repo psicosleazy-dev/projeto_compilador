@@ -57,7 +57,7 @@ void insere_dec(LISTA* lista){
 
 LISTA_DEC* busca_dec(LISTA_DEC *pRecebido, valor_t valor_lexico){
     LISTA *aux = NULL, *elem = NULL;
-    LISTA_DEC *aux2 = NULL, *elem2;
+    LISTA_DEC *aux2 = NULL, *elem2 = NULL;
     printf("buscou aqui");
     for(aux2 = pRecebido; aux2!=NULL; aux2 = aux2->prox){
         aux = aux2->lista;
