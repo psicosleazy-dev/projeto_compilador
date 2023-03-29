@@ -105,9 +105,11 @@ void print_iloc(ILOC inst){
         printf("%s           -> %s",inst.op,inst.op1);
         break; 
     case ILOC_LABEL:
-
+        printf("%s:",inst.label);
+        break;
     case ILOC_NOP:
-           
+        printf("%s",inst.op);
+        break;           
   }
 }
 

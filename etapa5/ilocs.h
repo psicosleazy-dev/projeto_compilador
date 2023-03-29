@@ -52,8 +52,6 @@
 #define ILOC_RET 23
 #define ILOC_READ 25*/
 
-
-
 #include<stdio.h>
 #include<stdlib.h>
 #include "hash.h"

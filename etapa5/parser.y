@@ -12,6 +12,7 @@ int yylex(void);
 void yyerror (char const *s);
 extern int get_line_number();
 extern void* arvore;
+// definir as seguintes variaveis aqui ao inves de com extern
 extern Stack* stack;
 extern LISTA* lista2;
 }
@@ -720,11 +721,56 @@ comandos_simples: declaracao_local ';' comandos_simples {if($1 == NULL) {$$ = $3
 	| while ';' comandos_simples {$$ = $1; add_child($$,$3);}
 	| while ';' {$$ = $1;};
 // falta gerar codigo esses aqui tbm
-retorno: TK_PR_RETURN expressao {$$ = create_node(AST_RET,"return"); add_child($$,$2);};
-if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco else {$$ = create_node(AST_IF,"if"); add_child($$,$3); add_child($$,$6); add_child($$,$7);};
+retorno: TK_PR_RETURN expressao {
+	$$ = create_node(AST_RET,"return");
+	add_child($$,$2);
+	$$.temp = gera_temp();
+	LISTA_ILOCS *l = NULL;
+	ILOC inst;
+	inst = gera_inst(ILOC_JUMP,"jump",NULL,NULL,$$.temp);
+	insere_lista_ilocs(l,inst);
+	concat_lista_ilocs(l,$1.code);
+	$$.code = l;
+	};
+if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco else {
+	$$ = create_node(AST_IF,"if");
+	add_child($$,$3);
+	add_child($$,$6);
+	add_child($$,$7);
+	char *label_true = gera_rotulo();
+	char *label_false = gera_rotulo();
+	char *next = gera_rotulo();
+
+	$$.temp = gera_temp();
+	char *opaco = gera_temp();
+	LISTA_ILOCS *l = NULL;
+	ILOC inst;
+	inst = gera_inst(ILOC_LOADI, "loadI","0",NULL,temp);
+	insere_lista_ilocs(l,inst);
+	inst = gera_inst(ILOC_DIF,"cmp_NE",$3.temp,$$.temp,opaco);
+	insere_lista_ilocs(l,inst);
+	inst = gera_inst(ILOC_BR,"cbr",opaco,label_true,label_false);
+	insere_lista_ilocs(l,inst);
+	/*organizar!!!!! inst2 = gera_inst_com_label(label_true,inst);
+	inst = gera_inst(ILOC_LABEL,label_true,"nop");
+	insere_lista_ilocs(l,inst);
+	*/
+	inst = gera_inst(ILOC_JUMP,"jumpI",next);
+	insere_lista_ilocs(l,inst);
+	// concatenar lista do else (reavaliar else!!!!)
+	};
 else: TK_PR_ELSE bloco {$$ = $2;}
 	| {$$ = NULL;};
-while: TK_PR_WHILE '(' expressao ')' bloco {$$ = create_node(AST_WHILE,"while"); add_child($$,$3); add_child($$,$5);};
+while: TK_PR_WHILE '(' expressao ')' bloco {
+	$$ = create_node(AST_WHILE,"while");
+	add_child($$,$3);
+	add_child($$,$5);
+	char *label_true = gera_rotulo();
+	char *label_false = gera_rotulo();
+	char *next;
+
+	// tentar seguir a mesma logica da operacao relacional e do if pra traduzir
+	};
 %%
 void yyerror (char const *s){
 	fprintf(stderr, "%s in line %d.\n",s,get_line_number());
