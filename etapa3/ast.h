@@ -57,7 +57,6 @@ struct node{
 typedef struct node node_t;
 
 node_t* create_node(int,char*,valor_t);
-char* create_leaf(valor_t);
 void add_child(node_t*,node_t*);
 static void ast_print(node_t*);
 static void _ast_print_graphviz (FILE*, node_t*);

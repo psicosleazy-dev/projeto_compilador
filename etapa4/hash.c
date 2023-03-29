@@ -29,14 +29,15 @@ void insert_item(HASH_TABLE* table, valor_t novo_simbolo)
     // Creates the item.
     HASH_ENT* item = create_item(novo_simbolo);
 
-// Computes the index.
+    // Computes the index.
     int index = hashAddress(novo_simbolo.value.token);
 
     HASH_ENT* current_item; /* = (HASH_ENT*) malloc(sizeof(HASH_ENT));*/
     current_item = table->items[index];
 
-    if (current_item == NULL)
+    if (current_item == NULL){
         table->items[index] = item;
+    }
 }
 
 void init_table(HASH_TABLE* table)
@@ -48,7 +49,6 @@ void init_table(HASH_TABLE* table)
 
     for (int i = 0; i < table->size_table; i++)
         table->items[i] = NULL;
-
 
 }
 
@@ -107,7 +107,6 @@ HASH_ENT* ht_search(HASH_TABLE* table, char* token)
             return item;
         }
     }
-
     return NULL;
 }
 

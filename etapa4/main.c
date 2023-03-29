@@ -6,7 +6,6 @@ extern int yylex_destroy(void);
 extern void initMe(void);
 extern Stack* stack;
 extern LISTA* lista;
-extern LISTA_DEC* listadec;
 void *arvore = NULL;
 void exporta (void *arvore);
 void libera (void *arvore);

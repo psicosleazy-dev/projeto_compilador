@@ -25,7 +25,6 @@ extern void* arvore;
 %type<no> prec_one
 %type<no> expressoes
 %type<no> bloco
-%type<no> identificador
 %type<no> declaracao_global
 %type<no> declaracao_local
 %type<no> lista_nomes_local
@@ -52,6 +51,7 @@ extern void* arvore;
 %type<no> TK_LIT_FLOAT
 %type<no> TK_LIT_TRUE
 %type<no> TK_LIT_FALSE
+%type<no> TK_IDENTIFICADOR
 %token TK_PR_INT
 %token TK_PR_FLOAT
 %token TK_PR_BOOL
@@ -87,15 +87,43 @@ lista: funcao {$$ = $1;}
 	| declaracao_global lista {$$ = $1; add_child($$,$2);};
 declaracao_global: tipo lista_nomes_global ';' {$$ = $2;};
 declaracao_local: tipo lista_nomes_local {$$ = $2;};
-identificador: TK_IDENTIFICADOR {char *id; id = strdup(yylval.valor_lexico.value.token); $$ = create_node(TK_IDENTIFICADOR,id,yylval.valor_lexico);};
-lista_nomes_local: lista_nomes_local ',' identificador '[' lista_inteiros ']' TK_OC_LE TK_LIT_INT {node_t *new_node; new_node = calloc(1,sizeof(node_t)); $$ = create_node(AST_INIT,"<=",yylval.valor_lexico); add_child($$,$3); $8 = create_node(AST_LIT_INT,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$8); new_node = create_node(AST_ARR,"[]",yylval.valor_lexico); add_child(new_node,$3); add_child(new_node,$5);}
-	| identificador '[' lista_inteiros ']' TK_OC_LE TK_LIT_INT {node_t *new_node; new_node = calloc(1,sizeof(node_t)); $$ = create_node(AST_INIT,"<=",yylval.valor_lexico); add_child($$,$1); add_child($$,$6); new_node = create_node(AST_ARR,"[]",yylval.valor_lexico); add_child(new_node,$1); add_child(new_node,$3);}
-	| identificador '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
-        | lista_nomes_local ',' identificador '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]",yylval.valor_lexico); add_child($$,$3); add_child($$,$5);};
-lista_nomes_global: lista_nomes_global ',' identificador '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]",yylval.valor_lexico); add_child($$,$3); add_child($$,$5);}
-	| identificador '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
-	| lista_nomes_global ',' identificador {$$ = $3; add_child($$,$1);}
-	| identificador {$$ = $1;};
+lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']' TK_OC_LE TK_LIT_INT {
+node_t *new_node;
+new_node = calloc(1,sizeof(node_t));
+$$ = create_node(AST_INIT,"<=",yylval.valor_lexico);
+$3 = create_node(AST_ID,yylval.valor_lexico.value.token,yylval.valor_lexico);
+add_child($$,$3);
+$8 = create_node(AST_LIT_INT,yylval.valor_lexico.value.token,yylval.valor_lexico);
+add_child($$,$8);
+new_node = create_node(AST_ARR,"[]",yylval.valor_lexico);
+add_child(new_node,$3);
+add_child(new_node,$5);
+add_child($$,new_node);}
+	| TK_IDENTIFICADOR '[' lista_inteiros ']' TK_OC_LE TK_LIT_INT {
+node_t *new_node;
+new_node = calloc(1,sizeof(node_t));
+$$ = create_node(AST_INIT,"<=",yylval.valor_lexico);
+$1 = create_node(AST_ID,yylval.valor_lexico.value.token,yylval.valor_lexico);
+add_child($$,$1);
+$6 = create_node(AST_LIT_INT,yylval.valor_lexico.value.token,yylval.valor_lexico);
+add_child($$,$6);
+new_node = create_node(AST_ARR,"[]",yylval.valor_lexico);
+add_child(new_node,$1);
+add_child(new_node,$3);
+add_child($$,new_node);
+}
+	| TK_IDENTIFICADOR '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]",yylval.valor_lexico); $1 = create_node(AST_ID,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
+	| TK_IDENTIFICADOR TK_OC_LE TK_LIT_INT {$$ = create_node(AST_INIT,"<=",yylval.valor_lexico); $1 = create_node(AST_ID,yylval.valor_lexico.value.token,yylval.valor_lexico);
+add_child($$,$1); $3 = create_node(AST_LIT_INT,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$3);}
+	| lista_nomes_local ',' TK_IDENTIFICADOR TK_OC_LE TK_LIT_INT {$$ = create_node(AST_INIT,"<=",yylval.valor_lexico); $3 = create_node(AST_ID,yylval.valor_lexico.value.token,yylval.valor_lexico);
+add_child($$,$3); $5 = create_node(AST_LIT_INT,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$5);}
+	| TK_IDENTIFICADOR {$$ = NULL;}
+	| lista_nomes_local ',' TK_IDENTIFICADOR {$$ = NULL;}
+        | lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]",yylval.valor_lexico); $3 = create_node(AST_ID,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$3); add_child($$,$5);};
+lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]",yylval.valor_lexico); add_child($$,$3); add_child($$,$5);}
+	| TK_IDENTIFICADOR '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]",yylval.valor_lexico); $1 = create_node(AST_ID,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
+	| lista_nomes_global ',' TK_IDENTIFICADOR {$$ = NULL;}
+	| TK_IDENTIFICADOR {$$ = NULL;};
 lista_inteiros: lista_inteiros '^' TK_LIT_INT {$$ = create_node(AST_CIRC, "^",yylval.valor_lexico); $3 = create_node(AST_LIT_INT,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}| TK_LIT_INT {$$ = create_node(AST_LIT_INT,yylval.valor_lexico.value.token,yylval.valor_lexico);};
 expressao: expressao TK_OC_OR prec_six {$$ = create_node(AST_OR, "||",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| prec_six {$$ = $1;};
@@ -121,15 +149,15 @@ prec_one: '!' prec_one {$$ = create_node(AST_NOT, "!",yylval.valor_lexico); add_
 	| prec_zero {$$ = $1;};
 prec_zero: '(' expressao ')' {$$ = $2;}
 	| operando {$$ = $1;};
-expressoes: expressoes '^' expressao {$$ = create_node(AST_CIRC,"^",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
+expressoes: expressao '^' expressoes {$$ = create_node(AST_CIRC,"^",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
 	| expressao {$$ = $1;};
-argumentos: argumentos ',' expressao {$$ = $3;}
+argumentos: expressao ',' argumentos {$$ = $1;}
 	| expressao {$$ = $1;};
 args: argumentos {$$ = $1;}
 	| {$$ = NULL;};
-chamada_funcao: identificador '(' args ')' {char label[100] = "call ", *nome_fun; nome_fun = strdup(yylval.valor_lexico.value.token); strcat(label,nome_fun); $$ = create_node(AST_CALL,label,yylval.valor_lexico); add_child($$,$3); };
-operando: identificador '[' expressoes ']' {$$ = create_node(AST_INDEX,"[]",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
-	| identificador {$$ = $1;}
+chamada_funcao: TK_IDENTIFICADOR '(' args ')' {char label[100] = "call ", *nome_fun; nome_fun = strdup(yylval.valor_lexico.value.token); strcat(label,nome_fun); $$ = create_node(AST_CALL,label,yylval.valor_lexico); add_child($$,$3); };
+operando: TK_IDENTIFICADOR '[' expressoes ']' {$$ = create_node(AST_INDEX,"[]",yylval.valor_lexico); $1 = create_node(AST_ID,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$1); add_child($$,$3);}
+	| TK_IDENTIFICADOR {$$ = create_node(AST_ID,yylval.valor_lexico.value.token,yylval.valor_lexico);}
 	| TK_LIT_INT {$$ = create_node(AST_LIT_INT,yylval.valor_lexico.value.token,yylval.valor_lexico);}
 	| TK_LIT_FLOAT {$$ = create_node(AST_LIT_FLOAT,yylval.valor_lexico.value.token,yylval.valor_lexico);}
 	| TK_LIT_FALSE {$$ = create_node(AST_LIT_FALSE,yylval.valor_lexico.value.token,yylval.valor_lexico);}
@@ -139,13 +167,23 @@ tipo: TK_PR_INT
 	| TK_PR_FLOAT
 	| TK_PR_BOOL
 	| TK_PR_CHAR;
-funcao: tipo identificador '(' parametros ')' bloco {$$ = create_node(AST_FUNC,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$6);};
+funcao: tipo TK_IDENTIFICADOR '(' parametros ')' bloco {$$ = create_node(AST_FUNC,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$6);};
 bloco: '{' comandos_simples '}' {$$ = $2;} 
 	| '{' '}' {$$ = NULL;};
-parametros: parametros ',' tipo identificador
-	| tipo identificador;
-atribuicao: identificador '[' expressoes ']' '=' expressao {node_t *new_node; new_node = calloc(1,sizeof(node_t)); $$ = create_node(AST_ATT,"=",yylval.valor_lexico); add_child($$,$1); add_child($$,$6); new_node = create_node(AST_ARR,"[]",yylval.valor_lexico); add_child(new_node,$3); add_child($$,new_node);}
-	| identificador '=' expressao {$$ = create_node(AST_ATT, "=",yylval.valor_lexico); add_child($$,$1); add_child($$,$3);};
+parametros: parametros ',' tipo TK_IDENTIFICADOR
+	| tipo TK_IDENTIFICADOR
+	| ;
+atribuicao: TK_IDENTIFICADOR '[' expressoes ']' '=' expressao {
+node_t *new_node;
+new_node = calloc(1,sizeof(node_t));
+$$ = create_node(AST_ATT,"=",yylval.valor_lexico);
+$1 = create_node(AST_ID,yylval.valor_lexico.value.token,yylval.valor_lexico);
+add_child($$,$1);
+add_child($$,$6);
+new_node = create_node(AST_ARR,"[]",yylval.valor_lexico);
+add_child(new_node,$3);
+add_child($$,new_node);}
+	| TK_IDENTIFICADOR '=' expressao {$$ = create_node(AST_ATT, "=",yylval.valor_lexico); $1 = create_node(AST_ID,yylval.valor_lexico.value.token,yylval.valor_lexico); add_child($$,$1); add_child($$,$3);};
 comandos_simples: comando_simples ';' comandos_simples {$$ = $1; add_child($$,$3);}
 	| comando_simples ';' {$$ = $1;};
 comando_simples: declaracao_local {$$ = $1;}

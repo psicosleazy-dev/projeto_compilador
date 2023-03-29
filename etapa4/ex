@@ -1,2 +1,6 @@
-int a,x;
-float a;
+int b,c;
+int f(){
+    int r;
+    int a;
+    a = r;
+}

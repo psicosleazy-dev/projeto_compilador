@@ -13,7 +13,6 @@ extern int get_line_number();
 extern void* arvore;
 extern Stack* stack;
 extern LISTA* lista2;
-extern LISTA_DEC* listadec;
 }
 
 /* Nomes: Lucas Brum e Arthur Oliveira */
@@ -33,8 +32,6 @@ extern LISTA_DEC* listadec;
 %type<no> bloco
 %type<no> declaracao_global
 %type<no> declaracao_local
-//%type<no> nomes_local
-//%type<no> nomes_global
 %type<no> lista_nomes_global
 %type<no> lista_nomes_local
 %type<no> lista_inteiros
@@ -55,39 +52,27 @@ extern LISTA_DEC* listadec;
 %type<no> while
 %type<no> prec_zero
 %type<valor_lexico> tipo
-%type<valor_lexico> TK_LIT_INT
-%type<valor_lexico> TK_LIT_FLOAT
-%type<valor_lexico> TK_LIT_TRUE
-%type<valor_lexico> TK_LIT_FALSE
-%type<valor_lexico> TK_IDENTIFICADOR
-%type<valor_lexico> TK_PR_INT
-%type<valor_lexico> TK_PR_FLOAT
-%type<valor_lexico> TK_PR_BOOL
-%type<valor_lexico> TK_PR_CHAR
-%token TK_PR_INT
-%token TK_PR_FLOAT
-%token TK_PR_BOOL
-%token TK_PR_CHAR
+%token<valor_lexico> TK_LIT_INT
+%token<valor_lexico> TK_LIT_FLOAT
+%token<valor_lexico> TK_LIT_TRUE
+%token<valor_lexico> TK_LIT_FALSE
+%token<valor_lexico> TK_IDENTIFICADOR
+%token<valor_lexico> TK_PR_INT
+%token<valor_lexico> TK_PR_FLOAT
+%token<valor_lexico> TK_PR_BOOL
+%token<valor_lexico> TK_PR_CHAR
 %token TK_PR_IF
 %token TK_PR_THEN
 %token TK_PR_ELSE
 %token TK_PR_WHILE
-%token TK_PR_INPUT
-%token TK_PR_OUTPUT
 %token TK_PR_RETURN
-%token TK_PR_FOR
 %token TK_OC_LE
 %token TK_OC_GE
 %token TK_OC_EQ
 %token TK_OC_NE
 %token TK_OC_AND
 %token TK_OC_OR
-%token TK_LIT_INT
 %token TK_LIT_CHAR
-%token TK_LIT_FLOAT
-%token TK_LIT_FALSE
-%token TK_LIT_TRUE
-%token TK_IDENTIFICADOR
 %token TK_ERRO
 %start programa
 %%
@@ -102,7 +87,9 @@ funcao: tipo TK_IDENTIFICADOR '(' parametros ')' bloco { // adicionar na tabela 
 	leaf = create_leaf($2);
 	$$ = create_node(AST_FUNC,leaf);
 	add_child($$,$6);
-	checkTableListDec(stack,listadec,$2);
+	$2 = altera_natureza($2,NAT_FUNCTION);
+	$2 = altera_tipo($2,$1);
+	checkTableDec(stack,$2);
 	HASH_TABLE* table;
 	table = pop(stack);
 	insert_item(table,$2);
@@ -111,254 +98,8 @@ tipo: TK_PR_INT {inicia_lista();}
 	| TK_PR_FLOAT {inicia_lista();}
 	| TK_PR_BOOL {inicia_lista();}
 	| TK_PR_CHAR {inicia_lista();};
-declaracao_global: tipo lista_nomes_global {listadec = altera_tipo_dec(listadec,$1); $$ = $2; /* criar uma lista de declaracoes que posteriormente sera adicionada na tabela*/};
-declaracao_local: tipo lista_nomes_local {listadec = altera_tipo_dec(listadec,$1); $$ = $2;};
-/*
-nomes_local: TK_PR_INT TK_IDENTIFICADOR '[' lista_inteiros ']' TK_OC_LE TK_LIT_INT {node_t *new_node;
-	$$ = create_node(AST_INIT,"<=");
-	char *leaf;
-	leaf = create_leaf($2);
-	node_t* new_node2;
-	new_node2 = create_node(AST_ID,leaf);
-	add_child($$,new_node2);
-	leaf = create_leaf($7);
-	node_t* new_node3;
-	new_node3 = create_node(AST_LIT_INT,leaf);
-	add_child($$,new_node3);
-	new_node = create_node(AST_ARR,"[]");
-	add_child(new_node,new_node2);
-	add_child(new_node,$4);
-	add_child($$,new_node);
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	HASH_TABLE* table;
-	table = pop(stack);
-	insert_item(table,$2);
-	insert_item(table,$7);
-	push(stack,table);}
-| TK_PR_INT TK_IDENTIFICADOR '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]");
-	node_t* new_node;
-	char* leaf;
-	leaf = create_leaf($2);
-	new_node = create_node(AST_ID,leaf);
-	add_child($$,new_node);
-	add_child($$,$4);
-	HASH_TABLE *table;
-	table = pop(stack);
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_ARRAY);
-	checkTableListDec(stack,listadec,$2);
-	insert_item(table,$2);
-	push(stack,table);}
-| TK_PR_INT TK_IDENTIFICADOR TK_OC_LE TK_LIT_INT {$$ = create_node(AST_INIT,"<=");
-	node_t* new_node;
-	char* leaf;
-	leaf = create_leaf($2);
-	new_node = create_node(AST_ID,leaf);
-	add_child($$,new_node);
-	node_t* new_node2;
-	leaf = create_leaf($4);
-	new_node2 = create_node(AST_LIT_INT,leaf);
-	add_child($$,new_node2);
-	HASH_TABLE *table;
-	table = pop(stack);
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	insert_item(table,$2);
-	insert_item(table,$4);
-	push(stack,table);}
-| TK_PR_INT TK_IDENTIFICADOR {$$ = NULL; $2 = altera_tipo($2,$1); $2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	HASH_TABLE* table;
-	table = pop(stack);
-	insert_item(table,$2);
-	push(stack,table);}
-| TK_PR_FLOAT TK_IDENTIFICADOR '[' lista_inteiros ']' TK_OC_LE TK_LIT_INT {node_t *new_node;
-	$$ = create_node(AST_INIT,"<=");
-	char *leaf;
-	leaf = create_leaf($2);
-	node_t* new_node2;
-	new_node2 = create_node(AST_ID,leaf);
-	add_child($$,new_node2);
-	leaf = create_leaf($7);
-	node_t* new_node3;
-	new_node3 = create_node(AST_LIT_INT,leaf);
-	add_child($$,new_node3);
-	new_node = create_node(AST_ARR,"[]");
-	add_child(new_node,new_node2);
-	add_child(new_node,$4);
-	add_child($$,new_node);
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	HASH_TABLE* table;
-	table = pop(stack);
-	insert_item(table,$2);
-	insert_item(table,$7);
-	push(stack,table);}
-| TK_PR_FLOAT TK_IDENTIFICADOR '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]");
-	node_t* new_node;
-	char* leaf;
-	leaf = create_leaf($2);
-	new_node = create_node(AST_ID,leaf);
-	add_child($$,new_node);
-	add_child($$,$4);
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_ARRAY);
-	checkTableListDec(stack,listadec,$2);
-	HASH_TABLE* table;
-	table = pop(stack);
-	insert_item(table,$2);
-	push(stack,table);}
-| TK_PR_FLOAT TK_IDENTIFICADOR TK_OC_LE TK_LIT_INT {$$ = create_node(AST_INIT,"<=");
-	node_t* new_node;
-	char* leaf;
-	leaf = create_leaf($2);
-	new_node = create_node(AST_ID,leaf);
-	add_child($$,new_node);
-	node_t* new_node2;
-	leaf = create_leaf($4);
-	new_node2 = create_node(AST_LIT_INT,leaf);
-	add_child($$,new_node2);
-	$2 = altera_tipo($1,$2);
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	HASH_TABLE* table;
-	table = pop(stack);
-	insert_item(table,$2);
-	insert_item(table,$4);
-	push(stack,table);}
-| TK_PR_FLOAT TK_IDENTIFICADOR {$$ = NULL; $2 = altera_tipo($2,$1); $2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	HASH_TABLE* table;
-	table = pop(stack);
-	insert_item(table,$2);
-	push(stack,table);}
-| TK_PR_BOOL TK_IDENTIFICADOR '[' lista_inteiros ']' TK_OC_LE TK_LIT_INT {node_t *new_node;
-	$$ = create_node(AST_INIT,"<=");
-	char *leaf;
-	leaf = create_leaf($2);
-	node_t* new_node2;
-	new_node2 = create_node(AST_ID,leaf);
-	add_child($$,new_node2);
-	add_child($$,$4);
-	leaf = create_leaf($7);
-	node_t* new_node3;
-	new_node3 = create_node(AST_LIT_INT,leaf);
-	add_child($$,new_node3);
-	new_node = create_node(AST_ARR,"[]");
-	add_child(new_node,new_node2);
-	add_child(new_node,$4);
-	add_child($$,new_node);
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	HASH_TABLE* table;
-	table = pop(stack);
-	insert_item(table,$2);
-	insert_item(table,$7);
-	push(stack,table);}
-| TK_PR_BOOL TK_IDENTIFICADOR '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]");
-	node_t* new_node;
-	char* leaf;
-	leaf = create_leaf($2);
-	new_node = create_node(AST_ID,leaf);
-	add_child($$,new_node);
-	add_child($$,$4);
-	HASH_TABLE *table;
-	table = pop(stack);
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_ARRAY);
-	checkTableListDec(stack,listadec,$2);
-	insert_item(table,$2);
-	push(stack,table);}
-| TK_PR_BOOL TK_IDENTIFICADOR TK_OC_LE TK_LIT_INT {$$ = create_node(AST_INIT,"<=");
-	node_t* new_node;
-	char* leaf;
-	leaf = create_leaf($1);
-	new_node = create_node(AST_ID,leaf);
-	add_child($$,new_node);
-	node_t* new_node2;
-	leaf = create_leaf($2);
-	new_node2 = create_node(AST_LIT_INT,leaf);
-	add_child($$,new_node2);
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	HASH_TABLE* table;
-	table = pop(stack);
-	insert_item(table,$2);
-	insert_item(table,$4);
-	push(stack,table);}
-| TK_PR_BOOL TK_IDENTIFICADOR {$$ = NULL;
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	HASH_TABLE* table;
-	table = pop(stack);
-	insert_item(table,$2);
-	push(stack,table);}
-| TK_PR_CHAR TK_IDENTIFICADOR '[' lista_inteiros ']' TK_OC_LE TK_LIT_INT {node_t *new_node;
-	$$ = create_node(AST_INIT,"<=");
-	char *leaf;
-	leaf = create_leaf($2);
-	new_node = create_node(AST_ID,leaf);
-	add_child($$,new_node);
-	leaf = create_leaf($7);
-	node_t* new_node2;
-	add_child($$,new_node2);
-	new_node2 = create_node(AST_ARR,"[]");
-	add_child($$,new_node2);
-	add_child(new_node2,new_node);	
-	add_child(new_node2,$4);
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	HASH_TABLE* table;
-	table = pop(stack);
-	insert_item(table,$2);
-	insert_item(table,$7);
-	push(stack,table);}
-| TK_PR_CHAR TK_IDENTIFICADOR '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]");
-	node_t* new_node;
-	char* leaf;
-	leaf = create_leaf($1);
-	new_node = create_node(AST_ID,leaf);
-	add_child($$,new_node);
-	add_child($$,$4);
-	$2 = altera_tipo($2,$1);
-	$1 = altera_natureza($1,NAT_ARRAY);
-	checkTableListDec(stack,listadec,$2);
-	HASH_TABLE* table;
-	table = pop(stack);
-	insert_item(table,$2);
-	push(stack,table);}
-| TK_PR_CHAR TK_IDENTIFICADOR TK_OC_LE TK_LIT_INT {$$ = create_node(AST_INIT,"<=");
-	node_t* new_node;
-	char* leaf;
-	leaf = create_leaf($2);
-	new_node = create_node(AST_ID,leaf);
-	add_child($$,new_node);
-	node_t* new_node2;
-	leaf = create_leaf($4);
-	new_node2 = create_node(AST_LIT_INT,leaf);
-	add_child($$,new_node2);
-	HASH_TABLE *table;
-	table = pop(stack);
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	insert_item(table,$2);
-	insert_item(table,$4);
-	push(stack,table);}
-| TK_PR_CHAR TK_IDENTIFICADOR {$$ = NULL; $2 = altera_tipo($2,$1); $2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	HASH_TABLE* table;
-	table = pop(stack);
-	insert_item(table,$2);
-	push(stack,table);};*/
+declaracao_global: tipo lista_nomes_global {altera_tipo_na_lista(lista2,$1); insere_lista_na_tabela(lista2,stack); $$ = $2;};
+declaracao_local: tipo lista_nomes_local {altera_tipo_na_lista(lista2,$1); insere_lista_na_tabela(lista2,stack); $$ = $2;};
 lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']' TK_OC_LE TK_LIT_INT {
 	node_t *new_node;
 	$$ = create_node(AST_INIT,"<=");
@@ -377,14 +118,8 @@ lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']'
 	add_child(new_node,new_node2);
 	add_child(new_node,$5);
 	add_child($$,new_node);
-	$3 = altera_natureza($3,NAT_VARIABLE);
-	HASH_TABLE* table;
-	table = pop(stack);
-	checkTableListDec(stack,listadec,$3);
-	insere($3);
-	insere_dec(lista2);
-	insert_item(table,$8);
-	push(stack,table);}
+	$3 = altera_natureza($3,NAT_ARRAY);
+	insere($3);}
 	| TK_IDENTIFICADOR '[' lista_inteiros ']' TK_OC_LE TK_LIT_INT {
 	node_t *new_node;
 	$$ = create_node(AST_INIT,"<=");
@@ -401,14 +136,8 @@ lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']'
 	add_child(new_node,new_node2);
 	add_child(new_node,$3);
 	add_child($$,new_node);
-	$1 = altera_natureza($1,NAT_VARIABLE);
-	HASH_TABLE* table;
-	table = pop(stack);
-	checkTableListDec(stack,listadec,$1);
-	insere($1);
-	insere_dec(lista2);
-	insert_item(table,$6);
-	push(stack,table);}
+	$1 = altera_natureza($1,NAT_ARRAY);
+	insere($1);}
 	| TK_IDENTIFICADOR '[' lista_inteiros ']' {
 	$$ = create_node(AST_ARR,"[]");
 	node_t* new_node;
@@ -420,10 +149,7 @@ lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']'
 	HASH_TABLE *table;
 	table = pop(stack);
 	$1 = altera_natureza($1,NAT_ARRAY);
-	checkTableListDec(stack,listadec,$1);
-	insere($1);
-	insere_dec(lista2);
-	push(stack,table);}
+	insere($1);}
 	| TK_IDENTIFICADOR TK_OC_LE TK_LIT_INT {
 	$$ = create_node(AST_INIT,"<=");
 	node_t* new_node;
@@ -435,14 +161,8 @@ lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']'
 	leaf = create_leaf($3);
 	new_node2 = create_node(AST_LIT_INT,leaf);
 	add_child($$,new_node2);
-	HASH_TABLE *table;
-	table = pop(stack);
 	$1 = altera_natureza($1,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$1);
-	insere($1);
-	insere_dec(lista2);
-	insert_item(table,$3);
-	push(stack,table);}
+	insere($1);}
 	| lista_nomes_local ',' TK_IDENTIFICADOR TK_OC_LE TK_LIT_INT {
 	node_t* new_node;	
 	char* leaf;
@@ -456,27 +176,11 @@ lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']'
 	new_node2 = create_node(AST_LIT_INT,leaf);
 	add_child($$,new_node2);
 	$3 = altera_natureza($3,NAT_VARIABLE);
-	HASH_TABLE *table;
-	table = pop(stack);
-	checkTableListDec(stack,listadec,$3);
-	insere($3);
-	insere_dec(lista2);
-	insert_item(table,$5);
-	push(stack,table);}
-	| TK_IDENTIFICADOR {$1 = altera_natureza($1,NAT_VARIABLE);
-	HASH_TABLE* table;	
-	table = pop(stack);
-	checkTableListDec(stack,listadec,$1);
-	insere($1);
-	insere_dec(lista2);
-	push(stack,table);}
+	insere($3);}
+	| TK_IDENTIFICADOR {$$ = NULL; $1 = altera_natureza($1,NAT_VARIABLE);
+	insere($1);}
 	| lista_nomes_local ',' TK_IDENTIFICADOR {$$ = $1; $3 = altera_natureza($3,NAT_VARIABLE);
-	HASH_TABLE* table;	
-	table = pop(stack);
-	checkTableListDec(stack,listadec,$3);
-	insere($3);
-	insere_dec(lista2);
-	push(stack,table);}
+	insere($3);}
     | lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']' {
 		$$ = create_node(AST_ARR,"[]");
 		node_t* new_node;
@@ -487,101 +191,7 @@ lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']'
 		add_child($$,$5);
 		add_child($$,$1);
 		$3 = altera_natureza($3,NAT_ARRAY);
-		HASH_TABLE* table;	
-		table = pop(stack);
-		checkTableListDec(stack,listadec,$3);
-		insere($3);
-		insere_dec(lista2);
-		push(stack,table);};
-/*
-nomes_global: TK_PR_INT TK_IDENTIFICADOR '[' lista_inteiros ']'{$$ = create_node(AST_ARR,"[]");
-	node_t* new_node;
-	char* leaf;
-	leaf = create_leaf($2);
-	new_node = create_node(AST_ID,leaf);
-	add_child($$,new_node);
-	add_child($$,$4);
-	HASH_TABLE* table;
-	table = pop(stack);
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	insert_item(table,$2);
-	push(stack,table);}
-	| TK_PR_FLOAT TK_IDENTIFICADOR '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]");
-	node_t* new_node;
-	char* leaf;
-	leaf = create_leaf($2);
-	new_node = create_node(AST_ID,leaf);
-	add_child($$,new_node);
-	add_child($$,$4);
-	HASH_TABLE* table;
-	table = pop(stack);
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_ARRAY);
-	checkTableListDec(stack,listadec,$2);
-	insert_item(table,$2);
-	push(stack,table);}
-	| TK_PR_BOOL TK_IDENTIFICADOR '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]");
-	node_t* new_node;
-	char* leaf;
-	leaf = create_leaf($2);
-	new_node = create_node(AST_ID,leaf);
-	add_child($$,new_node);
-	add_child($$,$4);
-	HASH_TABLE* table;
-	table = pop(stack);
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	$2 = altera_tipo($2,$1);
-	checkTableListDec(stack,listadec,$2);
-	insert_item(table,$2);
-	push(stack,table);}
-	| TK_PR_CHAR TK_IDENTIFICADOR '[' lista_inteiros ']' {$$ = create_node(AST_ARR,"[]");
-	node_t* new_node;
-	char* leaf;
-	leaf = create_leaf($2);
-	new_node = create_node(AST_ID,leaf);
-	add_child($$,new_node);
-	add_child($$,$4);
-	HASH_TABLE* table;
-	table = pop(stack);
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	$2 = altera_tipo($2,$1);
-	checkTableListDec(stack,listadec,$2);
-	insert_item(table,$2);
-	push(stack,table);}
-	| TK_PR_INT TK_IDENTIFICADOR {$$ = NULL;
-	HASH_TABLE* table;
-	table = pop(stack);
-	$2 = altera_tipo($2,$1);
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$2);
-	insert_item(table,$2);
-	push(stack,table);}
-	| TK_PR_FLOAT TK_IDENTIFICADOR {$$ = NULL;
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	$2 = altera_tipo($2,$1);
-	HASH_TABLE* table;
-	table = pop(stack);
-	checkTableListDec(stack,listadec,$2);
-	insert_item(table,$2);
-	push(stack,table);}
-	| TK_PR_BOOL TK_IDENTIFICADOR {$$ = NULL;
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	$2 = altera_tipo($2,$1);
-	HASH_TABLE* table;
-	table = pop(stack);
-	checkTableListDec(stack,listadec,$2);
-	insert_item(table,$2);
-	push(stack,table);}
-	| TK_PR_CHAR TK_IDENTIFICADOR {$$ = NULL;
-	$2 = altera_natureza($2,NAT_VARIABLE);
-	$2 = altera_tipo($2,$1);
-	HASH_TABLE* table;
-	table = pop(stack);
-	checkTableListDec(stack,listadec,$2);
-	insert_item(table,$2);
-	push(stack,table);};*/
+		insere($3);};
 lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR '[' lista_inteiros ']' {
 	$$ = create_node(AST_ARR,"[]");
 	node_t* new_node;
@@ -591,10 +201,8 @@ lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR '[' lista_inteiros '
 	add_child($$,new_node);
 	add_child($$,$5);
 	add_child($$,$1);
-	$3 = altera_natureza($3,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$3);
-	insere($3);
-	insere_dec(lista2);}
+	$3 = altera_natureza($3,NAT_ARRAY);
+	insere($3);}
 	| TK_IDENTIFICADOR '[' lista_inteiros ']' {
 	$$ = create_node(AST_ARR,"[]");
 	node_t* new_node;	
@@ -604,19 +212,13 @@ lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR '[' lista_inteiros '
 	add_child($$,new_node); 
 	add_child($$,$3);
 	$1 = altera_natureza($1,NAT_ARRAY);
-	checkTableListDec(stack,listadec,$1);
-	insere($1);
-	insere_dec(lista2);}
+	insere($1);}
 	| lista_nomes_global ',' TK_IDENTIFICADOR {$$ = $1;
 	$3 = altera_natureza($3,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$3);
-	insere($3);
-	insere_dec(lista2);}
+	insere($3);}
 	| TK_IDENTIFICADOR {$$ = NULL;
 	$1 = altera_natureza($1,NAT_VARIABLE);
-	checkTableListDec(stack,listadec,$1);
-	insere($1);
-	insere_dec(lista2);};
+	insere($1);};
 lista_inteiros: lista_inteiros '^' TK_LIT_INT {
 	$$ = create_node(AST_CIRC, "^"); 
 	node_t* new_node;
@@ -677,7 +279,8 @@ chamada_funcao: TK_IDENTIFICADOR '(' args ')' {
 	$$ = create_node(AST_CALL,label);
 	add_child($$,$3);
 	$1 = altera_natureza($1,NAT_FUNCTION);
-	checkTableListInUse(stack,listadec,$1);
+	int tipo = retorna_tipo_simbolo($1,stack);
+	$$ = altera_tipo_no($$,tipo);
 };
 operando: TK_IDENTIFICADOR '[' expressoes ']' {
 $$ = create_node(AST_INDEX,"[]");
@@ -685,13 +288,14 @@ $$ = create_node(AST_INDEX,"[]");
 	char* leaf;
 	leaf = create_leaf($1);
 	new_node = create_node(AST_ID,leaf); add_child($$,new_node); add_child($$,$3);
-	checkTableListInUse(stack,listadec,$1);}
+	int tipo = retorna_tipo_simbolo($1,stack);
+	$$ = altera_tipo_no($$,tipo);}
 	| TK_IDENTIFICADOR {
 	char* leaf;
 	leaf = create_leaf($1);
 	$$ = create_node(AST_ID,leaf);
-	$1 = altera_natureza($1,NAT_VARIABLE);
-	checkTableListInUse(stack,listadec,$1);}
+	int tipo = retorna_tipo_simbolo($1,stack);
+	$$ = altera_tipo_no($$,tipo);}
 	| TK_LIT_INT {char* leaf;
 	leaf = create_leaf($1);
 	$$ = create_node(AST_LIT_INT,leaf);
@@ -732,7 +336,7 @@ $$ = create_node(AST_INDEX,"[]");
 	| chamada_funcao {$$ = $1;}; 
 _empilha: {HASH_TABLE* table;
 	table = create_table(HASH_SIZE);
-	push(stack,table);};
+	push(stack,table);}; // executada sempre que um novo escopo é criado
 bloco: '{' _empilha comandos_simples '}' {$$ = $3;} 
 	| '{' '}' {$$ = NULL;};
 parametros: parametros ',' tipo TK_IDENTIFICADOR {$4 = altera_natureza($4,NAT_VARIABLE);
@@ -746,20 +350,19 @@ parametros: parametros ',' tipo TK_IDENTIFICADOR {$4 = altera_natureza($4,NAT_VA
 	insert_item(table,$2);
 	push(stack,table);}
 	| ;
-atribuicao: TK_IDENTIFICADOR '[' expressoes ']' '=' expressao {
-node_t *new_node;
+atribuicao: TK_IDENTIFICADOR '[' expressoes ']' '=' expressao {node_t *new_node;
 	$$ = create_node(AST_ATT,"=");
 	char* leaf;
 	leaf = create_leaf($1);
 	new_node = create_node(AST_ID,leaf);
 	add_child($$,new_node);
 	add_child($$,$6);
-	$$ = inf_tipo_lex($$,$1,$6,AST_ATT);
+	int tipo = retorna_tipo_simbolo($1,stack);
+	new_node = altera_tipo_no(new_node,tipo);
+	$$ = inf_tipo($$,new_node,$6,AST_ATT);
 	new_node = create_node(AST_ARR,"[]");
 	add_child($$,$3);
-	add_child($$,new_node);
-	$1 = altera_natureza($1,NAT_ARRAY);
-	checkTableListInUse(stack,listadec,$1);}
+	add_child($$,new_node);}
 	| TK_IDENTIFICADOR '=' expressao {
 	$$ = create_node(AST_ATT, "=");
 	node_t* new_node;	
@@ -768,9 +371,9 @@ node_t *new_node;
 	new_node = create_node(AST_ID,leaf);
 	add_child($$,new_node);
 	add_child($$,$3);
-	$$ = inf_tipo_lex($$,$1,$3,AST_ATT);
-	$1 = altera_natureza($1,NAT_VARIABLE);
-	checkTableListInUse(stack,listadec,$1);};
+	int tipo = retorna_tipo_simbolo($1,stack);
+	new_node = altera_tipo_no(new_node,tipo);
+	$$ = inf_tipo($$,new_node,$3,AST_ATT);};
 comandos_simples: declaracao_local ';' comandos_simples {if($1 == NULL) {$$ = $3;} else {$$ = $1; add_child($$,$3);}}
 	| declaracao_local ';' {$$ = $1;}
 	| bloco ';' comandos_simples {$$ = $1; add_child($$,$3);}
@@ -799,5 +402,4 @@ void initMe(){
 	stack = create_stack();
 	HASH_TABLE *table = create_table(HASH_SIZE);
 	push(stack,table); // tabela do escopo global
-	init_lista_dec();
 }

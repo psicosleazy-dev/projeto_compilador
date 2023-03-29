@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.5.1.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,6 +31,9 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
+
 #ifndef YY_YY_PARSER_TAB_H_INCLUDED
 # define YY_YY_PARSER_TAB_H_INCLUDED
 /* Debug traces.  */
@@ -40,17 +44,18 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "parser.y" /* yacc.c:1909  */
+#line 1 "parser.y"
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "ast.h"
 int yylex(void);
 void yyerror (char const *s);
 extern int get_line_number();
 extern void* arvore;
 
-#line 54 "parser.tab.h" /* yacc.c:1909  */
+#line 59 "parser.tab.h"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -87,17 +92,16 @@ extern void* arvore;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-
 union YYSTYPE
 {
-#line 15 "parser.y" /* yacc.c:1909  */
+#line 16 "parser.y"
 
  node_t *no;
  valor_t valor_lexico;
 
-#line 99 "parser.tab.h" /* yacc.c:1909  */
-};
+#line 103 "parser.tab.h"
 
+};
 typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
