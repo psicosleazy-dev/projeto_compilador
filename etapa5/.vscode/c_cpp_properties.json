@@ -10,8 +10,9 @@
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:\\Users\\lucas\\Documents\\MinGW\\bin\\g++.exe",
-            "configurationProvider": "ms-vscode.makefile-tools"
+            "cStandard": "c17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "windows-gcc-x64"
         }
     ],
     "version": 4

@@ -1,8 +1,4 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include "hash.h"
 #include "stack_management.h"
-#include "errors.h"
 
 int empty_stack(Stack* stack){
      if(stack->head == NULL)

@@ -66,6 +66,7 @@ ILOC gera_inst(int tipo,char *op, char *op1, char *op2, char *res)
 
 ILOC gera_inst_com_label(char* label,ILOC inst){
   inst.label = strdup(label);
+  inst.tipo_iloc = ILOC_LABEL;
   return inst;
 }
 
@@ -100,9 +101,12 @@ void print_iloc(ILOC inst){
     case ILOC_JUMP:
         printf("%s           -> %s",inst.op,inst.op1);
         break;
-        /*case ILOC_LABEL:
-
-    case ILOC_NOP:*/
+    case ILOC_LABEL:
+        printf("%s:  %s %s, %s  => %s",inst.label,inst.op,inst.op1,inst.op2,inst.res);
+        break;
+    case ILOC_NOP:
+        printf("%s",inst.op);
+        break;
   }
 }
 
@@ -112,6 +116,7 @@ void print_list_ilocs(LISTA_ILOCS *l)
   while (currentNode != NULL)
   {
     print_iloc(currentNode->inst);
+    printf("\n");
     currentNode = currentNode->next;
   }
   printf("\n");
@@ -155,9 +160,9 @@ int retorna_end_desloc(Stack *stack, valor_t simbolo)
   if (ent)
     return ent->desloc;
   else{
-    printError(ERR_UNDECLARED, simbolo.value.token, 0);
-    return 0; // so pra parar encher o saco
-}
+    printError(ERR_UNDECLARED, simbolo.value.token,0);
+    return 0;
+  }
 }
 
 /*

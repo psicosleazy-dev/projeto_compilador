@@ -1,5 +1,5 @@
-#ifndef _TACS_H_
-#define _TACS_H_
+#ifndef _ILOCS_H_
+#define _ILOCS_H_
 #define ILOC_SYMBOL 333
 #define ILOC_MOVE 334
 #define ILOC_ADD 335
@@ -30,6 +30,9 @@
 #define ILOC_DEC 360
 #define ILOC_SUBI 361
 // #define ILOC_NOP 364
+
+#include "stack_management.h"
+
 
 /*#define ILOC_ADD 2
 #define ILOC_SUB 3
@@ -86,5 +89,8 @@ void print_lista_ilocs(LISTA_ILOCS*);
 void concat_lista_ilocs(LISTA_ILOCS*,LISTA_ILOCS*);
 void free_list(LISTA_ILOCS*);
 int retorna_end_desloc(Stack*,valor_t);
+char* retorna_label(Stack*,char*);
+char* retorna_temp(node_t*);
+void atribui_temp(node_t*);
 int escopo_global(Stack*,valor_t);
 #endif

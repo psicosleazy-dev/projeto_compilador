@@ -1,12 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "parser.tab.h"
-#include "ast.h"
-#include "hash.h"
 #include "errors.h"
-#include "list.h"
-#include "stack_management.h"
+
 extern int get_line_number(void);
 
 // perfumaria minha pra imprimir o erro bonitinho na tela

@@ -31,8 +31,9 @@
 #define AST_LIT_FALSE 330
 #define AST_MUL 331
 #define AST_DIV 332
-#include <stdio.h>
+
 #include "ilocs.h"
+#include <stdio.h>
 
 union Literal{
  int int_value;
@@ -46,18 +47,19 @@ struct valor{
   int tamanho;
   int tipo;
   union Literal value;
+  char *label;
 };
 
-typedef struct valor valor_t;
+typedef struct valor valor_t; // a struct que carrega o valor lexico
 
 struct node{
-  char *label;
   int type;
   int datatype;
   LISTA_ILOCS* code;
-  char *temp;
+  char *temp; // temporario pro resultado de alguma expressao
   int number_of_children;
   struct node **children;
+  char *label; // label pra chamada de funcao
 };
 
 typedef struct node node_t;

@@ -12,12 +12,15 @@ int yylex(void);
 void yyerror (char const *s);
 extern int get_line_number();
 extern void* arvore;
+// definir as seguintes variaveis aqui ao inves de com extern
 extern Stack* stack;
 extern LISTA* lista2;
 }
 
+
 /* Nomes: Lucas Brum e Arthur Oliveira */
 %define parse.error verbose
+// %code requires { #include "ast.h" }
 
 %union{
  node_t *no;
@@ -96,7 +99,18 @@ funcao: tipo TK_IDENTIFICADOR '(' parametros ')' bloco { // adicionar na tabela 
 	HASH_TABLE* table;
 	table = pop(stack);
 	insert_item(table,$2);
-	push(stack,table);};
+	push(stack,table);
+	// vamos gerar codigo
+	char* label_da_funcao;
+	label_da_funcao = retorna_label(stack,$1.value.valueChar);
+	LISTA_ILOCS* l;
+	ILOC inst;
+	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
+	inst = gera_inst_com_label(label_da_funcao,inst);
+	insere(l,inst);
+	concat_lista_ilocs(l,$6->code);
+	$$->code = l;
+	};
 tipo: TK_PR_INT {inicia_lista();}
 	| TK_PR_FLOAT {inicia_lista();}
 	| TK_PR_BOOL {inicia_lista();}
@@ -249,289 +263,289 @@ expressao: expressao TK_OC_OR prec_six {$$ = create_node(AST_OR, "||");
 add_child($$,$1);
 add_child($$,$3);
 $$ = inf_tipo($$,$1,$3,AST_OR);
-$$.temp = gera_temp();
+$$->temp = gera_temp();
 LISTA_ILOCS *l = NULL, *code_1, *code_3;
 ILOC inst;
-inst = gera_inst(ILOC_OR,"or",$1.temp,$3.temp,$$.temp);
+inst = gera_inst(ILOC_OR,"or",$1->temp,$3->temp,$$->temp);
 insere_lista_ilocs(l,inst);
-code_1 = $1.code;
-code_3 = $3.code;
+code_1 = $1->code;
+code_3 = $3->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
-$$.code = code_1;
+$$->code = code_1;
 }
 	| prec_six {$$ = $1;};
 prec_six: prec_six TK_OC_AND prec_five {$$ = create_node(AST_AND, "&&");
 add_child($$,$1);
 add_child($$,$3);
 $$ = inf_tipo($$,$1,$3,AST_AND);
-$$.temp = gera_temp();
+$$->temp = gera_temp();
 LISTA_ILOCS *l = NULL, *code_1, *code_3;
 ILOC inst;
-inst = gera_inst(ILOC_AND,"and",$1.temp,$3.temp,$$.temp);
+inst = gera_inst(ILOC_AND,"and",$1->temp,$3->temp,$$->temp);
 insere_lista_ilocs(l,inst);
-code_1 = $1.code;
-code_3 = $3.code;
+code_1 = $1->code;
+code_3 = $3->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
-$$.code = code_1;
+$$->code = code_1;
 }
 	| prec_five {$$ = $1;};
 prec_five: prec_five TK_OC_EQ prec_four {$$ = create_node(AST_EQ, "==");
 add_child($$,$1);
 add_child($$,$3);
 $$ = inf_tipo($$,$1,$3,AST_EQ);
-$$.temp = gera_temp();
-char *label_true = gera_rotulo();
-char *label_false = gera_rotulo();
-char *next = gera_rotulo();
+atribui_temp($$);
+char *label_true = strdup(gera_rotulo());
+char *label_false = strdup(gera_rotulo());
+char *next = strdup(gera_rotulo());
 LISTA_ILOCS *l = NULL;
-ILOC inst = gera_inst(ILOC_LE,"cmp_EQ",$1.temp,$.temp,$$.temp);
+ILOC inst = gera_inst(ILOC_LE,"cmp_EQ",retorna_temp($1),retorna_temp($3),retorna_temp($$));
 insere_lista_ilocs(l,inst);
-ILOC inst2 = gera_inst(ILOC_BR,"cbr",$$.temp,label_true,label_false);
+ILOC inst2 = gera_inst(ILOC_BR,"cbr",retorna_temp($$),label_true,label_false);
 insere_lista_ilocs(l,inst2);
-ILOC inst3 = gera_inst(ILOC_LOADI,"loadI","1",NULL,$$.temp);
+ILOC inst3 = gera_inst(ILOC_LOADI,"loadI","1",NULL,retorna_temp($$));
 ILOC inst3 = gera_inst_com_label(label_true,inst3);
 insere_lista_ilocs(l,inst3);
 ILOC inst4 = gera_inst(ILOC_JUMP,"jumpI",NULL,NULL,next);
 insere_lista_ilocs(l,inst4);
-ILOC inst5 = gera_inst(ILOC_LOADI,"loadI","0",NULL,$$.temp);
+ILOC inst5 = gera_inst(ILOC_LOADI,"loadI","0",NULL,retorna_temp($$));
 ILOC inst5 = gera_inst_com_label(label_false,inst5);
 insere_lista_ilocs(l,inst5);
 ILOC inst6 = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 ILOC inst6 = gera_inst_com_label(next,inst6);
 insere_lista_ilocs(l,inst6);
 LISTA_ILOCS *code_1 = NULL,*code_3 = NULL;
-code_1 = $1.code;
-code_3 = $3.code;
+code_1 = $1->code;
+code_3 = $3->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
-$$.code = code_1;
+$$->code = code_1;
 }
 	| prec_five TK_OC_NE prec_four {$$ = create_node(AST_NE, "!=");
 	add_child($$,$1);
 	add_child($$,$3);
 	$$ = inf_tipo($$,$1,$3,AST_NE);
-	$$.temp = gera_temp();
+	$$->temp = gera_temp();
 	char *label_true = gera_rotulo();
 	char *label_false = gera_rotulo();
 	char *next = gera_rotulo();
 	LISTA_ILOCS *l = NULL;
-	ILOC inst = gera_inst(ILOC_LE,"cmp_NE",$1.temp,$.temp,$$.temp);
+	ILOC inst = gera_inst(ILOC_LE,"cmp_NE",retorna_temp($1),retorna_temp($3),retorna_temp($$));
 	insere_lista_ilocs(l,inst);
-	ILOC inst2 = gera_inst(ILOC_BR,"cbr",$$.temp,label_true,label_false);
+	ILOC inst2 = gera_inst(ILOC_BR,"cbr",$$->temp,label_true,label_false);
 	insere_lista_ilocs(l,inst2);
-	ILOC inst3 = gera_inst(ILOC_LOADI,"loadI","1",NULL,$$.temp);
+	ILOC inst3 = gera_inst(ILOC_LOADI,"loadI","1",NULL,$$->temp);
 	ILOC inst3 = gera_inst_com_label(label_true,inst3);
 	insere_lista_ilocs(l,inst3);
 	ILOC inst4 = gera_inst(ILOC_JUMP,"jumpI",NULL,NULL,next);
 	insere_lista_ilocs(l,inst4);
-	ILOC inst5 = gera_inst(ILOC_LOADI,"loadI","0",NULL,$$.temp);
+	ILOC inst5 = gera_inst(ILOC_LOADI,"loadI","0",NULL,$$->temp);
 	ILOC inst5 = gera_inst_com_label(label_false,inst5);
 	insere_lista_ilocs(l,inst5);
 	ILOC inst6 = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 	ILOC inst6 = gera_inst_com_label(next,inst6);
 	insere_lista_ilocs(l,inst6);
 	LISTA_ILOCS *code_1 = NULL,*code_3 = NULL;
-	code_1 = $1.code;
-	code_3 = $3.code;
+	code_1 = $1->code;
+	code_3 = $3->code;
 	concat_lista_ilocs(code_1,code_3);
 	concat_lista_ilocs(code_1,l);
-	$$.code = code_1;
+	$$->code = code_1;
 	}
 	| prec_four {$$ = $1;};
 prec_four: prec_four '>' prec_three {$$ = create_node(AST_G, ">");
 add_child($$,$1);
 add_child($$,$3);
 $$ = inf_tipo($$,$1,$3,AST_G);
-$$.temp = gera_temp();
+$$->temp = gera_temp();
 char *label_true = gera_rotulo();
 char *label_false = gera_rotulo();
 char *next = gera_rotulo();
 LISTA_ILOCS *l = NULL;
-ILOC inst = gera_inst(ILOC_LE,"cmp_GT",$1.temp,$.temp,$$.temp);
+ILOC inst = gera_inst(ILOC_LE,"cmp_GT",$1->temp,$3->temp,$$->temp);
 insere_lista_ilocs(l,inst);
-ILOC inst2 = gera_inst(ILOC_BR,"cbr",$$.temp,label_true,label_false);
+ILOC inst2 = gera_inst(ILOC_BR,"cbr",$$->temp,label_true,label_false);
 insere_lista_ilocs(l,inst2);
-ILOC inst3 = gera_inst(ILOC_LOADI,"loadI","1",NULL,$$.temp);
+ILOC inst3 = gera_inst(ILOC_LOADI,"loadI","1",NULL,$$->temp);
 ILOC inst3 = gera_inst_com_label(label_true,inst3);
 insere_lista_ilocs(l,inst3);
 ILOC inst4 = gera_inst(ILOC_JUMP,"jumpI",NULL,NULL,next);
 insere_lista_ilocs(l,inst4);
-ILOC inst5 = gera_inst(ILOC_LOADI,"loadI","0",NULL,$$.temp);
+ILOC inst5 = gera_inst(ILOC_LOADI,"loadI","0",NULL,$$->temp);
 ILOC inst5 = gera_inst_com_label(label_false,inst5);
 insere_lista_ilocs(l,inst5);
 ILOC inst6 = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 ILOC inst6 = gera_inst_com_label(next,inst6);
 insere_lista_ilocs(l,inst6);
 LISTA_ILOCS *code_1 = NULL,*code_3 = NULL;
-code_1 = $1.code;
-code_3 = $3.code;
+code_1 = $1->code;
+code_3 = $3->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
-$$.code = code_1;}
+$$->code = code_1;}
 	| prec_four '<' prec_three {$$ = create_node(AST_L, "<");
 	add_child($$,$1);
 	add_child($$,$3);
 	$$ = inf_tipo($$,$1,$3,AST_L);
-	$$.temp = gera_temp();
+	$$->temp = gera_temp();
 char *label_true = gera_rotulo();
 char *label_false = gera_rotulo();
 char *next = gera_rotulo();
 LISTA_ILOCS *l = NULL;
-ILOC inst = gera_inst(ILOC_LE,"cmp_LT",$1.temp,$.temp,$$.temp);
+ILOC inst = gera_inst(ILOC_LE,"cmp_LT",$1->temp,$3->temp,$$->temp);
 insere_lista_ilocs(l,inst);
-ILOC inst2 = gera_inst(ILOC_BR,"cbr",$$.temp,label_true,label_false);
+ILOC inst2 = gera_inst(ILOC_BR,"cbr",$$->temp,label_true,label_false);
 insere_lista_ilocs(l,inst2);
-ILOC inst3 = gera_inst(ILOC_LOADI,"loadI","1",NULL,$$.temp);
+ILOC inst3 = gera_inst(ILOC_LOADI,"loadI","1",NULL,$$->temp);
 ILOC inst3 = gera_inst_com_label(label_true,inst3);
 insere_lista_ilocs(l,inst3);
 ILOC inst4 = gera_inst(ILOC_JUMP,"jumpI",NULL,NULL,next);
 insere_lista_ilocs(l,inst4);
-ILOC inst5 = gera_inst(ILOC_LOADI,"loadI","0",NULL,$$.temp);
+ILOC inst5 = gera_inst(ILOC_LOADI,"loadI","0",NULL,$$->temp);
 ILOC inst5 = gera_inst_com_label(label_false,inst5);
 insere_lista_ilocs(l,inst5);
 ILOC inst6 = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 ILOC inst6 = gera_inst_com_label(next,inst6);
 insere_lista_ilocs(l,inst6);
 LISTA_ILOCS *code_1 = NULL,*code_3 = NULL;
-code_1 = $1.code;
-code_3 = $3.code;
+code_1 = $1->code;
+code_3 = $3->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
-$$.code = code_1;}
+$$->code = code_1;}
 	| prec_four TK_OC_LE prec_three {$$ = create_node(AST_LE, "<=");
 	add_child($$,$1);
 	add_child($$,$3);
 	$$ = inf_tipo($$,$1,$3,AST_LE);
-	$$.temp = gera_temp();
+	$$->temp = gera_temp();
 char *label_true = gera_rotulo();
 char *label_false = gera_rotulo();
 char *next = gera_rotulo();
 LISTA_ILOCS *l = NULL;
-ILOC inst = gera_inst(ILOC_LE,"cmp_LE",$1.temp,$.temp,$$.temp);
+ILOC inst = gera_inst(ILOC_LE,"cmp_LE",$1->temp,$3->temp,$$->temp);
 insere_lista_ilocs(l,inst);
-ILOC inst2 = gera_inst(ILOC_BR,"cbr",$$.temp,label_true,label_false);
+ILOC inst2 = gera_inst(ILOC_BR,"cbr",$$->temp,label_true,label_false);
 insere_lista_ilocs(l,inst2);
-ILOC inst3 = gera_inst(ILOC_LOADI,"loadI","1",NULL,$$.temp);
+ILOC inst3 = gera_inst(ILOC_LOADI,"loadI","1",NULL,$$->temp);
 ILOC inst3 = gera_inst_com_label(label_true,inst3);
 insere_lista_ilocs(l,inst3);
 ILOC inst4 = gera_inst(ILOC_JUMP,"jumpI",NULL,NULL,next);
 insere_lista_ilocs(l,inst4);
-ILOC inst5 = gera_inst(ILOC_LOADI,"loadI","0",NULL,$$.temp);
+ILOC inst5 = gera_inst(ILOC_LOADI,"loadI","0",NULL,$$->temp);
 ILOC inst5 = gera_inst_com_label(label_false,inst5);
 insere_lista_ilocs(l,inst5);
 ILOC inst6 = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 ILOC inst6 = gera_inst_com_label(next,inst6);
 insere_lista_ilocs(l,inst6);
 LISTA_ILOCS *code_1 = NULL,*code_3 = NULL;
-code_1 = $1.code;
-code_3 = $3.code;
+code_1 = $1->code;
+code_3 = $3->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
-$$.code = code_1;}
+$$->code = code_1;}
 	| prec_four TK_OC_GE prec_three {$$ = create_node(AST_GE, ">=");
 	add_child($$,$1);
 	add_child($$,$3);
 	$$ = inf_tipo($$,$1,$3,AST_GE);
-	$$.temp = gera_temp();
+	$$->temp = gera_temp();
 char *label_true = gera_rotulo();
 char *label_false = gera_rotulo();
 char *next = gera_rotulo();
 LISTA_ILOCS *l = NULL;
-ILOC inst = gera_inst(ILOC_LE,"cmp_GE",$1.temp,$.temp,$$.temp);
+ILOC inst = gera_inst(ILOC_LE,"cmp_GE",$1->temp,$3->temp,$$->temp);
 insere_lista_ilocs(l,inst);
-ILOC inst2 = gera_inst(ILOC_BR,"cbr",$$.temp,label_true,label_false);
+ILOC inst2 = gera_inst(ILOC_BR,"cbr",$$->temp,label_true,label_false);
 insere_lista_ilocs(l,inst2);
-ILOC inst3 = gera_inst(ILOC_LOADI,"loadI","1",NULL,$$.temp);
+ILOC inst3 = gera_inst(ILOC_LOADI,"loadI","1",NULL,$$->temp);
 ILOC inst3 = gera_inst_com_label(label_true,inst3);
 insere_lista_ilocs(l,inst3);
 ILOC inst4 = gera_inst(ILOC_JUMP,"jumpI",NULL,NULL,next);
 insere_lista_ilocs(l,inst4);
-ILOC inst5 = gera_inst(ILOC_LOADI,"loadI","0",NULL,$$.temp);
+ILOC inst5 = gera_inst(ILOC_LOADI,"loadI","0",NULL,$$->temp);
 ILOC inst5 = gera_inst_com_label(label_false,inst5);
 insere_lista_ilocs(l,inst5);
 ILOC inst6 = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 ILOC inst6 = gera_inst_com_label(next,inst6);
 insere_lista_ilocs(l,inst6);
 LISTA_ILOCS *code_1 = NULL,*code_3 = NULL;
-code_1 = $1.code;
-code_3 = $3.code;
+code_1 = $1->code;
+code_3 = $3->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
-$$.code = code_1;}
+$$->code = code_1;}
 	| prec_three {$$ = $1;};
 prec_three: prec_three '+' prec_two {$$ = create_node(AST_ADD, "+");
 add_child($$,$1);
 add_child($$,$3);
 $$ = inf_tipo($$,$1,$3,AST_ADD);
-$$.temp = gera_temp();
+$$->temp = gera_temp();
 LISTA_ILOCS *l = NULL, *code_1, *code_3;
 ILOC inst;
-if($2.type == INT_TYPE)
-    inst = gera_inst(ILOC_ADDI,"addI",$1.temp,$3.temp,$$.temp);
+if($3->type == INT_TYPE)
+    inst = gera_inst(ILOC_ADDI,"addI",$1->temp,$3->temp,$$->temp);
 else
-    inst = gera_inst(ILOC_ADD,"add",$1.temp,$3.temp,$$.temp);
+    inst = gera_inst(ILOC_ADD,"add",$1->temp,$3->temp,$$->temp);
 insere_lista_ilocs(l,inst);
-code_1 = $1.code;
-code_3 = $3.code;
+code_1 = $1->code;
+code_3 = $3->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
-$$.code = code_1;
+$$->code = code_1;
 }
 	| prec_three '-' prec_two {$$ = create_node(AST_SUB, "-");
 	add_child($$,$1);
 	add_child($$,$3);
 	$$ = inf_tipo($$,$1,$3,AST_SUB);
-	$$.temp = gera_temp();
+	$$->temp = gera_temp();
 LISTA_ILOCS *l = NULL, *code_1, *code_3;
 ILOC inst;
-if($2.type == INT_TYPE)
-    inst = gera_inst(ILOC_SUBI,"subI",$1.temp,$3.temp,$$.temp);
+if($3->type == INT_TYPE)
+    inst = gera_inst(ILOC_SUBI,"subI",$1->temp,$3->temp,$$->temp);
 else
-    inst = gera_inst(ILOC_SUB,"sub",$1.temp,$3.temp,$$.temp);
+    inst = gera_inst(ILOC_SUB,"sub",$1->temp,$3->temp,$$->temp);
 insere_lista_ilocs(l,inst);
-code_1 = $1.code;
-code_3 = $3.code;
+code_1 = $1->code;
+code_3 = $3->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
-$$.code = code_1;}
+$$->code = code_1;}
 	| prec_two {$$ = $1;};
 prec_two: prec_two '*' prec_one {$$ = create_node(AST_MUL, "*");
 add_child($$,$1);
 add_child($$,$3);
 $$ = inf_tipo($$,$1,$3,AST_MUL);
-$$.temp = gera_temp();
+$$->temp = gera_temp();
 LISTA_ILOCS *l = NULL, *code_1, *code_3;
 ILOC inst;
-if($2.type == INT_TYPE)
-    inst = gera_inst(ILOC_MULTI,"multI",$1.temp,$3.temp,$$.temp);
+if($3->type == INT_TYPE)
+    inst = gera_inst(ILOC_MULTI,"multI",$1->temp,$3->temp,$$->temp);
 else
-    inst = gera_inst(ILOC_MULT,"mult",$1.temp,$3.temp,$$.temp);
+    inst = gera_inst(ILOC_MULT,"mult",$1->temp,$3->temp,$$->temp);
 insere_lista_ilocs(l,inst);
-code_1 = $1.code;
-code_3 = $3.code;
+code_1 = $1->code;
+code_3 = $3->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
-$$.code = code_1;
+$$->code = code_1;
 }
 	| prec_two '/' prec_one {$$ = create_node(AST_DIV, "/");
 	add_child($$,$1);
 	add_child($$,$3);
 	$$ = inf_tipo($$,$1,$3,AST_DIV);
-	$$.temp = gera_temp();
+	$$->temp = gera_temp();
 	LISTA_ILOCS *l = NULL, *code_1, *code_3;
 	ILOC inst;
-	if($2.type == INT_TYPE)
-		inst = gera_inst(ILOC_ADDI,"divI",$1.temp,$3.temp,$$.temp);
+	if($3->type == INT_TYPE)
+		inst = gera_inst(ILOC_ADDI,"divI",$1->temp,$3->temp,$$->temp);
 	else
-		inst = gera_inst(ILOC_ADDI,"div",$1.temp,$3.temp,$$.temp);
+		inst = gera_inst(ILOC_ADDI,"div",$1->temp,$3->temp,$$->temp);
 	insere_lista_ilocs(l,inst);
-	code_1 = $1.code;
-	code_3 = $3.code;
+	code_1 = $1->code;
+	code_3 = $3->code;
 	concat_lista_ilocs(code_1,code_3);
 	concat_lista_ilocs(code_1,l);
-	$$.code = code_1;}
+	$$->code = code_1;}
 	| prec_two '%' prec_one {$$ = create_node(AST_MOD, "%"); add_child($$,$1); add_child($$,$3); $$ = inf_tipo($$,$1,$3,AST_MOD);}
 	| prec_one {$$ = $1;};
 prec_one: '!' prec_one {$$ = create_node(AST_NOT, "!"); add_child($$,$2);}
@@ -581,15 +595,15 @@ $$ = create_node(AST_INDEX,"[]");
     // else
     //   gera loadAI rfp, endereco_desloca => temporario
     // coloca essa instrucao na AST em $$
-    /*$$.temp = strdup(gera_temp());
+    /*$$->temp = strdup(gera_temp());
 	LISTA_ILOCS* l = NULL;
 	ILOC inst;
 	if(escopo_global(stack,$1))
-	   inst = gera_inst(ILOC_LOADAI,"loadAI","rbss",itoa(retorna_end_desloc),$$.temp);
+	   inst = gera_inst(ILOC_LOADAI,"loadAI","rbss",itoa(retorna_end_desloc),$$->temp);
 	else
-	   inst = gera_inst(ILOC_LOADAI,"loadAI","rfp",itoa(retorna_end_desloc),$$.temp);
+	   inst = gera_inst(ILOC_LOADAI,"loadAI","rfp",itoa(retorna_end_desloc),$$->temp);
 	insere(l,inst);
-	$$.code = l;
+	$$->code = l;
 	*/}
 	| TK_LIT_INT {char* leaf;
 	leaf = create_leaf($1);
@@ -600,12 +614,12 @@ $$ = create_node(AST_INDEX,"[]");
 	table = pop(stack);
 	insert_item(table,$1);
 	push(stack,table);
-	$$.temp = gera_temp();
+	$$->temp = gera_temp();
 	LISTA_ILOCS* l = NULL;
 	ILOC inst;
-	inst = gera_inst(ILOC_LOADI,"loadI",itoa($1.value.valueInt),$$.temp);
+	inst = gera_inst(ILOC_LOADI,"loadI",itoa($1.value.valueInt),$$->temp);
 	insere(l,inst);
-	$$.code = l;
+	$$->code = l;
 	}
 	| TK_LIT_FLOAT {
 	char* leaf;
@@ -626,12 +640,12 @@ $$ = create_node(AST_INDEX,"[]");
 	table = pop(stack);
 	insert_item(table,$1);
 	push(stack,table);
-	$$.temp = gera_temp();
+	$$->temp = gera_temp();
 	LISTA_ILOCS* l = NULL;
 	ILOC inst;
-	inst = gera_inst(ILOC_LOADI,"loadI",itoa($1.value.valueInt),$$.temp);
+	inst = gera_inst(ILOC_LOADI,"loadI",itoa($1.value.valueInt),$$->temp);
 	insere(l,inst);
-	$$.code = l;
+	$$->code = l;
 	}
 	| TK_LIT_TRUE {char* leaf;
 	leaf = create_leaf($1);
@@ -642,12 +656,12 @@ $$ = create_node(AST_INDEX,"[]");
 	table = pop(stack);
 	insert_item(table,$1);
 	push(stack,table);
-	$$.temp = gera_temp();
+	$$->temp = gera_temp();
 	LISTA_ILOCS* l = NULL;
 	ILOC inst;
-	inst = gera_inst(ILOC_LOADI,"loadI",itoa($1.value.valueInt),$$.temp);
+	inst = gera_inst(ILOC_LOADI,"loadI",itoa($1.value.valueInt),$$->temp);
 	insere(l,inst);
-	$$.code = l;}
+	$$->code = l;}
 	| chamada_funcao {$$ = $1;}; 
 _empilha: {HASH_TABLE* table;
 	table = create_table(HASH_SIZE);
@@ -694,16 +708,16 @@ node_t *new_node;
 	int tipo = retorna_tipo_simbolo($1,stack);
 	new_node = altera_tipo_no(new_node,tipo);
 	$$ = inf_tipo($$,new_node,$3,AST_ATT);
-	$$.temp = strdup(gera_temp());
+	$$->temp = strdup(gera_temp());
 	LISTA_ILOCS* l = NULL;
 	ILOC inst;
 	char buf[20];
 	if(escopo_global(stack,$1))
-	   inst = gera_inst(ILOC_ATT,"storeAI",$3.temp,"rbss",itoa(retorna_end_desloc(stack,$1),buf,10));
+	   inst = gera_inst(ILOC_ATT,"storeAI",$3->temp,"rbss",itoa(retorna_end_desloc(stack,$1),buf,10));
 	else
-	   inst = gera_inst(ILOC_ATT,"storeAI",$3.temp,"rfp",itoa(retorna_end_desloc(stack,$1),buf,10));
+	   inst = gera_inst(ILOC_ATT,"storeAI",$3->temp,"rfp",itoa(retorna_end_desloc(stack,$1),buf,10));
 	insere(l,inst);
-	$$.code = l;
+	$$->code = l;
 	};
 comandos_simples: declaracao_local ';' comandos_simples {if($1 == NULL) {$$ = $3;} else {$$ = $1; add_child($$,$3);}}
 	| declaracao_local ';' {$$ = $1;}
@@ -720,17 +734,78 @@ comandos_simples: declaracao_local ';' comandos_simples {if($1 == NULL) {$$ = $3
 	| while ';' comandos_simples {$$ = $1; add_child($$,$3);}
 	| while ';' {$$ = $1;};
 // falta gerar codigo esses aqui tbm
-retorno: TK_PR_RETURN expressao {$$ = create_node(AST_RET,"return"); add_child($$,$2);};
-if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco else {$$ = create_node(AST_IF,"if"); add_child($$,$3); add_child($$,$6); add_child($$,$7);};
+retorno: TK_PR_RETURN expressao {
+	$$ = create_node(AST_RET,"return");
+	add_child($$,$2);
+	$$->temp = gera_temp();
+	LISTA_ILOCS *l = NULL;
+	ILOC inst;
+	inst = gera_inst(ILOC_JUMP,"jump",NULL,NULL,$$->temp);
+	insere_lista_ilocs(l,inst);
+	concat_lista_ilocs(l,$2->code);
+	$$->code = l;
+	};
+if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco else {
+	$$ = create_node(AST_IF,"if");
+	add_child($$,$3);
+	add_child($$,$6);
+	add_child($$,$7);
+	char *label_true = gera_rotulo();
+	char *label_false = gera_rotulo();
+	char *next = gera_rotulo();
+	$$->temp = gera_temp();
+	char *opaco = gera_temp();
+	LISTA_ILOCS *l = NULL;
+	ILOC inst;
+	inst = gera_inst(ILOC_LOADI, "loadI","0",NULL,temp);
+	insere_lista_ilocs(l,inst);
+	inst = gera_inst(ILOC_DIF,"cmp_NE",$3->temp,$$->temp,opaco);
+	insere_lista_ilocs(l,inst);
+	inst = gera_inst(ILOC_BR,"cbr",opaco,label_true,label_false);
+	insere_lista_ilocs(l,inst);
+	/*organizar!!!!! inst2 = gera_inst_com_label(label_true,inst);
+	inst = gera_inst(ILOC_LABEL,label_true,"nop");
+	insere_lista_ilocs(l,inst);
+	*/
+	inst = gera_inst(ILOC_JUMP,"jumpI",next);
+	insere_lista_ilocs(l,inst);
+	// concatenar lista do else (reavaliar else!!!!)
+	};
 else: TK_PR_ELSE bloco {$$ = $2;}
 	| {$$ = NULL;};
-while: TK_PR_WHILE '(' expressao ')' bloco {$$ = create_node(AST_WHILE,"while"); add_child($$,$3); add_child($$,$5);};
+while: TK_PR_WHILE '(' expressao ')' bloco {
+	$$ = create_node(AST_WHILE,"while");
+	add_child($$,$3);
+	add_child($$,$5);
+	// tentar seguir a mesma logica da operacao relacional e do if pra traduzir
+	char *label_true = gera_rotulo();
+	char *label_false = gera_rotulo();
+	char *next = gera_rotulo();
+	$$->temp = gera_temp();
+	char *opaco = gera_temp();
+    LISTA_ILOCS *l = NULL;
+	ILOC inst;
+	// gerar iloc com label label_verdade: nop (acho q pode ser label do proprio codigo)
+	inst = gera_inst(ILOC_LOADI, "loadI","0",NULL,temp);
+	inst = gera_inst_com_label(label_true,inst);
+	insere_lista_ilocs(l,inst);
+	inst = gera_inst(ILOC_DIF,"cmp_NE",$3->temp,$$->temp,opaco);
+	insere_lista_ilocs(l,inst);
+	inst = gera_inst(ILOC_BR,"cbr",opaco,label_true,label_false);
+	insere_lista_ilocs(l,inst);
+	concat_lista_ilocs(l,$5->code);
+	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
+	inst = gera_inst_com_label(next,inst);
+	insere_lista_ilocs(l,inst);
+	
+	};
 %%
 void yyerror (char const *s){
 	fprintf(stderr, "%s in line %d.\n",s,get_line_number());
 }
 
 void initMe(){
+	inicia_lista();
 	stack = create_stack();
 	HASH_TABLE *table = create_table(HASH_SIZE);
 	push(stack,table); // tabela do escopo global

@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "ast.h"
 #define ARQUIVO_SAIDA "saida.dot"
 extern void *arvore;

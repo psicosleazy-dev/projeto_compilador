@@ -1,10 +1,4 @@
 #include "hash.h"
-#include "errors.h"
-#include "ast.h"
-#include "parser.tab.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 static int desloc = 0;
 
@@ -43,6 +37,10 @@ void insert_item(HASH_TABLE* table, valor_t novo_simbolo)
             item->desloc = desloc;
             table->items[index] = item;
             desloc = desloc + item->valor_lexico.tamanho;
+        }
+        if(novo_simbolo.linha == NAT_FUNCTION){
+            table->items[index] = item;
+            novo_simbolo.label = strdup(gera_rotulo());
         }
         else
             table->items[index] = item;

@@ -1,13 +1,20 @@
 #ifndef HASH_HEADER
 #define HASH_HEADER
 #define HASH_SIZE 997
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "ast.h"
+#include "parser.tab.h"
+#include "errors.h"
+#include "ilocs.h"
 
 typedef struct hash_ent{
    valor_t valor_lexico; // dados acerca do simbolo
    int chave;
    int desloc;
-   char* label;
 }HASH_ENT;
 
 typedef struct hash_table{
