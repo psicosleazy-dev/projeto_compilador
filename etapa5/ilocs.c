@@ -1,9 +1,5 @@
-#include <stdlib.h>
-#include <string.h>
 #include "ilocs.h"
-#include "hash.h"
-#include "stack_management.h"
-#include "errors.h"
+
 #define MAX_LEN 3
 
 char *gera_rotulo(void)

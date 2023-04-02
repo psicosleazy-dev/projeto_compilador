@@ -31,6 +31,8 @@
 #define ILOC_SUBI 361
 #define ILOC_NOP 362
 
+#include "stack_management.h"
+
 
 /*#define ILOC_ADD 2
 #define ILOC_SUB 3
@@ -52,12 +54,6 @@
 #define ILOC_CALL 21
 #define ILOC_RET 23
 #define ILOC_READ 25*/
-
-#include<stdio.h>
-#include<stdlib.h>
-#include "hash.h"
-#include "stack_management.h"
-#include "ast.h"
 
 struct iloc{
     int tipo_iloc;

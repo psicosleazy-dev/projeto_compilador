@@ -1,11 +1,4 @@
-#include "parser.tab.h"
 #include "hash.h"
-#include "errors.h"
-#include "ast.h"
-#include "ilocs.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 static int desloc = 0;
 

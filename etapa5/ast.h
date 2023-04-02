@@ -31,8 +31,9 @@
 #define AST_LIT_FALSE 330
 #define AST_MUL 331
 #define AST_DIV 332
-#include <stdio.h>
+
 #include "ilocs.h"
+#include <stdio.h>
 
 union Literal{
  int int_value;

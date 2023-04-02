@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "stack_management.h"
 #include "list.h"
 extern int yyparse(void);
