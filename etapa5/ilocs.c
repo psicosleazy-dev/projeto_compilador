@@ -6,6 +6,7 @@
 #include "stack_management.h"
 #include "errors.h"
 #define MAX_LEN 3
+
 char *gera_rotulo(void)
 {
   char *label = (char *)malloc(MAX_LEN * sizeof(char));
@@ -139,12 +140,15 @@ int escopo_global(Stack *stack, valor_t s)
   while (aux)
   {
     achou = ht_search(aux->data, s.value.token);
-    if (achou)
+    if (achou){
       if (aux->next)
         return 0; // se a tabela nao e a ultima (escopo nao e global, é local)
       else
         return 1; // a tabela é a ultima, escopo global
+    }
   }
+
+  return 0;
 }
 
 int retorna_end_desloc(Stack *stack, valor_t simbolo)
@@ -154,8 +158,10 @@ int retorna_end_desloc(Stack *stack, valor_t simbolo)
 
   if (ent)
     return ent->desloc;
-  else
-    printError(ERR_UNDECLARED, simbolo.value.token, 0);
+  else{
+    printError(ERR_UNDECLARED, simbolo.value.token,0);
+    return 0;
+  }
 }
 
 /*
@@ -167,8 +173,19 @@ char* retorna_label(Stack* stack,char* id){
   HASH_ENT* ent = search_stack(stack,id);
   if(ent)
     return ent->valor_lexico.label;
-  else
+  else{
     printError(ERR_UNDECLARED,id,0);
+    return NULL;
+    }
+}
+
+void atribui_temp(node_t* no){
+    char* temp = gera_temp();
+    no->temp = strdup(temp);
+}
+
+char* retorna_temp(node_t* no){
+    return no->temp;
 }
 
 

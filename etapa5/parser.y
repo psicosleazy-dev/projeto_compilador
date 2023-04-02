@@ -15,7 +15,7 @@ extern void* arvore;
 // definir as seguintes variaveis aqui ao inves de com extern
 extern Stack* stack;
 extern LISTA* lista2;
-}
+%}
 
 //Stack* stack;
 //LISTA* lista2;
