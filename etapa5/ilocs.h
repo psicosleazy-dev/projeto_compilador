@@ -57,6 +57,7 @@
 #include<stdlib.h>
 #include "hash.h"
 #include "stack_management.h"
+#include "ast.h"
 
 struct iloc{
     int tipo_iloc;

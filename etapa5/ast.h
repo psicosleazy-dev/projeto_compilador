@@ -54,7 +54,7 @@ typedef struct valor valor_t; // a struct que carrega o valor lexico
 struct node{
   int type;
   int datatype;
-  //LISTA_ILOCS* code;
+  LISTA_ILOCS* code;
   char *temp; // temporario pro resultado de alguma expressao
   int number_of_children;
   struct node **children;
