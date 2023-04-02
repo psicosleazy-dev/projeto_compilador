@@ -7,7 +7,6 @@ typedef struct hash_ent{
    valor_t valor_lexico; // dados acerca do simbolo
    int chave;
    int desloc;
-   char* label;
 }HASH_ENT;
 
 typedef struct hash_table{

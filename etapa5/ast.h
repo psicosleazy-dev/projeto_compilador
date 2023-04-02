@@ -45,17 +45,17 @@ struct valor{
   int natureza;
   int tamanho;
   int tipo;
+  char *label; // label pra chamada de funcao
   union Literal value;
 };
 
-typedef struct valor valor_t;
+typedef struct valor valor_t; // a struct que carrega o valor lexico
 
 struct node{
-  char *label;
   int type;
   int datatype;
-  LISTA_ILOCS code;
-  char *temp;
+  //LISTA_ILOCS* code;
+  char *temp; // temporario pro resultado de alguma expressao
   int number_of_children;
   struct node **children;
 };

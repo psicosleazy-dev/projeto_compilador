@@ -1,13 +1,11 @@
+#include <stdlib.h>
+#include <string.h>
 #include "ilocs.h"
 #include "ast.h"
 #include "hash.h"
 #include "stack_management.h"
-#include "list.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "errors.h"
 #define MAX_LEN 3
-
 char *gera_rotulo(void)
 {
   char *label = (char *)malloc(MAX_LEN * sizeof(char));
@@ -27,11 +25,6 @@ char *gera_temp(void)
   static int contador = 0;
   snprintf(temp, 200, "r%d", contador++);
   return temp;
-}
-
-void init_lista_ilocs(LISTA_ILOCS *lista)
-{
-  lista = NULL;
 }
 
 void insere_lista_ilocs(LISTA_ILOCS **lista, ILOC inst)
@@ -54,7 +47,7 @@ void insere_lista_ilocs(LISTA_ILOCS **lista, ILOC inst)
 ILOC gera_inst(int tipo,char *op, char *op1, char *op2, char *res)
 {
   ILOC inst;
-  
+
   inst.tipo_iloc = tipo;
   if (op)
     inst.op = strdup(op);
@@ -70,6 +63,7 @@ ILOC gera_inst(int tipo,char *op, char *op1, char *op2, char *res)
 
 ILOC gera_inst_com_label(char* label,ILOC inst){
   inst.label = strdup(label);
+  inst.tipo_iloc = ILOC_LABEL;
   return inst;
 }
 
@@ -103,13 +97,13 @@ void print_iloc(ILOC inst){
         break;
     case ILOC_JUMP:
         printf("%s           -> %s",inst.op,inst.op1);
-        break; 
+        break;
     case ILOC_LABEL:
-        printf("%s:",inst.label);
+        printf("%s:  %s %s, %s  => %s",inst.label,inst.op,inst.op1,inst.op2,inst.res);
         break;
     case ILOC_NOP:
         printf("%s",inst.op);
-        break;           
+        break;
   }
 }
 
@@ -118,7 +112,8 @@ void print_list_ilocs(LISTA_ILOCS *l)
   LISTA_ILOCS *currentNode = l;
   while (currentNode != NULL)
   {
-    print_ilocs(currentNode->inst);
+    print_iloc(currentNode->inst);
+    printf("\n");
     currentNode = currentNode->next;
   }
   printf("\n");
@@ -163,21 +158,32 @@ int retorna_end_desloc(Stack *stack, valor_t simbolo)
     printError(ERR_UNDECLARED, simbolo.value.token, 0);
 }
 
+/*
 void concat_lista_ilocs(LISTA_ILOCS* l1,LISTA_ILOCS* l2){
 
+}*/
+
+char* retorna_label(Stack* stack,char* id){
+  HASH_ENT* ent = search_stack(stack,id);
+  if(ent)
+    return ent->valor_lexico.label;
+  else
+    printError(ERR_UNDECLARED,id,0);
 }
 
-/*HASH_ENT* makeTemp(){
-  static int serialNumber = 0;
-  static char buffer[128];
-  sprintf(buffer, "_temp%d", serialNumber++);
-  return insert_item
-}
 
-HASH_ENT* makeLabel(){
-  static int serialNumber = 0;
-  static char buffer[128];
-  sprintf(buffer, "_label%d", serialNumber++);
-  return insert_item();
+int main(){
+  LISTA_ILOCS *L = NULL;
+  ILOC inst, inst2;
+
+  inst = gera_inst(ILOC_ADD,"add","r0","r1","r2");
+  inst2 = gera_inst(ILOC_ADDI,"addi","r0","r1","r2");
+  inst2 = gera_inst_com_label("L0:",inst2);
+
+  insere_lista_ilocs(&L,inst);
+  insere_lista_ilocs(&L,inst2);
+
+  print_list_ilocs(L);
+
+  return 0;
 }
-*/

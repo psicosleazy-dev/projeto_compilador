@@ -1,4 +1,4 @@
-%code requires{
+%{
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -17,8 +17,13 @@ extern Stack* stack;
 extern LISTA* lista2;
 }
 
+//Stack* stack;
+//LISTA* lista2;
+
+
 /* Nomes: Lucas Brum e Arthur Oliveira */
 %define parse.error verbose
+// %code requires { #include "ast.h" }
 
 %union{
  node_t *no;
@@ -97,7 +102,18 @@ funcao: tipo TK_IDENTIFICADOR '(' parametros ')' bloco { // adicionar na tabela 
 	HASH_TABLE* table;
 	table = pop(stack);
 	insert_item(table,$2);
-	push(stack,table);};
+	push(stack,table);
+	// vamos gerar codigo
+	char* label_da_funcao;
+	label_da_funcao = retorna_label(stack,$1.value.valueChar);
+	LISTA_ILOCS* l;
+	ILOC inst;
+	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
+	inst = gera_inst_com_label(label_da_funcao,inst);
+	insere(l,inst);
+	concat_lista_ilocs(l,$6.code);
+	$$.code = l;
+	};
 tipo: TK_PR_INT {inicia_lista();}
 	| TK_PR_FLOAT {inicia_lista();}
 	| TK_PR_BOOL {inicia_lista();}
@@ -740,7 +756,6 @@ if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco else {
 	char *label_true = gera_rotulo();
 	char *label_false = gera_rotulo();
 	char *next = gera_rotulo();
-
 	$$.temp = gera_temp();
 	char *opaco = gera_temp();
 	LISTA_ILOCS *l = NULL;
@@ -765,11 +780,27 @@ while: TK_PR_WHILE '(' expressao ')' bloco {
 	$$ = create_node(AST_WHILE,"while");
 	add_child($$,$3);
 	add_child($$,$5);
+	// tentar seguir a mesma logica da operacao relacional e do if pra traduzir
 	char *label_true = gera_rotulo();
 	char *label_false = gera_rotulo();
-	char *next;
-
-	// tentar seguir a mesma logica da operacao relacional e do if pra traduzir
+	char *next = gera_rotulo();
+	$$.temp = gera_temp();
+	char *opaco = gera_temp();
+    LISTA_ILOCS *l = NULL;
+	ILOC inst;
+	// gerar iloc com label label_verdade: nop (acho q pode ser label do proprio codigo)
+	inst = gera_inst(ILOC_LOADI, "loadI","0",NULL,temp);
+	inst = gera_inst_com_label(label_true,inst);
+	insere_lista_ilocs(l,inst);
+	inst = gera_inst(ILOC_DIF,"cmp_NE",$3.temp,$$.temp,opaco);
+	insere_lista_ilocs(l,inst);
+	inst = gera_inst(ILOC_BR,"cbr",opaco,label_true,label_false);
+	insere_lista_ilocs(l,inst);
+	concat_lista_ilocs(l,$5.code);
+	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
+	inst = gera_inst_com_label(next,inst);
+	insere_lista_ilocs(l,inst);
+	
 	};
 %%
 void yyerror (char const *s){
@@ -777,6 +808,7 @@ void yyerror (char const *s){
 }
 
 void initMe(){
+	inicia_lista();
 	stack = create_stack();
 	HASH_TABLE *table = create_table(HASH_SIZE);
 	push(stack,table); // tabela do escopo global

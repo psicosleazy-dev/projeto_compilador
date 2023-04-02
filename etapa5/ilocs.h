@@ -1,5 +1,5 @@
-#ifndef _TACS_H_
-#define _TACS_H_
+#ifndef _ILOCS_H_
+#define _ILOCS_H_
 #define ILOC_SYMBOL 333
 #define ILOC_MOVE 334
 #define ILOC_ADD 335
@@ -30,6 +30,7 @@
 #define ILOC_DEC 360
 #define ILOC_SUBI 361
 #define ILOC_NOP 362
+
 
 /*#define ILOC_ADD 2
 #define ILOC_SUB 3
@@ -80,11 +81,12 @@ char* gera_rotulo(void);
 char* gera_temp(void);
 ILOC gera_inst(int,char*,char*,char*,char*);
 ILOC gera_inst_com_label(char*,ILOC);
-void insere_lista_ilocs(LISTA_ILOCS*,ILOC);
+void insere_lista_ilocs(LISTA_ILOCS**,ILOC);
 void print_iloc(ILOC);
 void print_lista_ilocs(LISTA_ILOCS*);
 void concat_lista_ilocs(LISTA_ILOCS*,LISTA_ILOCS*);
 void free_list(LISTA_ILOCS*);
 int retorna_end_desloc(Stack*,valor_t);
+char* retorna_label(Stack*,char*);
 int escopo_global(Stack*,valor_t);
 #endif
