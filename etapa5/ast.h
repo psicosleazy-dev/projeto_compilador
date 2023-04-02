@@ -45,7 +45,6 @@ struct valor{
   int natureza;
   int tamanho;
   int tipo;
-  char *label; // label pra chamada de funcao
   union Literal value;
 };
 
@@ -58,6 +57,7 @@ struct node{
   char *temp; // temporario pro resultado de alguma expressao
   int number_of_children;
   struct node **children;
+  char *label; // label pra chamada de funcao
 };
 
 typedef struct node node_t;
