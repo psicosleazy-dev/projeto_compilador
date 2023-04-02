@@ -46,6 +46,7 @@ struct valor{
   int tamanho;
   int tipo;
   union Literal value;
+  char *label;
 };
 
 typedef struct valor valor_t; // a struct que carrega o valor lexico
