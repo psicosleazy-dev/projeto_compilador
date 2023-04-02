@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ilocs.h"
-#include "ast.h"
 #include "hash.h"
 #include "stack_management.h"
 #include "errors.h"
@@ -178,16 +177,6 @@ char* retorna_label(Stack* stack,char* id){
     return NULL;
     }
 }
-
-void atribui_temp(node_t* no){
-    char* temp = gera_temp();
-    no->temp = strdup(temp);
-}
-
-char* retorna_temp(node_t* no){
-    return no->temp;
-}
-
 
 int main(){
   LISTA_ILOCS *L = NULL;
