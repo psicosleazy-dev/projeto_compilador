@@ -54,7 +54,7 @@ struct node{
   char *label;
   int type;
   int datatype;
-  LISTA_ILOCS code;
+  LISTA_ILOCS* code;
   char *temp;
   int number_of_children;
   struct node **children;

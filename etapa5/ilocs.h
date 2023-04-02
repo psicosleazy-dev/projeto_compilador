@@ -29,7 +29,7 @@
 #define ILOC_ADDI 359
 #define ILOC_DEC 360
 #define ILOC_SUBI 361
-#define ILOC_NOP 362
+// #define ILOC_NOP 364
 
 /*#define ILOC_ADD 2
 #define ILOC_SUB 3
@@ -51,8 +51,6 @@
 #define ILOC_CALL 21
 #define ILOC_RET 23
 #define ILOC_READ 25*/
-
-
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -82,7 +80,7 @@ char* gera_rotulo(void);
 char* gera_temp(void);
 ILOC gera_inst(int,char*,char*,char*,char*);
 ILOC gera_inst_com_label(char*,ILOC);
-void insere_lista_ilocs(LISTA_ILOCS*,ILOC);
+void insere_lista_ilocs(LISTA_ILOCS**,ILOC);
 void print_iloc(ILOC);
 void print_lista_ilocs(LISTA_ILOCS*);
 void concat_lista_ilocs(LISTA_ILOCS*,LISTA_ILOCS*);

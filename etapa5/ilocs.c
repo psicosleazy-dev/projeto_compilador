@@ -3,6 +3,7 @@
 #include "hash.h"
 #include "stack_management.h"
 #include "list.h"
+#include "errors.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,11 +30,6 @@ char *gera_temp(void)
   return temp;
 }
 
-void init_lista_ilocs(LISTA_ILOCS *lista)
-{
-  lista = NULL;
-}
-
 void insere_lista_ilocs(LISTA_ILOCS **lista, ILOC inst)
 {
   LISTA_ILOCS *p = (LISTA_ILOCS *)malloc(sizeof(LISTA_ILOCS));
@@ -54,7 +50,7 @@ void insere_lista_ilocs(LISTA_ILOCS **lista, ILOC inst)
 ILOC gera_inst(int tipo,char *op, char *op1, char *op2, char *res)
 {
   ILOC inst;
-  
+
   inst.tipo_iloc = tipo;
   if (op)
     inst.op = strdup(op);
@@ -103,11 +99,10 @@ void print_iloc(ILOC inst){
         break;
     case ILOC_JUMP:
         printf("%s           -> %s",inst.op,inst.op1);
-        break; 
-    case ILOC_LABEL:
+        break;
+        /*case ILOC_LABEL:
 
-    case ILOC_NOP:
-           
+    case ILOC_NOP:*/
   }
 }
 
@@ -116,7 +111,7 @@ void print_list_ilocs(LISTA_ILOCS *l)
   LISTA_ILOCS *currentNode = l;
   while (currentNode != NULL)
   {
-    print_ilocs(currentNode->inst);
+    print_iloc(currentNode->inst);
     currentNode = currentNode->next;
   }
   printf("\n");
@@ -142,12 +137,14 @@ int escopo_global(Stack *stack, valor_t s)
   while (aux)
   {
     achou = ht_search(aux->data, s.value.token);
-    if (achou)
+    if (achou){
       if (aux->next)
         return 0; // se a tabela nao e a ultima (escopo nao e global, é local)
       else
         return 1; // a tabela é a ultima, escopo global
+    }
   }
+  return 0;
 }
 
 int retorna_end_desloc(Stack *stack, valor_t simbolo)
@@ -157,25 +154,29 @@ int retorna_end_desloc(Stack *stack, valor_t simbolo)
 
   if (ent)
     return ent->desloc;
-  else
+  else{
     printError(ERR_UNDECLARED, simbolo.value.token, 0);
+    return 0; // so pra parar encher o saco
+}
 }
 
+/*
 void concat_lista_ilocs(LISTA_ILOCS* l1,LISTA_ILOCS* l2){
 
-}
+}*/
 
-/*HASH_ENT* makeTemp(){
-  static int serialNumber = 0;
-  static char buffer[128];
-  sprintf(buffer, "_temp%d", serialNumber++);
-  return insert_item
-}
+int main(){
+  LISTA_ILOCS *l = NULL;
+  ILOC inst, inst2;
 
-HASH_ENT* makeLabel(){
-  static int serialNumber = 0;
-  static char buffer[128];
-  sprintf(buffer, "_label%d", serialNumber++);
-  return insert_item();
+  inst = gera_inst(ILOC_ADD,"add","r1","r2",gera_temp());
+  inst2 = gera_inst(ILOC_ADDI,"addi","r1","r2",gera_temp());
+  inst2 = gera_inst_com_label("L0",inst2);
+
+  insere_lista_ilocs(&l,inst);
+  insere_lista_ilocs(&l,inst2);
+
+  print_lista_ilocs(l);
+
+  return 0;
 }
-*/
