@@ -29,10 +29,7 @@
 #define ILOC_ADDI 359
 #define ILOC_DEC 360
 #define ILOC_SUBI 361
-// #define ILOC_NOP 364
-
-#include "stack_management.h"
-
+#define ILOC_NOP 364
 
 /*#define ILOC_ADD 2
 #define ILOC_SUB 3
@@ -55,10 +52,12 @@
 #define ILOC_RET 23
 #define ILOC_READ 25*/
 
-#include<stdio.h>
-#include<stdlib.h>
-#include "hash.h"
+#ifndef STACK_H
 #include "stack_management.h"
+#endif
+
+#include <string.h>
+#include <stdlib.h>
 
 struct iloc{
     int tipo_iloc;
@@ -71,13 +70,11 @@ struct iloc{
 
 typedef struct iloc ILOC;
 
-struct lista_ilocs
+typedef struct lista_ilocs
 {
     ILOC inst;
     struct lista_ilocs *next;
-};
-
-typedef struct lista_ilocs LISTA_ILOCS;
+}LISTA_ILOCS;
 
 char* gera_rotulo(void);
 char* gera_temp(void);

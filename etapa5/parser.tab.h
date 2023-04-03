@@ -46,15 +46,10 @@ extern int yydebug;
 /* "%code requires" blocks.  */
 #line 1 "parser.y"
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#ifndef _ARVORE_H_
 #include "ast.h"
-#include "hash.h"
-#include "list.h"
-#include "errors.h"
-#include "stack_management.h"
-#include "ilocs.h"
+#endif
+
 int yylex(void);
 void yyerror (char const *s);
 extern int get_line_number();

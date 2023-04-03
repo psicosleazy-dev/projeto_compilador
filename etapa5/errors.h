@@ -20,12 +20,12 @@
 #define STRING_TYPE	     93
 #define CHAR_TYPE	     94
 
-#include "stack_management.h"
-
-#include "hash.h"
-#include "ast.h"
 #include "list.h"
 #include "parser.tab.h"
+
+#ifndef STACK_H
+#include "stack_management.h"
+#endif
 
 void printError(int,char*,int);
 const char* showType(int);

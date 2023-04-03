@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "ast.h"
 #include "list.h"
-#include "errors.h"
 
 void inicia_lista(){
     lista2 = NULL;
