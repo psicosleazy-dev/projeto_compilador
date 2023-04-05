@@ -32,7 +32,10 @@
 #define AST_MUL 331
 #define AST_DIV 332
 
+#ifndef _ILOCS_H_
 #include "ilocs.h"
+#endif
+
 #include <stdio.h>
 
 union Literal{

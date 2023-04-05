@@ -7,12 +7,6 @@ int empty_stack(Stack* stack){
         return 0;
 }
 
-void init_stack(void){
-    stack = malloc(sizeof(Stack));
-    stack->head = NULL;
-    stack->size = 0;
-}
-
 Stack* create_stack(){
     Stack* stack = malloc(sizeof(Stack));
     stack->head = NULL;

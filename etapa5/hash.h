@@ -2,10 +2,6 @@
 #define HASH_HEADER
 #define HASH_SIZE 997
 
-#ifndef ERROR_H
-#include "errors.h"
-#endif
-
 #ifndef _ARVORE_H_
 #include "ast.h"
 #endif

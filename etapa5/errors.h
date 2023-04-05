@@ -19,12 +19,18 @@
 #define FLOAT_TYPE       92
 #define STRING_TYPE	     93
 #define CHAR_TYPE	     94
+
+#ifndef LIST_H
 #include "list.h"
+#endif
+
+#ifndef YY_YY_PARSER_TAB_H_INCLUDED
 #include "parser.tab.h"
+#endif
 
-
+#ifndef STACK_H
 #include "stack_management.h"
-
+#endif
 
 void printError(int,char*,int);
 const char* showType(int);

@@ -1,8 +1,10 @@
 #ifndef STACK_H
 #define STACK_H
+
 #ifndef HASH_H
 #include "hash.h"
 #endif
+
 typedef struct stack_node{
     HASH_TABLE *data;
     struct stack_node *next;
@@ -13,9 +15,6 @@ typedef struct Stack{
     int size;
 }Stack;
 
-
-
-void init_stack(void);
 Stack* create_stack();
 void push(Stack* stack, HASH_TABLE* data);
 HASH_TABLE* pop(Stack* stack);

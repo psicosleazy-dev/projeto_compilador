@@ -1,6 +1,9 @@
 #ifndef LIST_H
 #define LIST_H
+
+#ifndef _ARVORE_H_
 #include "ast.h"
+#endif
 
 typedef struct lista{
 	valor_t valor_lexico;
