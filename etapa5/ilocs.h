@@ -52,9 +52,7 @@
 #define ILOC_RET 23
 #define ILOC_READ 25*/
 
-#ifndef STACK_H
-#include "stack_management.h"
-#endif
+
 
 #include <string.h>
 #include <stdlib.h>
@@ -75,6 +73,10 @@ typedef struct lista_ilocs
     ILOC inst;
     struct lista_ilocs *next;
 }LISTA_ILOCS;
+
+#ifndef STACK_H
+#include "stack_management.h"
+#endif
 
 char* gera_rotulo(void);
 char* gera_temp(void);

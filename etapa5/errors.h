@@ -19,13 +19,12 @@
 #define FLOAT_TYPE       92
 #define STRING_TYPE	     93
 #define CHAR_TYPE	     94
-
 #include "list.h"
 #include "parser.tab.h"
 
-#ifndef STACK_H
+
 #include "stack_management.h"
-#endif
+
 
 void printError(int,char*,int);
 const char* showType(int);
@@ -44,4 +43,5 @@ int retorna_tipo_simbolo(valor_t, Stack*);
 node_t* inf_tipo_lex(node_t*,valor_t,node_t*,int);
 void altera_tipo_na_lista(LISTA*,valor_t);
 void insere_lista_na_tabela(LISTA*,Stack*);
+
 #endif
