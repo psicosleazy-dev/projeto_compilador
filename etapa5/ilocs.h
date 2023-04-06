@@ -30,18 +30,6 @@
 #define ILOC_DEC 360
 #define ILOC_SUBI 361
 #define ILOC_NOP 364
-
-#include <string.h>
-#include <stdlib.h>
-
-#ifndef STACK_H
-#include "stack_management.h"
-#endif
-
-#ifndef ERROR_H
-#include "errors.h"
-#endif
-
 /*#define ILOC_ADD 2
 #define ILOC_SUB 3
 #define ILOC_MUL 4
@@ -62,6 +50,11 @@
 #define ILOC_CALL 21
 #define ILOC_RET 23
 #define ILOC_READ 25*/
+#define MAX_LEN 3
+
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 struct iloc{
     int tipo_iloc;
@@ -79,18 +72,17 @@ typedef struct lista_ilocs{
     struct lista_ilocs *next;
 }LISTA_ILOCS;
 
-char* gera_rotulo(void);
-char* gera_temp(void);
+void insere_lista_ilocs(LISTA_ILOCS**,ILOC);
 ILOC gera_inst(int,char*,char*,char*,char*);
 ILOC gera_inst_com_label(char*,ILOC);
-void insere_lista_ilocs(LISTA_ILOCS**,ILOC);
 void print_iloc(ILOC);
 void print_lista_ilocs(LISTA_ILOCS*);
 void concat_lista_ilocs(LISTA_ILOCS*,LISTA_ILOCS*);
 void free_list(LISTA_ILOCS*);
-int retorna_end_desloc(Stack*,valor_t);
-char* retorna_label(Stack*,char*);
-char* retorna_temp(node_t*);
-void atribui_temp(node_t*);
-int escopo_global(Stack*,valor_t);
+char* gera_temp(void);
+char* gera_rotulo(void);
+//char* retorna_label(Stack*,char*);
+//char* retorna_temp(node_t*);
+//void atribui_temp(node_t*);
+
 #endif
