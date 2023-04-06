@@ -1,5 +1,4 @@
 #include "stack_management.h"
-#include "list.h"
 extern int yyparse(void);
 extern int yylex_destroy(void);
 extern void initMe(void);
