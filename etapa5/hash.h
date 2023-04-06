@@ -2,11 +2,9 @@
 #define HASH_HEADER
 #define HASH_SIZE 997
 
-#ifndef _ARVORE_H_
-#include "ast.h"
-#endif
-
+#ifndef ERROR_H
 #include "errors.h"
+#endif
 
 typedef struct hash_ent{
    valor_t valor_lexico; // dados acerca do simbolo
