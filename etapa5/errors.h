@@ -20,10 +20,6 @@
 #define STRING_TYPE	     93
 #define CHAR_TYPE	     94
 
-#ifndef LIST_H
-#include "list.h"
-#endif
-
 #ifndef YY_YY_PARSER_TAB_H_INCLUDED
 #include "parser.tab.h"
 #endif
@@ -32,8 +28,8 @@
 #include "stack_management.h"
 #endif
 
-void printError(int,char*,int);
 const char* showType(int);
+void printError(int,char*,int);
 void checkTableDec(Stack*,valor_t);
 void checkTableInUse(Stack*,valor_t);
 int get_result_type(int,int,int);
