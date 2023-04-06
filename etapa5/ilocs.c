@@ -1,26 +1,4 @@
 #include "ilocs.h"
-#define MAX_LEN 3
-
-char *gera_rotulo(void)
-{
-  char *label = (char *)malloc(MAX_LEN * sizeof(char));
-  static int contador = 0;
-  snprintf(label, 200, "L%d", contador++);
-  return label;
-}
-
-/*int gera_rotulo(void){
-  static int contador = 0;
-  return contador++;
-}*/
-
-char *gera_temp(void)
-{
-  char *temp = (char *)malloc(MAX_LEN * sizeof(char));
-  static int contador = 0;
-  snprintf(temp, 200, "r%d", contador++);
-  return temp;
-}
 
 void insere_lista_ilocs(LISTA_ILOCS **lista, ILOC inst)
 {
@@ -126,40 +104,30 @@ void free_list(LISTA_ILOCS* l){
     }
 }
 
-int escopo_global(Stack *stack, valor_t s)
-{
-  stack_node *aux;
-  aux = stack->head;
-  HASH_ENT *achou;
-  while (aux)
-  {
-    achou = ht_search(aux->data, s.value.token);
-    if (achou){
-      if (aux->next)
-        return 0; // se a tabela nao e a ultima (escopo nao e global, é local)
-      else
-        return 1; // a tabela é a ultima, escopo global
-    }
-  }
-  return 0;
-}
-
-int retorna_end_desloc(Stack *stack, valor_t simbolo)
-{
-  HASH_ENT *ent = NULL;
-  ent = search_stack(stack, simbolo.value.token);
-
-  if (ent)
-    return ent->desloc;
-  else{
-    printError(ERR_UNDECLARED, simbolo.value.token,0);
-    return 0;
-  }
-}
-
 /*
 void concat_lista_ilocs(LISTA_ILOCS* l1,LISTA_ILOCS* l2){
 
+}*/
+
+char *gera_temp(void)
+{
+  char *temp = (char *)malloc(MAX_LEN * sizeof(char));
+  static int contador = 0;
+  snprintf(temp, 200, "r%d", contador++);
+  return temp;
+}
+
+char *gera_rotulo(void)
+{
+  char *label = (char *)malloc(MAX_LEN * sizeof(char));
+  static int contador = 0;
+  snprintf(label, 200, "L%d", contador++);
+  return label;
+}
+
+/*int gera_rotulo(void){
+  static int contador = 0;
+  return contador++;
 }*/
 
 int main(){
@@ -173,7 +141,7 @@ int main(){
   insere_lista_ilocs(&l,inst);
   insere_lista_ilocs(&l,inst2);
 
-  print_lista_ilocs(l);
+  print_list_ilocs(l);
 
   return 0;
 }

@@ -23,4 +23,6 @@ stack_node* retrieve(Stack* stack, int level); //get something below
 int empty_stack(Stack* stack);
 void print_stack(Stack* stack);
 void delete_stack(Stack* stack); //free everything
+int retorna_end_desloc(Stack *stack, valor_t simbolo);
+int escopo_global(Stack*,valor_t);
 #endif

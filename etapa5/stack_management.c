@@ -22,7 +22,6 @@ void push(Stack* stack, HASH_TABLE* table){
     stack->size+=1;
 }
 
-
 HASH_TABLE* pop(Stack* stack){
     if(empty_stack(stack)){
         printf("pilha vazia!\n");
@@ -80,6 +79,37 @@ HASH_ENT* search_stack(Stack* stack, char* simbolo){
     }
 
     return NULL;
+}
+
+int retorna_end_desloc(Stack *stack, valor_t simbolo)
+{
+  HASH_ENT *ent = NULL;
+  ent = search_stack(stack, simbolo.value.token);
+
+  if (ent)
+    return ent->desloc;
+  else{
+    printError(ERR_UNDECLARED, simbolo.value.token,0);
+    return 0;
+  }
+}
+
+int escopo_global(Stack *stack, valor_t s)
+{
+  stack_node *aux;
+  aux = stack->head;
+  HASH_ENT *achou;
+  while (aux)
+  {
+    achou = ht_search(aux->data, s.value.token);
+    if (achou){
+      if (aux->next)
+        return 0; // se a tabela nao e a ultima (escopo nao e global, é local)
+      else
+        return 1; // a tabela é a ultima, escopo global
+    }
+  }
+  return 0;
 }
 
 /*
