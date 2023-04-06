@@ -6,6 +6,8 @@
 #include "ast.h"
 #endif
 
+#include "errors.h"
+
 typedef struct hash_ent{
    valor_t valor_lexico; // dados acerca do simbolo
    int chave;
