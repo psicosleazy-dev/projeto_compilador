@@ -1,9 +1,23 @@
 #ifndef LIST_H
 #define LIST_H
+#include <stdlib.h>
 
-#ifndef _ARVORE_H_
-#include "ast.h"
-#endif
+union Literal{
+ int int_value;
+ float float_value;
+ char *token; // String ou char simples
+};
+
+struct valor{
+  int linha;
+  int natureza;
+  int tamanho;
+  int tipo;
+  union Literal value;
+  char *label;
+};
+
+typedef struct valor valor_t; // a struct que carrega o valor lexico
 
 typedef struct lista{
 	valor_t valor_lexico;

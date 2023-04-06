@@ -32,28 +32,11 @@
 #define AST_MUL 331
 #define AST_DIV 332
 
+#include "list.h"
+
 #ifndef _ILOCS_H_
 #include "ilocs.h"
 #endif
-
-#include <stdio.h>
-
-union Literal{
- int int_value;
- float float_value;
- char *token; // String ou char simples
-};
-
-struct valor{
-  int linha;
-  int natureza;
-  int tamanho;
-  int tipo;
-  union Literal value;
-  char *label;
-};
-
-typedef struct valor valor_t; // a struct que carrega o valor lexico
 
 struct node{
   int type;
