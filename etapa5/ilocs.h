@@ -76,7 +76,7 @@ void insere_lista_ilocs(LISTA_ILOCS**,ILOC);
 ILOC gera_inst(int,char*,char*,char*,char*);
 ILOC gera_inst_com_label(char*,ILOC);
 void print_iloc(ILOC);
-void print_lista_ilocs(LISTA_ILOCS*);
+void print_list_ilocs(LISTA_ILOCS*);
 void concat_lista_ilocs(LISTA_ILOCS*,LISTA_ILOCS*);
 void free_list(LISTA_ILOCS*);
 char* gera_temp(void);
