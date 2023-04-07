@@ -1,6 +1,6 @@
 #include "errors.h"
 
-extern int get_line_number(void);
+//extern int get_line_number(void);
 
 // perfumaria minha pra imprimir o erro bonitinho na tela
 const char* showType(int type)
@@ -53,40 +53,6 @@ void printError(int error, char *nome, int tipo_orig)
         break;
     }
 
-}
-
-void checkTableDec(Stack* stack, valor_t novo_simbolo)
-{
-    HASH_ENT* tmp = search_stack(stack,novo_simbolo.value.token);
-    if(tmp)
-    {
-        if(tmp->valor_lexico.tipo != novo_simbolo.tipo)
-            printError(ERR_DECLARED, novo_simbolo.value.token, tmp->valor_lexico.tipo);
-        if((tmp->valor_lexico.natureza == NAT_VARIABLE) && ((novo_simbolo.natureza == NAT_ARRAY)))
-            printError(ERR_VARIABLE, novo_simbolo.value.token,0);
-        if((tmp->valor_lexico.natureza == NAT_ARRAY) && ((novo_simbolo.natureza == NAT_VARIABLE) || (novo_simbolo.natureza == NAT_FUNCTION)))
-            printError(ERR_ARRAY, novo_simbolo.value.token,0);
-        if((tmp->valor_lexico.natureza == NAT_FUNCTION) && ((novo_simbolo.natureza == NAT_VARIABLE) || (novo_simbolo.natureza == NAT_ARRAY)))
-            printError(ERR_FUNCTION, novo_simbolo.value.token,0);
-        if((tmp->valor_lexico.tipo == CHAR_TYPE) && (novo_simbolo.tipo == INT_TYPE))
-            printError(ERR_CHAR_TO_INT, novo_simbolo.value.token,0);
-        if((tmp->valor_lexico.tipo == CHAR_TYPE) && (novo_simbolo.tipo == FLOAT_TYPE))
-            printError(ERR_CHAR_TO_FLOAT, novo_simbolo.value.token,0);
-        if((tmp->valor_lexico.tipo == CHAR_TYPE) && (novo_simbolo.tipo == BOOL_TYPE))
-            printError(ERR_CHAR_TO_BOOL, novo_simbolo.value.token,0);
-        if(((tmp->valor_lexico.tipo == INT_TYPE) || (tmp->valor_lexico.tipo == FLOAT_TYPE) || (tmp->valor_lexico.tipo == BOOL_TYPE)) && (novo_simbolo.tipo == CHAR_TYPE))
-            printError(ERR_X_TO_CHAR, novo_simbolo.value.token,0);
-        if((tmp->valor_lexico.tipo == CHAR_TYPE) && (novo_simbolo.natureza == NAT_ARRAY))
-            printError(ERR_CHAR_VECTOR, novo_simbolo.value.token,0);
-    }
-}
-
-void checkTableInUse(Stack* stack, valor_t novo_simbolo){
-    HASH_ENT* tmp = search_stack(stack,novo_simbolo.value.token);
-    if(!tmp)
-        printError(ERR_UNDECLARED,novo_simbolo.value.token,0);
-    else
-        checkTableDec(stack,novo_simbolo);
 }
 
 int get_result_type(int type_1, int type_2, int op_type)
@@ -449,26 +415,3 @@ void altera_tipo_na_lista(LISTA* l, valor_t tipo){
         altera_tamanho(aux->valor_lexico);
     }
 }
-
-void insere_lista_na_tabela(LISTA* l, Stack* stack){
-    LISTA* aux = NULL;
-    HASH_TABLE *table = NULL;
-
-    for(aux = l; aux!=NULL; aux=aux->prox){
-        checkTableDec(stack,aux->valor_lexico);
-        table = pop(stack);
-        aux->valor_lexico = altera_tamanho(aux->valor_lexico);
-        insert_item(table,aux->valor_lexico);
-        push(stack,table);
-    }
-}
-
-int retorna_tipo_simbolo(valor_t s, Stack* stack){
-    HASH_ENT* achou = search_stack(stack,s.value.token);
-    if(achou)
-        return achou->valor_lexico.tipo;
-    else
-        printError(ERR_UNDECLARED,s.value.token,s.tipo);
-    return 0;
-}
-// alterar para que inuse faça a verificacao na pilha e dec apenas na tabela!!!!

@@ -24,14 +24,8 @@
 #include "parser.tab.h"
 #endif
 
-#ifndef STACK_H
-#include "stack_management.h"
-#endif
-
 const char* showType(int);
 void printError(int,char*,int);
-void checkTableDec(Stack*,valor_t);
-void checkTableInUse(Stack*,valor_t);
 int get_result_type(int,int,int);
 void type_error(int,int,int);
 valor_t altera_tipo(valor_t,valor_t); // para declaracoes simples
@@ -41,9 +35,6 @@ valor_t altera_tamanho(valor_t);
 node_t* inf_tipo(node_t*,node_t*,node_t*,int);
 node_t* altera_tipo_no(node_t*,int); // para regras tipo lista
 int recupera_tipo_t(node_t*); // para operandos do tipo arvore - expressao
-int retorna_tipo_simbolo(valor_t, Stack*);
 node_t* inf_tipo_lex(node_t*,valor_t,node_t*,int);
 void altera_tipo_na_lista(LISTA*,valor_t);
-void insere_lista_na_tabela(LISTA*,Stack*);
-
 #endif
