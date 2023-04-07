@@ -1,19 +1,16 @@
+#include <stdio.h>
 #include "list.h"
 
-void inicia_lista(){
-    lista2 = NULL;
-}
-
-void insere(valor_t valor_lexico){
+void insere(LISTA* lista,valor_t valor_lexico){
     LISTA* p = (LISTA *)malloc(sizeof(LISTA));
     p->valor_lexico = valor_lexico;
     p->prox = NULL;
 
-    if(lista2==NULL)
-        lista2 = p;
+    if(lista==NULL)
+        lista = p;
     else{
-        p->prox = lista2;
-        lista2 = p;
+        p->prox = lista;
+        lista = p;
     }
 }
 

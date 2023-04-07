@@ -30,6 +30,7 @@
 #define ILOC_DEC 360
 #define ILOC_SUBI 361
 #define ILOC_NOP 364
+#define ILOC_MULTI 365
 /*#define ILOC_ADD 2
 #define ILOC_SUB 3
 #define ILOC_MUL 4

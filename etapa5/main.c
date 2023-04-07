@@ -2,8 +2,8 @@
 extern int yyparse(void);
 extern int yylex_destroy(void);
 extern void initMe(void);
-extern Stack* stack;
-extern LISTA* lista2;
+Stack* stack;
+LISTA* lista2;
 void *arvore = NULL;
 void exporta (void *arvore);
 void libera (void *arvore);

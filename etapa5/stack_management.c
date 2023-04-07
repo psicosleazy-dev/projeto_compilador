@@ -112,6 +112,15 @@ int escopo_global(Stack *stack, valor_t s)
   return 0;
 }
 
+char* retorna_label(Stack* s, char* token)
+{
+    HASH_ENT *ent = NULL;
+    ent = search_stack(s,token);
+    if (ent)
+        return ent->valor_lexico.label;
+    return "NULL";
+}
+
 /*
 int main(){
     Stack *stack = create_stack();

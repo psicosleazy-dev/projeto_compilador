@@ -24,9 +24,8 @@ typedef struct lista{
 	struct lista *prox;
 }LISTA;
 
-LISTA* lista2; // lista de simbolos
 void inicia_lista(); // inicia lista de simbolos
-void insere(valor_t);
+void insere(LISTA*,valor_t);
 void print_lista(LISTA*);
 void destroi_lista(LISTA*);
 #endif

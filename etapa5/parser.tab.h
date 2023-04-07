@@ -44,21 +44,17 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "parser.y"
+#line 17 "parser.y"
 
-#ifndef _ARVORE_H_
 #include "ast.h"
-#endif
+#include "hash.h"
+#include "list.h"
+#include "errors.h"
+#include "stack_management.h"
+#include "ilocs.h"
+#include "ast.h" 
 
-int yylex(void);
-void yyerror (char const *s);
-extern int get_line_number();
-extern void* arvore;
-// definir as seguintes variaveis aqui ao inves de com extern
-extern Stack* stack;
-extern LISTA* lista2;
-
-#line 67 "parser.tab.h"
+#line 58 "parser.tab.h"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -94,12 +90,12 @@ extern LISTA* lista2;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 25 "parser.y"
+#line 26 "parser.y"
 
  node_t *no;
  valor_t valor_lexico;
 
-#line 108 "parser.tab.h"
+#line 99 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
