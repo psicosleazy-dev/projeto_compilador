@@ -82,7 +82,6 @@ void concat_lista_ilocs(LISTA_ILOCS*,LISTA_ILOCS*);
 void free_list(LISTA_ILOCS*);
 char* gera_temp(void);
 char* gera_rotulo(void);
-//char* retorna_label(Stack*,char*);
 //char* retorna_temp(node_t*);
 //void atribui_temp(node_t*);
 

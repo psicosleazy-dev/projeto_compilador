@@ -29,4 +29,5 @@ void checkTableDec(Stack*,valor_t);
 void checkTableInUse(Stack*,valor_t);
 int retorna_tipo_simbolo(valor_t, Stack*);
 void insere_lista_na_tabela(LISTA*,Stack*);
+char* retorna_label(Stack*,char*);
 #endif

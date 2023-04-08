@@ -178,6 +178,13 @@ void insere_lista_na_tabela(LISTA* l, Stack* stack){
     }
 }
 
+char* retorna_label(Stack* stack, char* token){
+    HASH_ENT* ent = search_stack(stack, token);
+    if(ent)
+        return ent->valor_lexico.label;
+    return "null";
+}
+
 /*
 int main(){
     Stack *stack = create_stack();
