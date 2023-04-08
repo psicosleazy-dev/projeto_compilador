@@ -99,7 +99,7 @@ funcao: tipo TK_IDENTIFICADOR '(' parametros ')' bloco { // adicionar na tabela 
 	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 	inst = gera_inst_com_label(label_da_funcao,inst);
 	insere_lista_ilocs(&l,inst);
-	concat_lista_ilocs(l,$6->code);
+	l = concat_lista_ilocs(l,$6->code);
 	$$->code = l;
 	};
 tipo: TK_PR_INT {lista = NULL;}
@@ -261,8 +261,8 @@ inst = gera_inst(ILOC_OR,"or",$1->temp,$3->temp,$$->temp);
 insere_lista_ilocs(&l,inst);
 code_1 = $1->code;
 code_3 = $3->code;
-concat_lista_ilocs(code_1,code_3);
-concat_lista_ilocs(code_1,l);
+code_1 = concat_lista_ilocs(code_1,code_3);
+code_1 = concat_lista_ilocs(code_1,l);
 $$->code = code_1;
 }
 	| prec_six {$$ = $1;};
@@ -277,8 +277,8 @@ inst = gera_inst(ILOC_AND,"and",$1->temp,$3->temp,$$->temp);
 insere_lista_ilocs(&l,inst);
 code_1 = $1->code;
 code_3 = $3->code;
-concat_lista_ilocs(code_1,code_3);
-concat_lista_ilocs(code_1,l);
+code_1 = concat_lista_ilocs(code_1,code_3);
+code_1 = concat_lista_ilocs(code_1,l);
 $$->code = code_1;
 }
 	| prec_five {$$ = $1;};
@@ -309,8 +309,8 @@ insere_lista_ilocs(&l,inst6);
 LISTA_ILOCS *code_1 = NULL,*code_3 = NULL;
 code_1 = $1->code;
 code_3 = $3->code;
-concat_lista_ilocs(code_1,code_3);
-concat_lista_ilocs(code_1,l);
+code_1 = concat_lista_ilocs(code_1,code_3);
+code_1 = concat_lista_ilocs(code_1,l);
 $$->code = code_1;
 }
 	| prec_five TK_OC_NE prec_four {$$ = create_node(AST_NE, "!=");
@@ -340,8 +340,8 @@ $$->code = code_1;
 	LISTA_ILOCS *code_1 = NULL,*code_3 = NULL;
 	code_1 = $1->code;
 	code_3 = $3->code;
-	concat_lista_ilocs(code_1,code_3);
-	concat_lista_ilocs(code_1,l);
+	code_1 = concat_lista_ilocs(code_1,code_3);
+	code_1 = concat_lista_ilocs(code_1,l);
 	$$->code = code_1;
 	}
 	| prec_four {$$ = $1;};
@@ -372,8 +372,8 @@ insere_lista_ilocs(&l,inst6);
 LISTA_ILOCS *code_1 = NULL,*code_3 = NULL;
 code_1 = $1->code;
 code_3 = $3->code;
-concat_lista_ilocs(code_1,code_3);
-concat_lista_ilocs(code_1,l);
+code_1 = concat_lista_ilocs(code_1,code_3);
+code_1 = concat_lista_ilocs(code_1,l);
 $$->code = code_1;}
 	| prec_four '<' prec_three {$$ = create_node(AST_L, "<");
 	add_child($$,$1);
@@ -402,8 +402,8 @@ insere_lista_ilocs(&l,inst6);
 LISTA_ILOCS *code_1 = NULL,*code_3 = NULL;
 code_1 = $1->code;
 code_3 = $3->code;
-concat_lista_ilocs(code_1,code_3);
-concat_lista_ilocs(code_1,l);
+code_1 = concat_lista_ilocs(code_1,code_3);
+code_1 = concat_lista_ilocs(code_1,l);
 $$->code = code_1;}
 	| prec_four TK_OC_LE prec_three {$$ = create_node(AST_LE, "<=");
 	add_child($$,$1);
@@ -432,8 +432,8 @@ insere_lista_ilocs(&l,inst6);
 LISTA_ILOCS *code_1 = NULL,*code_3 = NULL;
 code_1 = $1->code;
 code_3 = $3->code;
-concat_lista_ilocs(code_1,code_3);
-concat_lista_ilocs(code_1,l);
+code_1 = concat_lista_ilocs(code_1,code_3);
+code_1 = concat_lista_ilocs(code_1,l);
 $$->code = code_1;}
 	| prec_four TK_OC_GE prec_three {$$ = create_node(AST_GE, ">=");
 	add_child($$,$1);
@@ -462,8 +462,8 @@ insere_lista_ilocs(&l,inst6);
 LISTA_ILOCS *code_1 = NULL,*code_3 = NULL;
 code_1 = $1->code;
 code_3 = $3->code;
-concat_lista_ilocs(code_1,code_3);
-concat_lista_ilocs(code_1,l);
+code_1 = concat_lista_ilocs(code_1,code_3);
+code_1 = concat_lista_ilocs(code_1,l);
 $$->code = code_1;}
 	| prec_three {$$ = $1;};
 prec_three: prec_three '+' prec_two {$$ = create_node(AST_ADD, "+");
@@ -480,8 +480,8 @@ else
 insere_lista_ilocs(&l,inst);
 code_1 = $1->code;
 code_3 = $3->code;
-concat_lista_ilocs(code_1,code_3);
-concat_lista_ilocs(code_1,l);
+code_1 = concat_lista_ilocs(code_1,code_3);
+code_1 = concat_lista_ilocs(code_1,l);
 $$->code = code_1;
 }
 	| prec_three '-' prec_two {$$ = create_node(AST_SUB, "-");
@@ -498,8 +498,8 @@ else
 insere_lista_ilocs(&l,inst);
 code_1 = $1->code;
 code_3 = $3->code;
-concat_lista_ilocs(code_1,code_3);
-concat_lista_ilocs(code_1,l);
+code_1 = concat_lista_ilocs(code_1,code_3);
+code_1 = concat_lista_ilocs(code_1,l);
 $$->code = code_1;}
 	| prec_two {$$ = $1;};
 prec_two: prec_two '*' prec_one {$$ = create_node(AST_MUL, "*");
@@ -516,8 +516,8 @@ else
 insere_lista_ilocs(&l,inst);
 code_1 = $1->code;
 code_3 = $3->code;
-concat_lista_ilocs(code_1,code_3);
-concat_lista_ilocs(code_1,l);
+code_1 = concat_lista_ilocs(code_1,code_3);
+code_1 = concat_lista_ilocs(code_1,l);
 $$->code = code_1;
 }
 	| prec_two '/' prec_one {$$ = create_node(AST_DIV, "/");
@@ -534,8 +534,8 @@ $$->code = code_1;
 	insere_lista_ilocs(&l,inst);
 	code_1 = $1->code;
 	code_3 = $3->code;
-	concat_lista_ilocs(code_1,code_3);
-	concat_lista_ilocs(code_1,l);
+	code_1 = concat_lista_ilocs(code_1,code_3);
+	code_1 = concat_lista_ilocs(code_1,l);
 	$$->code = code_1;}
 	| prec_two '%' prec_one {$$ = create_node(AST_MOD, "%"); add_child($$,$1); add_child($$,$3); $$ = inf_tipo($$,$1,$3,AST_MOD);}
 	| prec_one {$$ = $1;};
@@ -742,7 +742,7 @@ retorno: TK_PR_RETURN expressao {
 	ILOC inst;
 	inst = gera_inst(ILOC_JUMP,"jump",NULL,NULL,$$->temp);
 	insere_lista_ilocs(&l,inst);
-	concat_lista_ilocs(l,$2->code);
+	l = concat_lista_ilocs(l,$2->code);
 	$$->code = l;
 	};
 if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco else {
@@ -793,7 +793,7 @@ while: TK_PR_WHILE '(' expressao ')' bloco {
 	insere_lista_ilocs(&l,inst);
 	inst = gera_inst(ILOC_BR,"cbr",opaco,label_true,label_false);
 	insere_lista_ilocs(&l,inst);
-	concat_lista_ilocs(l,$5->code);
+	l = concat_lista_ilocs(l,$5->code);
 	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 	inst = gera_inst_com_label(next,inst);
 	insere_lista_ilocs(&l,inst);

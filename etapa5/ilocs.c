@@ -138,7 +138,7 @@ char *gera_rotulo(void)
   static int contador = 0;
   return contador++;
 }*/
-
+/*
 int main(){
   LISTA_ILOCS *l = NULL;
   ILOC inst, inst2;
@@ -153,4 +153,4 @@ int main(){
   print_list_ilocs(l);
 
   return 0;
-}
+}*/
