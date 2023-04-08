@@ -589,10 +589,12 @@ $$ = create_node(AST_INDEX,"[]");
     /*$$->temp = strdup(gera_temp());
 	LISTA_ILOCS* l = NULL;
 	ILOC inst;
+	char buf[2];
+	sprintf(buf, "%d", retorna_end_desloc());
 	if(escopo_global(stack,$1))
-	   inst = gera_inst(ILOC_LOADAI,"loadAI","rbss",itoa(retorna_end_desloc),$$->temp);
+	   inst = gera_inst(ILOC_LOADAI,"loadAI","rbss",buf,$$->temp);
 	else
-	   inst = gera_inst(ILOC_LOADAI,"loadAI","rfp",itoa(retorna_end_desloc),$$->temp);
+	   inst = gera_inst(ILOC_LOADAI,"loadAI","rfp",buf,$$->temp);
 	insere_lista_ilocs(&l,inst);
 	$$->code = l;
 	*/}
@@ -608,7 +610,9 @@ $$ = create_node(AST_INDEX,"[]");
 	$$->temp = gera_temp();
 	LISTA_ILOCS* l = NULL;
 	ILOC inst;
-	inst = gera_inst(ILOC_LOADI,"loadI",itoa($1.value.int_value),"null",$$->temp);
+	char buf[2];
+	sprintf(buf,"%d",$1.value.int_value);
+	inst = gera_inst(ILOC_LOADI,"loadI",buf,"null",$$->temp);
 	insere_lista_ilocs(&l,inst);
 	$$->code = l;
 	}
@@ -634,7 +638,9 @@ $$ = create_node(AST_INDEX,"[]");
 	$$->temp = gera_temp();
 	LISTA_ILOCS* l = NULL;
 	ILOC inst;
-	inst = gera_inst(ILOC_LOADI,"loadI",itoa($1.value.int_value),"null",$$->temp);
+	char buf[2];
+	sprintf(buf,"%d",$1.value.int_value);
+	inst = gera_inst(ILOC_LOADI,"loadI",buf,"null",$$->temp);
 	insere_lista_ilocs(&l,inst);
 	$$->code = l;
 	}
@@ -650,7 +656,9 @@ $$ = create_node(AST_INDEX,"[]");
 	$$->temp = gera_temp();
 	LISTA_ILOCS* l = NULL;
 	ILOC inst;
-	inst = gera_inst(ILOC_LOADI,"loadI",itoa($1.value.int_value),"null",$$->temp);
+	char buf[2];
+	sprintf(buf, "%d", $1.value.int_value);
+	inst = gera_inst(ILOC_LOADI,"loadI",buf,"null",$$->temp);
 	insere_lista_ilocs(&l,inst);
 	$$->code = l;}
 	| chamada_funcao {$$ = $1;}; 
@@ -702,11 +710,12 @@ node_t *new_node;
 	$$->temp = strdup(gera_temp());
 	LISTA_ILOCS* l = NULL;
 	ILOC inst;
-	char buf[20];
+	char buf[2];
+	sprintf(buf, "%d", retorna_end_desloc(stack,$1));
 	if(escopo_global(stack,$1))
-	   inst = gera_inst(ILOC_ATT,"storeAI",$3->temp,"rbss",itoa(retorna_end_desloc(stack,$1),buf,10));
+	   inst = gera_inst(ILOC_ATT,"storeAI",$3->temp,"rbss",buf);
 	else
-	   inst = gera_inst(ILOC_ATT,"storeAI",$3->temp,"rfp",itoa(retorna_end_desloc(stack,$1),buf,10));
+	   inst = gera_inst(ILOC_ATT,"storeAI",$3->temp,"rfp",buf);
 	insere_lista_ilocs(&l,inst);
 	$$->code = l;
 	};
