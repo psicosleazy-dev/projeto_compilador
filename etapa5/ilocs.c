@@ -104,10 +104,19 @@ void free_list(LISTA_ILOCS* l){
     }
 }
 
-/*
-void concat_lista_ilocs(LISTA_ILOCS* l1,LISTA_ILOCS* l2){
+LISTA_ILOCS* concat_lista_ilocs(LISTA_ILOCS* l1,LISTA_ILOCS* l2){
+  if (l1 == NULL) 
+    return l2;
+  else if (l2 == NULL)
+    return l1;
+  
+  LISTA_ILOCS* atual = l1;
+  while (atual->next != NULL)
+    atual = atual->next;
 
-}*/
+  atual->next = l2;
+  return l1;
+}
 
 char *gera_temp(void)
 {
