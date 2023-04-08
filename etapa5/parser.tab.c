@@ -68,18 +68,10 @@
 /* First part of user prologue.  */
 #line 1 "parser.y"
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 int yylex(void);
 void yyerror (char const *s);
-extern int get_line_number();
-extern void* arvore;
-// definir as seguintes variaveis aqui ao inves de com extern
-extern Stack* stack;
-extern LISTA* lista;
 
-#line 83 "parser.tab.c"
+#line 75 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -122,17 +114,15 @@ extern LISTA* lista;
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 17 "parser.y"
+#line 8 "parser.y"
 
-#include "ast.h"
-#include "hash.h"
-#include "list.h"
-#include "errors.h"
 #include "stack_management.h"
-#include "ilocs.h"
-#include "ast.h" 
+extern Stack* stack;
+extern LISTA* lista;
+extern int get_line_number();
+extern void* arvore;
 
-#line 136 "parser.tab.c"
+#line 126 "parser.tab.c"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -168,12 +158,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 26 "parser.y"
+#line 16 "parser.y"
 
  node_t *no;
  valor_t valor_lexico;
 
-#line 177 "parser.tab.c"
+#line 167 "parser.tab.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -550,16 +540,16 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    86,    86,    87,    88,    89,    90,    91,    92,   115,
-     116,   117,   118,   119,   120,   121,   141,   159,   171,   184,
-     198,   200,   202,   213,   224,   234,   237,   240,   253,   263,
-     278,   279,   294,   295,   326,   357,   358,   388,   418,   448,
-     478,   479,   497,   514,   515,   533,   550,   551,   552,   553,
-     554,   555,   556,   557,   558,   559,   560,   561,   562,   564,
-     574,   583,   609,   625,   635,   651,   666,   667,   670,   671,
-     672,   677,   682,   683,   699,   723,   724,   725,   726,   727,
-     728,   729,   730,   731,   732,   733,   734,   735,   736,   738,
-     749,   775,   776,   777
+       0,    76,    76,    77,    78,    79,    80,    81,    82,   105,
+     106,   107,   108,   109,   110,   111,   131,   149,   161,   174,
+     188,   190,   192,   203,   214,   224,   227,   230,   243,   253,
+     268,   269,   284,   285,   316,   347,   348,   378,   408,   438,
+     468,   469,   487,   504,   505,   523,   540,   541,   542,   543,
+     544,   545,   546,   547,   548,   549,   550,   551,   552,   554,
+     564,   573,   599,   615,   625,   641,   656,   657,   660,   661,
+     662,   667,   672,   673,   689,   713,   714,   715,   716,   717,
+     718,   719,   720,   721,   722,   723,   724,   725,   726,   728,
+     739,   765,   766,   767
 };
 #endif
 
@@ -1462,43 +1452,43 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 86 "parser.y"
+#line 76 "parser.y"
                 {arvore = (void*)(yyval.no); (yyval.no) = (yyvsp[0].no);}
-#line 1468 "parser.tab.c"
+#line 1458 "parser.tab.c"
     break;
 
   case 3:
-#line 87 "parser.y"
+#line 77 "parser.y"
           {arvore = (void*)(yyval.no); (yyval.no) = NULL;}
-#line 1474 "parser.tab.c"
+#line 1464 "parser.tab.c"
     break;
 
   case 4:
-#line 88 "parser.y"
+#line 78 "parser.y"
               {(yyval.no) = (yyvsp[0].no);}
-#line 1480 "parser.tab.c"
+#line 1470 "parser.tab.c"
     break;
 
   case 5:
-#line 89 "parser.y"
+#line 79 "parser.y"
                        {(yyval.no) = (yyvsp[-1].no); add_child((yyvsp[-1].no),(yyvsp[0].no));}
-#line 1486 "parser.tab.c"
+#line 1476 "parser.tab.c"
     break;
 
   case 6:
-#line 90 "parser.y"
+#line 80 "parser.y"
                                 {(yyval.no) = (yyvsp[-1].no);}
-#line 1492 "parser.tab.c"
+#line 1482 "parser.tab.c"
     break;
 
   case 7:
-#line 91 "parser.y"
+#line 81 "parser.y"
                                       {(yyval.no) = (yyvsp[-2].no); add_child((yyval.no),(yyvsp[0].no));}
-#line 1498 "parser.tab.c"
+#line 1488 "parser.tab.c"
     break;
 
   case 8:
-#line 92 "parser.y"
+#line 82 "parser.y"
                                                        { // adicionar na tabela o label da funcao funcao: header body
 	char* leaf;
 	leaf = create_leaf((yyvsp[-4].valor_lexico));
@@ -1522,47 +1512,47 @@ yyreduce:
 	concat_lista_ilocs(l,(yyvsp[0].no)->code);
 	(yyval.no)->code = l;
 	}
-#line 1526 "parser.tab.c"
+#line 1516 "parser.tab.c"
     break;
 
   case 9:
-#line 115 "parser.y"
+#line 105 "parser.y"
                 {lista = NULL;}
-#line 1532 "parser.tab.c"
+#line 1522 "parser.tab.c"
     break;
 
   case 10:
-#line 116 "parser.y"
+#line 106 "parser.y"
                       {lista = NULL;}
-#line 1538 "parser.tab.c"
+#line 1528 "parser.tab.c"
     break;
 
   case 11:
-#line 117 "parser.y"
+#line 107 "parser.y"
                      {lista = NULL;}
-#line 1544 "parser.tab.c"
+#line 1534 "parser.tab.c"
     break;
 
   case 12:
-#line 118 "parser.y"
+#line 108 "parser.y"
                      {lista = NULL;}
-#line 1550 "parser.tab.c"
+#line 1540 "parser.tab.c"
     break;
 
   case 13:
-#line 119 "parser.y"
+#line 109 "parser.y"
                                            {altera_tipo_na_lista(lista,(yyvsp[-1].valor_lexico)); insere_lista_na_tabela(lista,stack); (yyval.no) = (yyvsp[0].no);}
-#line 1556 "parser.tab.c"
+#line 1546 "parser.tab.c"
     break;
 
   case 14:
-#line 120 "parser.y"
+#line 110 "parser.y"
                                          {altera_tipo_na_lista(lista,(yyvsp[-1].valor_lexico)); insere_lista_na_tabela(lista,stack); (yyval.no) = (yyvsp[0].no);}
-#line 1562 "parser.tab.c"
+#line 1552 "parser.tab.c"
     break;
 
   case 15:
-#line 121 "parser.y"
+#line 111 "parser.y"
                                                                                                      {
 	node_t *new_node;
 	(yyval.no) = create_node(AST_INIT,"<=");
@@ -1583,11 +1573,11 @@ yyreduce:
 	add_child((yyval.no),new_node);
 	(yyvsp[-5].valor_lexico) = altera_natureza((yyvsp[-5].valor_lexico),NAT_ARRAY);
 	insere(lista,(yyvsp[-5].valor_lexico));}
-#line 1587 "parser.tab.c"
+#line 1577 "parser.tab.c"
     break;
 
   case 16:
-#line 141 "parser.y"
+#line 131 "parser.y"
                                                                       {
 	node_t *new_node;
 	(yyval.no) = create_node(AST_INIT,"<=");
@@ -1606,11 +1596,11 @@ yyreduce:
 	add_child((yyval.no),new_node);
 	(yyvsp[-5].valor_lexico) = altera_natureza((yyvsp[-5].valor_lexico),NAT_ARRAY);
 	insere(lista,(yyvsp[-5].valor_lexico));}
-#line 1610 "parser.tab.c"
+#line 1600 "parser.tab.c"
     break;
 
   case 17:
-#line 159 "parser.y"
+#line 149 "parser.y"
                                                   {
 	(yyval.no) = create_node(AST_ARR,"[]");
 	node_t* new_node;
@@ -1623,11 +1613,11 @@ yyreduce:
 	table = pop(stack);
 	(yyvsp[-3].valor_lexico) = altera_natureza((yyvsp[-3].valor_lexico),NAT_ARRAY);
 	insere(lista,(yyvsp[-3].valor_lexico));}
-#line 1627 "parser.tab.c"
+#line 1617 "parser.tab.c"
     break;
 
   case 18:
-#line 171 "parser.y"
+#line 161 "parser.y"
                                                {
 	(yyval.no) = create_node(AST_INIT,"<=");
 	node_t* new_node;
@@ -1641,11 +1631,11 @@ yyreduce:
 	add_child((yyval.no),new_node2);
 	(yyvsp[-2].valor_lexico) = altera_natureza((yyvsp[-2].valor_lexico),NAT_VARIABLE);
 	insere(lista,(yyvsp[-2].valor_lexico));}
-#line 1645 "parser.tab.c"
+#line 1635 "parser.tab.c"
     break;
 
   case 19:
-#line 184 "parser.y"
+#line 174 "parser.y"
                                                                      {
 	node_t* new_node;	
 	char* leaf;
@@ -1660,25 +1650,25 @@ yyreduce:
 	add_child((yyval.no),new_node2);
 	(yyvsp[-2].valor_lexico) = altera_natureza((yyvsp[-2].valor_lexico),NAT_VARIABLE);
 	insere(lista,(yyvsp[-2].valor_lexico));}
-#line 1664 "parser.tab.c"
+#line 1654 "parser.tab.c"
     break;
 
   case 20:
-#line 198 "parser.y"
+#line 188 "parser.y"
                            {(yyvsp[0].valor_lexico) = altera_natureza((yyvsp[0].valor_lexico),NAT_VARIABLE);
 	insere(lista,(yyvsp[0].valor_lexico));}
-#line 1671 "parser.tab.c"
+#line 1661 "parser.tab.c"
     break;
 
   case 21:
-#line 200 "parser.y"
+#line 190 "parser.y"
                                                  {(yyval.no) = (yyvsp[-2].no); (yyvsp[0].valor_lexico) = altera_natureza((yyvsp[0].valor_lexico),NAT_VARIABLE);
 	insere(lista,(yyvsp[0].valor_lexico));}
-#line 1678 "parser.tab.c"
+#line 1668 "parser.tab.c"
     break;
 
   case 22:
-#line 202 "parser.y"
+#line 192 "parser.y"
                                                                     {
 		(yyval.no) = create_node(AST_ARR,"[]");
 		node_t* new_node;
@@ -1690,11 +1680,11 @@ yyreduce:
 		add_child((yyval.no),(yyvsp[-5].no));
 		(yyvsp[-3].valor_lexico) = altera_natureza((yyvsp[-3].valor_lexico),NAT_ARRAY);
 		insere(lista,(yyvsp[-3].valor_lexico));}
-#line 1694 "parser.tab.c"
+#line 1684 "parser.tab.c"
     break;
 
   case 23:
-#line 213 "parser.y"
+#line 203 "parser.y"
                                                                                    {
 	(yyval.no) = create_node(AST_ARR,"[]");
 	node_t* new_node;
@@ -1706,11 +1696,11 @@ yyreduce:
 	add_child((yyval.no),(yyvsp[-5].no));
 	(yyvsp[-3].valor_lexico) = altera_natureza((yyvsp[-3].valor_lexico),NAT_ARRAY);
 	insere(lista,(yyvsp[-3].valor_lexico));}
-#line 1710 "parser.tab.c"
+#line 1700 "parser.tab.c"
     break;
 
   case 24:
-#line 224 "parser.y"
+#line 214 "parser.y"
                                                   {
 	(yyval.no) = create_node(AST_ARR,"[]");
 	node_t* new_node;	
@@ -1721,27 +1711,27 @@ yyreduce:
 	add_child((yyval.no),(yyvsp[-1].no));
 	(yyvsp[-3].valor_lexico) = altera_natureza((yyvsp[-3].valor_lexico),NAT_ARRAY);
 	insere(lista,(yyvsp[-3].valor_lexico));}
-#line 1725 "parser.tab.c"
+#line 1715 "parser.tab.c"
     break;
 
   case 25:
-#line 234 "parser.y"
+#line 224 "parser.y"
                                                   {(yyval.no) = (yyvsp[-2].no);
 	(yyvsp[0].valor_lexico) = altera_natureza((yyvsp[0].valor_lexico),NAT_VARIABLE);
 	insere(lista,(yyvsp[0].valor_lexico));}
-#line 1733 "parser.tab.c"
+#line 1723 "parser.tab.c"
     break;
 
   case 26:
-#line 237 "parser.y"
+#line 227 "parser.y"
                            {(yyval.no) = NULL;
 	(yyvsp[0].valor_lexico) = altera_natureza((yyvsp[0].valor_lexico),NAT_VARIABLE);
 	insere(lista,(yyvsp[0].valor_lexico));}
-#line 1741 "parser.tab.c"
+#line 1731 "parser.tab.c"
     break;
 
   case 27:
-#line 240 "parser.y"
+#line 230 "parser.y"
                                               {
 	(yyval.no) = create_node(AST_CIRC, "^"); 
 	node_t* new_node;
@@ -1755,11 +1745,11 @@ yyreduce:
 	table = pop(stack);
 	insert_item(table,(yyvsp[0].valor_lexico));
 	push(stack,table);}
-#line 1759 "parser.tab.c"
+#line 1749 "parser.tab.c"
     break;
 
   case 28:
-#line 253 "parser.y"
+#line 243 "parser.y"
                      {
 	node_t* new_node;	
 	char* leaf;
@@ -1770,11 +1760,11 @@ yyreduce:
 	table = pop(stack);
 	insert_item(table,(yyvsp[0].valor_lexico));
 	push(stack,table);}
-#line 1774 "parser.tab.c"
+#line 1764 "parser.tab.c"
     break;
 
   case 29:
-#line 263 "parser.y"
+#line 253 "parser.y"
                                        {(yyval.no) = create_node(AST_OR, "||");
 add_child((yyval.no),(yyvsp[-2].no));
 add_child((yyval.no),(yyvsp[0].no));
@@ -1790,17 +1780,17 @@ concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
 (yyval.no)->code = code_1;
 }
-#line 1794 "parser.tab.c"
+#line 1784 "parser.tab.c"
     break;
 
   case 30:
-#line 278 "parser.y"
+#line 268 "parser.y"
                    {(yyval.no) = (yyvsp[0].no);}
-#line 1800 "parser.tab.c"
+#line 1790 "parser.tab.c"
     break;
 
   case 31:
-#line 279 "parser.y"
+#line 269 "parser.y"
                                        {(yyval.no) = create_node(AST_AND, "&&");
 add_child((yyval.no),(yyvsp[-2].no));
 add_child((yyval.no),(yyvsp[0].no));
@@ -1816,17 +1806,17 @@ concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
 (yyval.no)->code = code_1;
 }
-#line 1820 "parser.tab.c"
+#line 1810 "parser.tab.c"
     break;
 
   case 32:
-#line 294 "parser.y"
+#line 284 "parser.y"
                     {(yyval.no) = (yyvsp[0].no);}
-#line 1826 "parser.tab.c"
+#line 1816 "parser.tab.c"
     break;
 
   case 33:
-#line 295 "parser.y"
+#line 285 "parser.y"
                                         {(yyval.no) = create_node(AST_EQ, "==");
 add_child((yyval.no),(yyvsp[-2].no));
 add_child((yyval.no),(yyvsp[0].no));
@@ -1858,11 +1848,11 @@ concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
 (yyval.no)->code = code_1;
 }
-#line 1862 "parser.tab.c"
+#line 1852 "parser.tab.c"
     break;
 
   case 34:
-#line 326 "parser.y"
+#line 316 "parser.y"
                                        {(yyval.no) = create_node(AST_NE, "!=");
 	add_child((yyval.no),(yyvsp[-2].no));
 	add_child((yyval.no),(yyvsp[0].no));
@@ -1894,17 +1884,17 @@ concat_lista_ilocs(code_1,l);
 	concat_lista_ilocs(code_1,l);
 	(yyval.no)->code = code_1;
 	}
-#line 1898 "parser.tab.c"
+#line 1888 "parser.tab.c"
     break;
 
   case 35:
-#line 357 "parser.y"
+#line 347 "parser.y"
                     {(yyval.no) = (yyvsp[0].no);}
-#line 1904 "parser.tab.c"
+#line 1894 "parser.tab.c"
     break;
 
   case 36:
-#line 358 "parser.y"
+#line 348 "parser.y"
                                     {(yyval.no) = create_node(AST_G, ">");
 add_child((yyval.no),(yyvsp[-2].no));
 add_child((yyval.no),(yyvsp[0].no));
@@ -1935,11 +1925,11 @@ code_3 = (yyvsp[0].no)->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
 (yyval.no)->code = code_1;}
-#line 1939 "parser.tab.c"
+#line 1929 "parser.tab.c"
     break;
 
   case 37:
-#line 388 "parser.y"
+#line 378 "parser.y"
                                    {(yyval.no) = create_node(AST_L, "<");
 	add_child((yyval.no),(yyvsp[-2].no));
 	add_child((yyval.no),(yyvsp[0].no));
@@ -1970,11 +1960,11 @@ code_3 = (yyvsp[0].no)->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
 (yyval.no)->code = code_1;}
-#line 1974 "parser.tab.c"
+#line 1964 "parser.tab.c"
     break;
 
   case 38:
-#line 418 "parser.y"
+#line 408 "parser.y"
                                         {(yyval.no) = create_node(AST_LE, "<=");
 	add_child((yyval.no),(yyvsp[-2].no));
 	add_child((yyval.no),(yyvsp[0].no));
@@ -2005,11 +1995,11 @@ code_3 = (yyvsp[0].no)->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
 (yyval.no)->code = code_1;}
-#line 2009 "parser.tab.c"
+#line 1999 "parser.tab.c"
     break;
 
   case 39:
-#line 448 "parser.y"
+#line 438 "parser.y"
                                         {(yyval.no) = create_node(AST_GE, ">=");
 	add_child((yyval.no),(yyvsp[-2].no));
 	add_child((yyval.no),(yyvsp[0].no));
@@ -2040,17 +2030,17 @@ code_3 = (yyvsp[0].no)->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
 (yyval.no)->code = code_1;}
-#line 2044 "parser.tab.c"
+#line 2034 "parser.tab.c"
     break;
 
   case 40:
-#line 478 "parser.y"
+#line 468 "parser.y"
                      {(yyval.no) = (yyvsp[0].no);}
-#line 2050 "parser.tab.c"
+#line 2040 "parser.tab.c"
     break;
 
   case 41:
-#line 479 "parser.y"
+#line 469 "parser.y"
                                     {(yyval.no) = create_node(AST_ADD, "+");
 add_child((yyval.no),(yyvsp[-2].no));
 add_child((yyval.no),(yyvsp[0].no));
@@ -2069,11 +2059,11 @@ concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
 (yyval.no)->code = code_1;
 }
-#line 2073 "parser.tab.c"
+#line 2063 "parser.tab.c"
     break;
 
   case 42:
-#line 497 "parser.y"
+#line 487 "parser.y"
                                   {(yyval.no) = create_node(AST_SUB, "-");
 	add_child((yyval.no),(yyvsp[-2].no));
 	add_child((yyval.no),(yyvsp[0].no));
@@ -2091,17 +2081,17 @@ code_3 = (yyvsp[0].no)->code;
 concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
 (yyval.no)->code = code_1;}
-#line 2095 "parser.tab.c"
+#line 2085 "parser.tab.c"
     break;
 
   case 43:
-#line 514 "parser.y"
+#line 504 "parser.y"
                    {(yyval.no) = (yyvsp[0].no);}
-#line 2101 "parser.tab.c"
+#line 2091 "parser.tab.c"
     break;
 
   case 44:
-#line 515 "parser.y"
+#line 505 "parser.y"
                                 {(yyval.no) = create_node(AST_MUL, "*");
 add_child((yyval.no),(yyvsp[-2].no));
 add_child((yyval.no),(yyvsp[0].no));
@@ -2120,11 +2110,11 @@ concat_lista_ilocs(code_1,code_3);
 concat_lista_ilocs(code_1,l);
 (yyval.no)->code = code_1;
 }
-#line 2124 "parser.tab.c"
+#line 2114 "parser.tab.c"
     break;
 
   case 45:
-#line 533 "parser.y"
+#line 523 "parser.y"
                                 {(yyval.no) = create_node(AST_DIV, "/");
 	add_child((yyval.no),(yyvsp[-2].no));
 	add_child((yyval.no),(yyvsp[0].no));
@@ -2142,89 +2132,89 @@ concat_lista_ilocs(code_1,l);
 	concat_lista_ilocs(code_1,code_3);
 	concat_lista_ilocs(code_1,l);
 	(yyval.no)->code = code_1;}
-#line 2146 "parser.tab.c"
+#line 2136 "parser.tab.c"
     break;
 
   case 46:
-#line 550 "parser.y"
+#line 540 "parser.y"
                                 {(yyval.no) = create_node(AST_MOD, "%"); add_child((yyval.no),(yyvsp[-2].no)); add_child((yyval.no),(yyvsp[0].no)); (yyval.no) = inf_tipo((yyval.no),(yyvsp[-2].no),(yyvsp[0].no),AST_MOD);}
-#line 2152 "parser.tab.c"
+#line 2142 "parser.tab.c"
     break;
 
   case 47:
-#line 551 "parser.y"
+#line 541 "parser.y"
                    {(yyval.no) = (yyvsp[0].no);}
-#line 2158 "parser.tab.c"
+#line 2148 "parser.tab.c"
     break;
 
   case 48:
-#line 552 "parser.y"
+#line 542 "parser.y"
                        {(yyval.no) = create_node(AST_NOT, "!"); add_child((yyval.no),(yyvsp[0].no));}
-#line 2164 "parser.tab.c"
+#line 2154 "parser.tab.c"
     break;
 
   case 49:
-#line 553 "parser.y"
+#line 543 "parser.y"
                        {(yyval.no) = create_node(AST_MINUS, "-"); add_child((yyval.no),(yyvsp[0].no));}
-#line 2170 "parser.tab.c"
+#line 2160 "parser.tab.c"
     break;
 
   case 50:
-#line 554 "parser.y"
+#line 544 "parser.y"
                     {(yyval.no) = (yyvsp[0].no);}
-#line 2176 "parser.tab.c"
+#line 2166 "parser.tab.c"
     break;
 
   case 51:
-#line 555 "parser.y"
+#line 545 "parser.y"
                              {(yyval.no) = (yyvsp[-1].no);}
-#line 2182 "parser.tab.c"
+#line 2172 "parser.tab.c"
     break;
 
   case 52:
-#line 556 "parser.y"
+#line 546 "parser.y"
                    {(yyval.no) = (yyvsp[0].no);}
-#line 2188 "parser.tab.c"
+#line 2178 "parser.tab.c"
     break;
 
   case 53:
-#line 557 "parser.y"
+#line 547 "parser.y"
                                      {(yyval.no) = create_node(AST_CIRC,"^"); add_child((yyval.no),(yyvsp[-2].no)); add_child((yyval.no),(yyvsp[0].no));}
-#line 2194 "parser.tab.c"
+#line 2184 "parser.tab.c"
     break;
 
   case 54:
-#line 558 "parser.y"
+#line 548 "parser.y"
                     {(yyval.no) = (yyvsp[0].no);}
-#line 2200 "parser.tab.c"
+#line 2190 "parser.tab.c"
     break;
 
   case 55:
-#line 559 "parser.y"
+#line 549 "parser.y"
                                      {(yyval.no) = (yyvsp[-2].no); add_child((yyval.no),(yyvsp[0].no));}
-#line 2206 "parser.tab.c"
+#line 2196 "parser.tab.c"
     break;
 
   case 56:
-#line 560 "parser.y"
+#line 550 "parser.y"
                     {(yyval.no) = (yyvsp[0].no);}
-#line 2212 "parser.tab.c"
+#line 2202 "parser.tab.c"
     break;
 
   case 57:
-#line 561 "parser.y"
+#line 551 "parser.y"
                  {(yyval.no) = (yyvsp[0].no);}
-#line 2218 "parser.tab.c"
+#line 2208 "parser.tab.c"
     break;
 
   case 58:
-#line 562 "parser.y"
+#line 552 "parser.y"
           {(yyval.no) = NULL;}
-#line 2224 "parser.tab.c"
+#line 2214 "parser.tab.c"
     break;
 
   case 59:
-#line 564 "parser.y"
+#line 554 "parser.y"
                                               {
 	char label[100] = "call ", *nome_fun;
 	nome_fun = strdup(create_leaf((yyvsp[-3].valor_lexico)));
@@ -2234,11 +2224,11 @@ concat_lista_ilocs(code_1,l);
 	(yyvsp[-3].valor_lexico) = altera_natureza((yyvsp[-3].valor_lexico),NAT_FUNCTION);
 	checkTableInUse(stack,(yyvsp[-3].valor_lexico));
 }
-#line 2238 "parser.tab.c"
+#line 2228 "parser.tab.c"
     break;
 
   case 60:
-#line 574 "parser.y"
+#line 564 "parser.y"
                                               {
 (yyval.no) = create_node(AST_INDEX,"[]");
 	node_t* new_node;
@@ -2248,11 +2238,11 @@ concat_lista_ilocs(code_1,l);
 	checkTableInUse(stack,(yyvsp[-3].valor_lexico));
 	int tipo = retorna_tipo_simbolo((yyvsp[-3].valor_lexico),stack);
 	(yyval.no) = altera_tipo_no((yyval.no),tipo);}
-#line 2252 "parser.tab.c"
+#line 2242 "parser.tab.c"
     break;
 
   case 61:
-#line 583 "parser.y"
+#line 573 "parser.y"
                            {
 	char* leaf;
 	leaf = create_leaf((yyvsp[0].valor_lexico));
@@ -2279,11 +2269,11 @@ concat_lista_ilocs(code_1,l);
 	insere_lista_ilocs(&l,inst);
 	$$->code = l;
 	*/}
-#line 2283 "parser.tab.c"
+#line 2273 "parser.tab.c"
     break;
 
   case 62:
-#line 609 "parser.y"
+#line 599 "parser.y"
                      {char* leaf;
 	leaf = create_leaf((yyvsp[0].valor_lexico));
 	(yyval.no) = create_node(AST_LIT_INT,leaf);
@@ -2300,11 +2290,11 @@ concat_lista_ilocs(code_1,l);
 	insere_lista_ilocs(&l,inst);
 	(yyval.no)->code = l;
 	}
-#line 2304 "parser.tab.c"
+#line 2294 "parser.tab.c"
     break;
 
   case 63:
-#line 625 "parser.y"
+#line 615 "parser.y"
                        {
 	char* leaf;
 	leaf = create_leaf((yyvsp[0].valor_lexico));
@@ -2315,11 +2305,11 @@ concat_lista_ilocs(code_1,l);
 	table = pop(stack);
 	insert_item(table,(yyvsp[0].valor_lexico));
 	push(stack,table);}
-#line 2319 "parser.tab.c"
+#line 2309 "parser.tab.c"
     break;
 
   case 64:
-#line 635 "parser.y"
+#line 625 "parser.y"
                        {char* leaf;
 	leaf = create_leaf((yyvsp[0].valor_lexico));
 	(yyval.no) = create_node(AST_LIT_FALSE,leaf);
@@ -2336,11 +2326,11 @@ concat_lista_ilocs(code_1,l);
 	insere_lista_ilocs(&l,inst);
 	(yyval.no)->code = l;
 	}
-#line 2340 "parser.tab.c"
+#line 2330 "parser.tab.c"
     break;
 
   case 65:
-#line 651 "parser.y"
+#line 641 "parser.y"
                       {char* leaf;
 	leaf = create_leaf((yyvsp[0].valor_lexico));
 	(yyval.no) = create_node(AST_LIT_TRUE,leaf);
@@ -2356,38 +2346,48 @@ concat_lista_ilocs(code_1,l);
 	inst = gera_inst(ILOC_LOADI,"loadI",itoa((yyvsp[0].valor_lexico).value.int_value),"null",(yyval.no)->temp);
 	insere_lista_ilocs(&l,inst);
 	(yyval.no)->code = l;}
-#line 2360 "parser.tab.c"
+#line 2350 "parser.tab.c"
     break;
 
   case 66:
-#line 666 "parser.y"
+#line 656 "parser.y"
                          {(yyval.no) = (yyvsp[0].no);}
-#line 2366 "parser.tab.c"
+#line 2356 "parser.tab.c"
     break;
 
   case 67:
-#line 667 "parser.y"
+#line 657 "parser.y"
           {HASH_TABLE* table;
 	table = create_table(HASH_SIZE);
 	push(stack,table);}
-#line 2374 "parser.tab.c"
+#line 2364 "parser.tab.c"
     break;
 
   case 68:
-#line 670 "parser.y"
+#line 660 "parser.y"
                                          {(yyval.no) = (yyvsp[-1].no);}
-#line 2380 "parser.tab.c"
+#line 2370 "parser.tab.c"
     break;
 
   case 69:
-#line 671 "parser.y"
+#line 661 "parser.y"
                   {(yyval.no) = NULL;}
-#line 2386 "parser.tab.c"
+#line 2376 "parser.tab.c"
     break;
 
   case 70:
-#line 672 "parser.y"
+#line 662 "parser.y"
                                                  {(yyvsp[0].valor_lexico) = altera_natureza((yyvsp[0].valor_lexico),NAT_VARIABLE);
+	HASH_TABLE* table;
+	table = pop(stack);
+	insert_item(table,(yyvsp[0].valor_lexico));
+	push(stack,table);}
+#line 2386 "parser.tab.c"
+    break;
+
+  case 71:
+#line 667 "parser.y"
+                                {(yyvsp[0].valor_lexico) = altera_natureza((yyvsp[0].valor_lexico),NAT_VARIABLE);
 	HASH_TABLE* table;
 	table = pop(stack);
 	insert_item(table,(yyvsp[0].valor_lexico));
@@ -2395,18 +2395,8 @@ concat_lista_ilocs(code_1,l);
 #line 2396 "parser.tab.c"
     break;
 
-  case 71:
-#line 677 "parser.y"
-                                {(yyvsp[0].valor_lexico) = altera_natureza((yyvsp[0].valor_lexico),NAT_VARIABLE);
-	HASH_TABLE* table;
-	table = pop(stack);
-	insert_item(table,(yyvsp[0].valor_lexico));
-	push(stack,table);}
-#line 2406 "parser.tab.c"
-    break;
-
   case 73:
-#line 683 "parser.y"
+#line 673 "parser.y"
                                                               {
 node_t *new_node;
 	(yyval.no) = create_node(AST_ATT,"=");
@@ -2423,11 +2413,11 @@ node_t *new_node;
 	new_node = create_node(AST_ARR,"[]");
 	add_child((yyval.no),(yyvsp[-3].no));
 	add_child((yyval.no),new_node);}
-#line 2427 "parser.tab.c"
+#line 2417 "parser.tab.c"
     break;
 
   case 74:
-#line 699 "parser.y"
+#line 689 "parser.y"
                                          {
 	(yyval.no) = create_node(AST_ATT, "=");
 	node_t* new_node;	
@@ -2452,95 +2442,95 @@ node_t *new_node;
 	insere_lista_ilocs(&l,inst);
 	(yyval.no)->code = l;
 	}
-#line 2456 "parser.tab.c"
+#line 2446 "parser.tab.c"
     break;
 
   case 75:
-#line 723 "parser.y"
+#line 713 "parser.y"
                                                         {if((yyvsp[-2].no) == NULL) {(yyval.no) = (yyvsp[0].no);} else {(yyval.no) = (yyvsp[-2].no); add_child((yyval.no),(yyvsp[0].no));}}
-#line 2462 "parser.tab.c"
+#line 2452 "parser.tab.c"
     break;
 
   case 76:
-#line 724 "parser.y"
+#line 714 "parser.y"
                                {(yyval.no) = (yyvsp[-1].no);}
-#line 2468 "parser.tab.c"
+#line 2458 "parser.tab.c"
     break;
 
   case 77:
-#line 725 "parser.y"
+#line 715 "parser.y"
                                      {(yyval.no) = (yyvsp[-2].no); add_child((yyval.no),(yyvsp[0].no));}
-#line 2474 "parser.tab.c"
+#line 2464 "parser.tab.c"
     break;
 
   case 78:
-#line 726 "parser.y"
+#line 716 "parser.y"
                     {(yyval.no) = (yyvsp[-1].no);}
-#line 2480 "parser.tab.c"
+#line 2470 "parser.tab.c"
     break;
 
   case 79:
-#line 727 "parser.y"
+#line 717 "parser.y"
                                               {(yyval.no) = (yyvsp[-2].no); add_child((yyval.no),(yyvsp[0].no));}
-#line 2486 "parser.tab.c"
+#line 2476 "parser.tab.c"
     break;
 
   case 80:
-#line 728 "parser.y"
+#line 718 "parser.y"
                              {(yyval.no) = (yyvsp[-1].no);}
-#line 2492 "parser.tab.c"
+#line 2482 "parser.tab.c"
     break;
 
   case 81:
-#line 729 "parser.y"
+#line 719 "parser.y"
                                           {(yyval.no) = (yyvsp[-2].no); add_child((yyval.no),(yyvsp[0].no));}
-#line 2498 "parser.tab.c"
+#line 2488 "parser.tab.c"
     break;
 
   case 82:
-#line 730 "parser.y"
+#line 720 "parser.y"
                          {(yyval.no) = (yyvsp[-1].no);}
-#line 2504 "parser.tab.c"
+#line 2494 "parser.tab.c"
     break;
 
   case 83:
-#line 731 "parser.y"
+#line 721 "parser.y"
                                        {(yyval.no) = (yyvsp[-2].no); add_child((yyval.no),(yyvsp[0].no));}
-#line 2510 "parser.tab.c"
+#line 2500 "parser.tab.c"
     break;
 
   case 84:
-#line 732 "parser.y"
+#line 722 "parser.y"
                       {(yyval.no) = (yyvsp[-1].no);}
-#line 2516 "parser.tab.c"
+#line 2506 "parser.tab.c"
     break;
 
   case 85:
-#line 733 "parser.y"
+#line 723 "parser.y"
                                   {(yyval.no) = (yyvsp[-2].no); add_child((yyval.no),(yyvsp[0].no));}
-#line 2522 "parser.tab.c"
+#line 2512 "parser.tab.c"
     break;
 
   case 86:
-#line 734 "parser.y"
+#line 724 "parser.y"
                  {(yyval.no) = (yyvsp[-1].no);}
-#line 2528 "parser.tab.c"
+#line 2518 "parser.tab.c"
     break;
 
   case 87:
-#line 735 "parser.y"
+#line 725 "parser.y"
                                      {(yyval.no) = (yyvsp[-2].no); add_child((yyval.no),(yyvsp[0].no));}
-#line 2534 "parser.tab.c"
+#line 2524 "parser.tab.c"
     break;
 
   case 88:
-#line 736 "parser.y"
+#line 726 "parser.y"
                     {(yyval.no) = (yyvsp[-1].no);}
-#line 2540 "parser.tab.c"
+#line 2530 "parser.tab.c"
     break;
 
   case 89:
-#line 738 "parser.y"
+#line 728 "parser.y"
                                 {
 	(yyval.no) = create_node(AST_RET,"return");
 	add_child((yyval.no),(yyvsp[0].no));
@@ -2552,11 +2542,11 @@ node_t *new_node;
 	concat_lista_ilocs(l,(yyvsp[0].no)->code);
 	(yyval.no)->code = l;
 	}
-#line 2556 "parser.tab.c"
+#line 2546 "parser.tab.c"
     break;
 
   case 90:
-#line 749 "parser.y"
+#line 739 "parser.y"
                                                      {
 	(yyval.no) = create_node(AST_IF,"if");
 	add_child((yyval.no),(yyvsp[-4].no));
@@ -2583,23 +2573,23 @@ node_t *new_node;
 	insere_lista_ilocs(&l,inst);
 	// concatenar lista do else (reavaliar else!!!!)
 	}
-#line 2587 "parser.tab.c"
+#line 2577 "parser.tab.c"
     break;
 
   case 91:
-#line 775 "parser.y"
+#line 765 "parser.y"
                        {(yyval.no) = (yyvsp[0].no);}
-#line 2593 "parser.tab.c"
+#line 2583 "parser.tab.c"
     break;
 
   case 92:
-#line 776 "parser.y"
+#line 766 "parser.y"
           {(yyval.no) = NULL;}
-#line 2599 "parser.tab.c"
+#line 2589 "parser.tab.c"
     break;
 
   case 93:
-#line 777 "parser.y"
+#line 767 "parser.y"
                                            {
 	(yyval.no) = create_node(AST_WHILE,"while");
 	add_child((yyval.no),(yyvsp[-2].no));
@@ -2626,11 +2616,11 @@ node_t *new_node;
 	insere_lista_ilocs(&l,inst);
 	
 	}
-#line 2630 "parser.tab.c"
+#line 2620 "parser.tab.c"
     break;
 
 
-#line 2634 "parser.tab.c"
+#line 2624 "parser.tab.c"
 
       default: break;
     }
@@ -2862,7 +2852,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 803 "parser.y"
+#line 793 "parser.y"
 
 void yyerror (char const *s){
 	fprintf(stderr, "%s in line %d.\n",s,get_line_number());

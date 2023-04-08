@@ -20,8 +20,8 @@
 #define STRING_TYPE	     93
 #define CHAR_TYPE	     94
 
-#ifndef YY_YY_PARSER_TAB_H_INCLUDED
-#include "parser.tab.h"
+#ifndef _ARVORE_H_
+#include "ast.h"
 #endif
 
 const char* showType(int);

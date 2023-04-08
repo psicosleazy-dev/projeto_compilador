@@ -44,17 +44,15 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 17 "parser.y"
+#line 8 "parser.y"
 
-#include "ast.h"
-#include "hash.h"
-#include "list.h"
-#include "errors.h"
 #include "stack_management.h"
-#include "ilocs.h"
-#include "ast.h" 
+extern Stack* stack;
+extern LISTA* lista;
+extern int get_line_number();
+extern void* arvore;
 
-#line 58 "parser.tab.h"
+#line 56 "parser.tab.h"
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -90,12 +88,12 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 26 "parser.y"
+#line 16 "parser.y"
 
  node_t *no;
  valor_t valor_lexico;
 
-#line 99 "parser.tab.h"
+#line 97 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

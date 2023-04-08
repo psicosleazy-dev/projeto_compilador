@@ -34,7 +34,6 @@ static void ast_print(node_t *tree){
   }
 }
 
-
 static void _ast_print_graphviz (FILE *foutput, node_t *tree){
   int i;
   if (tree != NULL){

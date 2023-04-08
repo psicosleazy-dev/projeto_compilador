@@ -1,9 +1,10 @@
 #include "stack_management.h"
+
 extern int yyparse(void);
 extern int yylex_destroy(void);
 extern void initMe(void);
 Stack* stack;
-LISTA* lista2;
+LISTA* lista;
 void *arvore = NULL;
 void exporta (void *arvore);
 void libera (void *arvore);
@@ -15,7 +16,7 @@ int main (int argc, char **argv)
   exporta(arvore);
   libera(arvore);
   delete_stack(stack);
-  destroi_lista(lista2);
+  destroi_lista(lista);
   arvore = NULL;
   yylex_destroy();
   return ret;

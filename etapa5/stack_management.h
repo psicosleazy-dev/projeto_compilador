@@ -5,10 +5,6 @@
 #include "hash.h"
 #endif
 
-#ifndef ERROR_H
-#include "errors.h"
-#endif
-
 typedef struct stack_node{
     HASH_TABLE *data;
     struct stack_node *next;

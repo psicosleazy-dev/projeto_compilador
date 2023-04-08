@@ -32,7 +32,9 @@
 #define AST_MUL 331
 #define AST_DIV 332
 
+#ifndef LIST_H
 #include "list.h"
+#endif
 
 #ifndef _ILOCS_H_
 #include "ilocs.h"

@@ -1,10 +1,7 @@
 /* Nomes: Lucas Brum e Arthur Oliveira*/
 %{
-#include <stdio.h>
-#include <string.h>
 #include "parser.tab.h"
-#include "ast.h"
-#include "errors.h"
+#include "stack_management.h"
 extern void *arvore;
 int count_line = 1;
 int get_line_number(void){

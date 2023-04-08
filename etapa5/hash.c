@@ -131,15 +131,15 @@ HASH_TABLE* create_table(int size)
 
 void calcula_tamanho(valor_t valor_lexico){
 	switch(valor_lexico.tipo){
-		case TK_LIT_FLOAT:
+		case 259://TK_LIT_FLOAT
 			valor_lexico.tamanho = 8;
 			break;
-		case TK_LIT_INT:
+		case 258://TK_LIT_INT
 			valor_lexico.tamanho = 4;
 			break;
-		case TK_LIT_CHAR:
-		case TK_LIT_TRUE:
-		case TK_LIT_FALSE:
+		case 278://TK_LIT_CHAR
+		case 260://TK_LIT_TRUE
+		case 261://TK_LIT_FALSE
 			valor_lexico.tamanho = 1;
 			break;
 	}

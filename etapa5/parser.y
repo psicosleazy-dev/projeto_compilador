@@ -1,27 +1,17 @@
 %{
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 int yylex(void);
 void yyerror (char const *s);
-extern int get_line_number();
-extern void* arvore;
-// definir as seguintes variaveis aqui ao inves de com extern
-extern Stack* stack;
-extern LISTA* lista;
 %}
-
 
 /* Nomes: Lucas Brum e Arthur Oliveira */
 %define parse.error verbose
 %code requires {
-#include "ast.h"
-#include "hash.h"
-#include "list.h"
-#include "errors.h"
 #include "stack_management.h"
-#include "ilocs.h"
-#include "ast.h" }
+extern Stack* stack;
+extern LISTA* lista;
+extern int get_line_number();
+extern void* arvore;
+}
 
 %union{
  node_t *no;

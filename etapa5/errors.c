@@ -1,6 +1,6 @@
 #include "errors.h"
 
-//extern int get_line_number(void);
+extern int get_line_number(void);
 
 // perfumaria minha pra imprimir o erro bonitinho na tela
 const char* showType(int type)
@@ -360,11 +360,11 @@ node_t* altera_datatype(node_t* no){
         no->datatype = FLOAT_TYPE;
         return no;
         break;
-    case TK_PR_BOOL:
+    case 265: //TK_PR_BOOL:
         no->datatype = BOOL_TYPE;
         return no;
         break;
-    case TK_PR_CHAR:
+    case 266: //TK_PR_CHAR:
         no->datatype = CHAR_TYPE;
         return no;
         break;
@@ -388,16 +388,16 @@ node_t* inf_tipo_lex(node_t *no, valor_t op1, node_t *op2, int tipo_op){
 
 valor_t altera_tipo(valor_t simbolo, valor_t tipo){
     switch(tipo.tipo){
-    case TK_PR_INT:
+    case 263: //TK_PR_INT
         simbolo.tipo = INT_TYPE;
         break;
-    case TK_PR_FLOAT:
+    case 264: //TK_PR_FLOAT
         simbolo.tipo = FLOAT_TYPE;
         break;
-    case TK_PR_BOOL:
+    case 265: //TK_PR_BOOL:
         simbolo.tipo = BOOL_TYPE;
         break;
-    case TK_PR_CHAR:
+    case 266: //TK_PR_CHAR:
         simbolo.tipo = CHAR_TYPE;
         break;
     }
