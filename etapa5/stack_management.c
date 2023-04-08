@@ -114,8 +114,7 @@ int escopo_global(Stack *stack, valor_t s)
 
 char* retorna_label(Stack* s, char* token)
 {
-    HASH_ENT *ent = NULL;
-    ent = search_stack(s,token);
+    HASH_ENT *ent = search_stack(s,token);;
     if (ent)
         return ent->valor_lexico.label;
     return "NULL";
@@ -176,13 +175,6 @@ void insere_lista_na_tabela(LISTA* l, Stack* stack){
         insert_item(table,aux->valor_lexico);
         push(stack,table);
     }
-}
-
-char* retorna_label(Stack* stack, char* token){
-    HASH_ENT* ent = search_stack(stack, token);
-    if(ent)
-        return ent->valor_lexico.label;
-    return "null";
 }
 
 /*
