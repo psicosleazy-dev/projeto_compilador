@@ -31,26 +31,8 @@
 #define ILOC_SUBI 361
 #define ILOC_NOP 364
 #define ILOC_MULTI 365
-/*#define ILOC_ADD 2
-#define ILOC_SUB 3
-#define ILOC_MUL 4
-#define ILOC_DIV 5
-#define ILOC_GREAT 6
-#define ILOC_LESS 7
-#define ILOC_GE 8
-#define ILOC_LE 9
-#define ILOC_EQ 10
-#define ILOC_DIF 11
-#define ILOC_AND 12
-#define ILOC_OR 13
-#define ILOC_LABEL 15
-#define ILOC_BEGINFUN 16
-#define ILOC_ENDFUN 18
-#define ILOC_IF 19
-#define ILOC_JUMP 20
-#define ILOC_CALL 21
-#define ILOC_RET 23
-#define ILOC_READ 25*/
+#define ILOC_DIVI 366
+#define ILOC_JUMPI 367
 #define MAX_LEN 3
 
 #include <string.h>
@@ -82,7 +64,4 @@ LISTA_ILOCS* concat_lista_ilocs(LISTA_ILOCS*,LISTA_ILOCS*);
 void free_list(LISTA_ILOCS*);
 char* gera_temp(void);
 char* gera_rotulo(void);
-//char* retorna_temp(node_t*);
-//void atribui_temp(node_t*);
-
 #endif

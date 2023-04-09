@@ -45,7 +45,7 @@ extern void* arvore;
 %type<no> atribuicao
 %type<no> retorno
 %type<no> if
-%type<no> else
+%type<no> if_else
 %type<no> while
 %type<no> prec_zero
 %type<valor_lexico> tipo
@@ -528,9 +528,9 @@ $$->code = code_1;
 	LISTA_ILOCS *l = NULL, *code_1, *code_3;
 	ILOC inst;
 	if($3->type == INT_TYPE)
-		inst = gera_inst(ILOC_ADDI,"divI",$1->temp,$3->temp,$$->temp);
+		inst = gera_inst(ILOC_DIVI,"divI",$1->temp,$3->temp,$$->temp);
 	else
-		inst = gera_inst(ILOC_ADDI,"div",$1->temp,$3->temp,$$->temp);
+		inst = gera_inst(ILOC_DIV,"div",$1->temp,$3->temp,$$->temp);
 	insere_lista_ilocs(&l,inst);
 	code_1 = $1->code;
 	code_3 = $3->code;
@@ -578,26 +578,18 @@ $$ = create_node(AST_INDEX,"[]");
 	checkTableInUse(stack,$1);
 	int tipo = retorna_tipo_simbolo($1,stack);
 	$$ = altera_tipo_no($$,tipo);
-    // obter o endereço da tabela de simbolos
-    // em qual tabela/escopo foi declarado
-    // gera um temporario
-    // if tabela global
-    //   gera loadAI rbss, endereco_desloca => temporario
-    // else
-    //   gera loadAI rfp, endereco_desloca => temporario
-    // coloca essa instrucao na AST em $$
-    /*$$->temp = strdup(gera_temp());
+    $$->temp = strdup(gera_temp());
 	LISTA_ILOCS* l = NULL;
 	ILOC inst;
 	char buf[2];
-	sprintf(buf, "%d", retorna_end_desloc());
+	sprintf(buf, "%d", retorna_end_desloc(stack,$1));
 	if(escopo_global(stack,$1))
 	   inst = gera_inst(ILOC_LOADAI,"loadAI","rbss",buf,$$->temp);
 	else
 	   inst = gera_inst(ILOC_LOADAI,"loadAI","rfp",buf,$$->temp);
 	insere_lista_ilocs(&l,inst);
 	$$->code = l;
-	*/}
+	}
 	| TK_LIT_INT {char* leaf;
 	leaf = create_leaf($1);
 	$$ = create_node(AST_LIT_INT,leaf);
@@ -668,11 +660,13 @@ _empilha: {HASH_TABLE* table;
 bloco: '{' _empilha comandos_simples '}' {$$ = $3;} 
 	| '{' '}' {$$ = NULL;};
 parametros: parametros ',' tipo TK_IDENTIFICADOR {$4 = altera_natureza($4,NAT_VARIABLE);
+    $4 = altera_tipo($4,$3);
 	HASH_TABLE* table;
 	table = pop(stack);
 	insert_item(table,$4);
 	push(stack,table);}
 	| tipo TK_IDENTIFICADOR {$2 = altera_natureza($2,NAT_VARIABLE);
+	$1 = altera_tipo($2,$1);
 	HASH_TABLE* table;
 	table = pop(stack);
 	insert_item(table,$2);
@@ -731,25 +725,26 @@ comandos_simples: declaracao_local ';' comandos_simples {if($1 == NULL) {$$ = $3
 	| retorno ';' {$$ = $1;}
 	| if ';' comandos_simples {$$ = $1; add_child($$,$3);}
 	| if ';' {$$ = $1;}
+	| if_else ';' comandos_simples {$$ = $1; add_child($$,$3);}
+	| if_else ';' {$$ = $1;}
 	| while ';' comandos_simples {$$ = $1; add_child($$,$3);}
 	| while ';' {$$ = $1;};
-// falta gerar codigo esses aqui tbm
 retorno: TK_PR_RETURN expressao {
 	$$ = create_node(AST_RET,"return");
 	add_child($$,$2);
 	$$->temp = gera_temp();
 	LISTA_ILOCS *l = NULL;
 	ILOC inst;
-	inst = gera_inst(ILOC_JUMP,"jump",NULL,NULL,$$->temp);
+	inst = gera_inst(ILOC_JUMP,"jump",NULL,NULL,$2->temp);
 	insere_lista_ilocs(&l,inst);
 	l = concat_lista_ilocs(l,$2->code);
 	$$->code = l;
 	};
-if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco else {
+if_else: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco TK_PR_ELSE bloco {
 	$$ = create_node(AST_IF,"if");
 	add_child($$,$3);
 	add_child($$,$6);
-	add_child($$,$7);
+	add_child($$,$8);
 	char *label_true = gera_rotulo();
 	char *label_false = gera_rotulo();
 	char *next = gera_rotulo();
@@ -763,41 +758,67 @@ if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco else {
 	insere_lista_ilocs(&l,inst);
 	inst = gera_inst(ILOC_BR,"cbr",opaco,label_true,label_false);
 	insere_lista_ilocs(&l,inst);
-	/*organizar!!!!! inst2 = gera_inst_com_label(label_true,inst);
-	inst = gera_inst(ILOC_LABEL,label_true,"nop");
+	inst = gera_inst(ILOC_LABEL,"nop","null","null","null");
+	inst = gera_inst_com_label(label_true,inst);
 	insere_lista_ilocs(&l,inst);
-	*/
-	inst = gera_inst(ILOC_JUMP,"jumpI","null","null",next);
+	l = concat_lista_ilocs(l,$6->code);
+	inst = gera_inst(ILOC_JUMPI,"jumpI","null","null",next);
 	insere_lista_ilocs(&l,inst);
-	// concatenar lista do else (reavaliar else!!!!)
+	inst = gera_inst(ILOC_LABEL,"nop","null","null","null");
+	inst = gera_inst_com_label(label_false,inst);
+	insere_lista_ilocs(&l,inst);
+	l = concat_lista_ilocs(l,$8->code);
+	inst = gera_inst(ILOC_LABEL,"nop","null","null","null");
+	inst = gera_inst_com_label(next,inst);
 	};
-else: TK_PR_ELSE bloco {$$ = $2;}
-	| {$$ = NULL;};
+if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco {
+	$$ = create_node(AST_IF,"if");
+	add_child($$,$3);
+	add_child($$,$6);
+	char *label_true = gera_rotulo();
+	char *label_false = gera_rotulo();
+	$$->temp = gera_temp();
+	char *opaco = gera_temp();
+	LISTA_ILOCS *l = NULL;
+	ILOC inst;
+	inst = gera_inst(ILOC_LOADI, "loadI","0","null",$$->temp);
+	insere_lista_ilocs(&l,inst);
+	inst = gera_inst(ILOC_DIF,"cmp_NE",$3->temp,$$->temp,opaco);
+	insere_lista_ilocs(&l,inst);
+	inst = gera_inst(ILOC_BR,"cbr",opaco,label_true,label_false);
+	insere_lista_ilocs(&l,inst);
+	inst = gera_inst(ILOC_LABEL,"nop","null","null","null");
+	inst = gera_inst_com_label(label_true,inst);
+	insere_lista_ilocs(&l,inst);
+	l = concat_lista_ilocs(l,$6->code);
+	inst = gera_inst(ILOC_JUMPI,"jumpI","null","null",label_false);
+	insere_lista_ilocs(&l,inst);
+	inst = gera_inst(ILOC_LABEL,"nop","null","null","null");
+	inst = gera_inst_com_label(label_false,inst);
+	};
 while: TK_PR_WHILE '(' expressao ')' bloco {
 	$$ = create_node(AST_WHILE,"while");
 	add_child($$,$3);
 	add_child($$,$5);
-	// tentar seguir a mesma logica da operacao relacional e do if pra traduzir
 	char *label_true = gera_rotulo();
 	char *label_false = gera_rotulo();
-	char *next = gera_rotulo();
 	$$->temp = gera_temp();
 	char *opaco = gera_temp();
     LISTA_ILOCS *l = NULL;
 	ILOC inst;
-	// gerar iloc com label label_verdade: nop (acho q pode ser label do proprio codigo)
-	inst = gera_inst(ILOC_LOADI, "loadI","0",NULL,$$->temp);
+	inst = gera_inst(ILOC_LABEL,"nop","null","null","null");
 	inst = gera_inst_com_label(label_true,inst);
 	insere_lista_ilocs(&l,inst);
+	inst = gera_inst(ILOC_LOADI, "loadI","0",NULL,$$->temp);
 	inst = gera_inst(ILOC_DIF,"cmp_NE",$3->temp,$$->temp,opaco);
 	insere_lista_ilocs(&l,inst);
 	inst = gera_inst(ILOC_BR,"cbr",opaco,label_true,label_false);
 	insere_lista_ilocs(&l,inst);
 	l = concat_lista_ilocs(l,$5->code);
 	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
-	inst = gera_inst_com_label(next,inst);
+	inst = gera_inst_com_label(label_false,inst);
 	insere_lista_ilocs(&l,inst);
-	
+	$$->code = l;
 	};
 %%
 void yyerror (char const *s){

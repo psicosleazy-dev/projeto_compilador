@@ -60,4 +60,5 @@ static void _ast_print_graphviz(FILE*, node_t*);
 static void _ast_print_graphviz2(FILE*, node_t*);
 void exporta(void*);
 void libera(void*);
+void print_code(void*);
 #endif

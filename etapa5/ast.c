@@ -83,3 +83,9 @@ void libera(void *arvore){
     free(tree);
   }
 }
+
+void print_code(void *arvore){
+  node_t *tree = (node_t *) arvore;
+  
+  print_list_ilocs(tree->code);
+}
