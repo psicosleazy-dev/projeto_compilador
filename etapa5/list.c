@@ -5,7 +5,7 @@ void insere(LISTA* lista,valor_t valor_lexico){
     LISTA* p = (LISTA *)malloc(sizeof(LISTA));
     p->valor_lexico = valor_lexico;
     p->prox = NULL;
-
+    printf("inserindo");
     if(lista==NULL)
         lista = p;
     else{

@@ -1,0 +1,6 @@
+int a;
+int b;
+int foo(){
+int xa;
+xa = 4;
+}

@@ -3,12 +3,11 @@
 extern int yyparse(void);
 extern int yylex_destroy(void);
 extern void initMe(void);
-Stack* stack;
-LISTA* lista;
 void *arvore = NULL;
 void exporta (void *arvore);
 void libera (void *arvore);
-
+Stack* stack;
+LISTA* lista;
 int main (int argc, char **argv)
 {
   initMe();

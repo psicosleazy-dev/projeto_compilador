@@ -31,19 +31,22 @@ void insert_item(HASH_TABLE* table, valor_t novo_simbolo)
 
     HASH_ENT* current_item; /* = (HASH_ENT*) malloc(sizeof(HASH_ENT));*/
     current_item = table->items[index];
-
     if (current_item == NULL){
         if(novo_simbolo.natureza == NAT_VARIABLE){
             item->desloc = desloc;
             table->items[index] = item;
             desloc = desloc + item->valor_lexico.tamanho;
+            printf("inseriu variavel");
         }
         if(novo_simbolo.linha == NAT_FUNCTION){
             table->items[index] = item;
             novo_simbolo.label = strdup(gera_rotulo());
+            printf("inseriu nome funcao");
         }
-        else
+        else{
             table->items[index] = item;
+            printf("inseriu");
+        }
     }
 }
 

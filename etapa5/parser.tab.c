@@ -2897,8 +2897,8 @@ void yyerror (char const *s){
 }
 
 void initMe(){
-	lista = NULL;
 	stack = create_stack();
 	HASH_TABLE *table = create_table(HASH_SIZE);
 	push(stack,table); // tabela do escopo global
+
 }

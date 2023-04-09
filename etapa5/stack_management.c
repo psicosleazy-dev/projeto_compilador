@@ -167,13 +167,14 @@ int retorna_tipo_simbolo(valor_t s, Stack* stack){
 void insere_lista_na_tabela(LISTA* l, Stack* stack){
     LISTA* aux = NULL;
     HASH_TABLE *table = NULL;
-
+    if(!l) printf("sim, a lista ta vazia");
     for(aux = l; aux!=NULL; aux=aux->prox){
         checkTableDec(stack,aux->valor_lexico);
         table = pop(stack);
         aux->valor_lexico = altera_tamanho(aux->valor_lexico);
         insert_item(table,aux->valor_lexico);
         push(stack,table);
+        printf("entrou no laco");
     }
 }
 
