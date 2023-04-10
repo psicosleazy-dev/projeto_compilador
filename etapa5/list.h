@@ -23,9 +23,8 @@ typedef struct lista{
 	valor_t valor_lexico;
 	struct lista *prox;
 }LISTA;
-
-void inicia_lista(); // inicia lista de simbolos
-void insere(LISTA*,valor_t);
+void inicializar_lista(LISTA**);
+LISTA* insere(LISTA*,valor_t);
 void print_lista(LISTA*);
 void destroi_lista(LISTA*);
 #endif

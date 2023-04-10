@@ -1,25 +1,44 @@
 #include <stdio.h>
 #include "list.h"
 
-void insere(LISTA* lista,valor_t valor_lexico){
-    LISTA* p = (LISTA *)malloc(sizeof(LISTA));
-    p->valor_lexico = valor_lexico;
-    p->prox = NULL;
-    printf("inserindo");
-    if(lista==NULL)
-        lista = p;
-    else{
-        p->prox = lista;
-        lista = p;
+
+LISTA *criar_no(valor_t valor) {
+    LISTA *novo = (LISTA *) malloc(sizeof(LISTA));
+    if (novo == NULL) {
+        printf("Erro ao alocar memoria!\n");
+        exit(1);
     }
+    novo->valor_lexico = valor;
+    novo->prox = NULL;
+    return novo;
+}
+
+LISTA* insere(LISTA *head, valor_t valor) {
+    LISTA *novo = criar_no(valor);
+    if (head == NULL) {
+        head = novo;
+    } else {
+        LISTA *atual = head;
+        while (atual->prox != NULL) {
+            atual = atual->prox;
+        }
+        atual->prox = novo;
+    }
+    return head;
+}
+
+void inicializar_lista(LISTA **head) {
+    *head = NULL;
 }
 
 void print_lista(LISTA* l){
     LISTA* aux = NULL;
-    for(aux = l; aux!=NULL; aux = aux->prox)
+    for(aux = l; aux!=NULL; aux = aux->prox){
         printf("\ntoken: %s",aux->valor_lexico.value.token);
+    }
 }
 
+/*
 void destroi_lista(LISTA* l){
     LISTA* aux,*aux2;
 
@@ -34,26 +53,30 @@ void destroi_lista(LISTA* l){
     l = NULL;
 }
 
-/*
+
 int main(){
     valor_t v;
     v.linha = 1;
-    v.natureza = NAT_FUNCTION;
+    v.natureza = 30;
     v.tamanho = 1;
-    v.tipo = INT_TYPE;
+    v.tipo = 30;
     v.value.token = "v";
 
-    printf("comecou");
-    inicia_lista();
-    printf("iniciou");
+    valor_t x;
+    x.linha = 1;
+    x.natureza = 30;
+    x.tamanho = 1;
+    x.tipo = 30;
+    x.value.token = "x";
 
-    init_lista_dec();
-    printf("iniciou dec");
-    insere(v);
-    printf("inseriu!");
-    insere_dec(lista2);
+    LISTA* l;
 
-    print_lista_dec(listadec);
+    inicializar_lista(&l);
+
+    l = insere(l,v);
+    l = insere(l,x);
+
+    print_lista(l);
 
     return 0;
 

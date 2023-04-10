@@ -1,4 +1,4 @@
-int a;
+int a, x;
 int b;
 int foo(){
 int xa;

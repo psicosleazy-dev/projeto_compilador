@@ -45,9 +45,9 @@ struct node{
   int datatype;
   LISTA_ILOCS* code;
   char *temp; // temporario pro resultado de alguma expressao
+  char *label;
   int number_of_children;
   struct node **children;
-  char *label; // label pra chamada de funcao
 };
 
 typedef struct node node_t;

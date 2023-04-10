@@ -48,7 +48,7 @@ extern int yydebug;
 
 #include "stack_management.h"
 extern Stack* stack;
-extern LISTA* lista;
+LISTA* lista;
 extern int get_line_number();
 extern void* arvore;
 

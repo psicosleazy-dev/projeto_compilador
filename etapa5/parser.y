@@ -8,7 +8,7 @@ void yyerror (char const *s);
 %code requires {
 #include "stack_management.h"
 extern Stack* stack;
-extern LISTA* lista;
+LISTA* lista;
 extern int get_line_number();
 extern void* arvore;
 }
@@ -78,7 +78,7 @@ programa: lista {arvore = (void*)$$; $$ = $1;}
 lista: funcao {$$ = $1;}
 	| funcao lista {$$ = $1; add_child($1,$2);}
 	| declaracao_global ';' {$$ = $1;}
-	| declaracao_global ';' lista {$$ = $1; add_child($$,$3);};
+	| declaracao_global ';' lista {if(!$1) {$$ = $3;} else{add_child($1,$3); $$ = $1;}};
 funcao: tipo TK_IDENTIFICADOR '(' parametros ')' bloco { // adicionar na tabela o label da funcao funcao: header body
 	char* leaf;
 	leaf = create_leaf($2);
@@ -93,8 +93,8 @@ funcao: tipo TK_IDENTIFICADOR '(' parametros ')' bloco { // adicionar na tabela 
 	push(stack,table);
 	// vamos gerar codigo
 	char* label_da_funcao;
-	label_da_funcao = retorna_label(stack,$1.value.token);
-	LISTA_ILOCS* l;
+	label_da_funcao = retorna_label(stack,$2.value.token);
+	LISTA_ILOCS* l = NULL;
 	ILOC inst;
 	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 	inst = gera_inst_com_label(label_da_funcao,inst);
@@ -102,10 +102,10 @@ funcao: tipo TK_IDENTIFICADOR '(' parametros ')' bloco { // adicionar na tabela 
 	l = concat_lista_ilocs(l,$6->code);
 	$$->code = l;
 	};
-tipo: TK_PR_INT {lista = NULL;}
-	| TK_PR_FLOAT {lista = NULL;}
-	| TK_PR_BOOL {lista = NULL;}
-	| TK_PR_CHAR {lista = NULL;};
+tipo: TK_PR_INT {inicializar_lista(&lista);}
+	| TK_PR_FLOAT {inicializar_lista(&lista);}
+	| TK_PR_BOOL {inicializar_lista(&lista);}
+	| TK_PR_CHAR {inicializar_lista(&lista);};
 declaracao_global: tipo lista_nomes_global {altera_tipo_na_lista(lista,$1); insere_lista_na_tabela(lista,stack); $$ = $2;};
 declaracao_local: tipo lista_nomes_local {altera_tipo_na_lista(lista,$1); insere_lista_na_tabela(lista,stack); $$ = $2;};
 lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']' TK_OC_LE TK_LIT_INT {
@@ -127,7 +127,7 @@ lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']'
 	add_child(new_node,$5);
 	add_child($$,new_node);
 	$3 = altera_natureza($3,NAT_ARRAY);
-	insere(lista,$3);}
+	lista = insere(lista,$3);}
 	| TK_IDENTIFICADOR '[' lista_inteiros ']' TK_OC_LE TK_LIT_INT {
 	node_t *new_node;
 	$$ = create_node(AST_INIT,"<=");
@@ -145,7 +145,7 @@ lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']'
 	add_child(new_node,$3);
 	add_child($$,new_node);
 	$1 = altera_natureza($1,NAT_ARRAY);
-	insere(lista,$1);}
+	lista = insere(lista,$1);}
 	| TK_IDENTIFICADOR '[' lista_inteiros ']' {
 	$$ = create_node(AST_ARR,"[]");
 	node_t* new_node;
@@ -157,7 +157,7 @@ lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']'
 	HASH_TABLE *table;
 	table = pop(stack);
 	$1 = altera_natureza($1,NAT_ARRAY);
-	insere(lista,$1);}
+	lista = insere(lista,$1);}
 	| TK_IDENTIFICADOR TK_OC_LE TK_LIT_INT {
 	$$ = create_node(AST_INIT,"<=");
 	node_t* new_node;
@@ -170,7 +170,7 @@ lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']'
 	new_node2 = create_node(AST_LIT_INT,leaf);
 	add_child($$,new_node2);
 	$1 = altera_natureza($1,NAT_VARIABLE);
-	insere(lista,$1);}
+	lista = insere(lista,$1);}
 	| lista_nomes_local ',' TK_IDENTIFICADOR TK_OC_LE TK_LIT_INT {
 	node_t* new_node;	
 	char* leaf;
@@ -184,11 +184,11 @@ lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']'
 	new_node2 = create_node(AST_LIT_INT,leaf);
 	add_child($$,new_node2);
 	$3 = altera_natureza($3,NAT_VARIABLE);
-	insere(lista,$3);}
+	lista = insere(lista,$3);}
 	| TK_IDENTIFICADOR {$1 = altera_natureza($1,NAT_VARIABLE);
-	insere(lista,$1);}
+	lista = insere(lista,$1); $$ = NULL;}
 	| lista_nomes_local ',' TK_IDENTIFICADOR {$$ = $1; $3 = altera_natureza($3,NAT_VARIABLE);
-	insere(lista,$3);}
+	lista = insere(lista,$3);}
     | lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']' {
 		$$ = create_node(AST_ARR,"[]");
 		node_t* new_node;
@@ -199,7 +199,7 @@ lista_nomes_local: lista_nomes_local ',' TK_IDENTIFICADOR '[' lista_inteiros ']'
 		add_child($$,$5);
 		add_child($$,$1);
 		$3 = altera_natureza($3,NAT_ARRAY);
-		insere(lista,$3);};
+		lista = insere(lista,$3);};
 lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR '[' lista_inteiros ']' {
 	$$ = create_node(AST_ARR,"[]");
 	node_t* new_node;
@@ -210,7 +210,7 @@ lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR '[' lista_inteiros '
 	add_child($$,$5);
 	add_child($$,$1);
 	$3 = altera_natureza($3,NAT_ARRAY);
-	insere(lista,$3);}
+	lista = insere(lista,$3);}
 	| TK_IDENTIFICADOR '[' lista_inteiros ']' {
 	$$ = create_node(AST_ARR,"[]");
 	node_t* new_node;	
@@ -220,13 +220,13 @@ lista_nomes_global: lista_nomes_global ',' TK_IDENTIFICADOR '[' lista_inteiros '
 	add_child($$,new_node); 
 	add_child($$,$3);
 	$1 = altera_natureza($1,NAT_ARRAY);
-	insere(lista,$1);}
+	lista = insere(lista,$1);}
 	| lista_nomes_global ',' TK_IDENTIFICADOR {$$ = $1;
 	$3 = altera_natureza($3,NAT_VARIABLE);
-	insere(lista,$3);}
+	lista = insere(lista,$3);}
 	| TK_IDENTIFICADOR {$$ = NULL;
 	$1 = altera_natureza($1,NAT_VARIABLE);
-	insere(lista,$1);};
+	lista = insere(lista,$1);};
 lista_inteiros: lista_inteiros '^' TK_LIT_INT {
 	$$ = create_node(AST_CIRC, "^"); 
 	node_t* new_node;
@@ -255,7 +255,7 @@ add_child($$,$1);
 add_child($$,$3);
 $$ = inf_tipo($$,$1,$3,AST_OR);
 $$->temp = gera_temp();
-LISTA_ILOCS *l = NULL, *code_1, *code_3;
+LISTA_ILOCS *l = NULL, *code_1 = NULL, *code_3 = NULL;
 ILOC inst;
 inst = gera_inst(ILOC_OR,"or",$1->temp,$3->temp,$$->temp);
 insere_lista_ilocs(&l,inst);
@@ -708,12 +708,13 @@ node_t *new_node;
 	sprintf(buf, "%d", retorna_end_desloc(stack,$1));
 	if(escopo_global(stack,$1))
 	   inst = gera_inst(ILOC_ATT,"storeAI",$3->temp,"rbss",buf);
-	else
+	else{
 	   inst = gera_inst(ILOC_ATT,"storeAI",$3->temp,"rfp",buf);
+	}
 	insere_lista_ilocs(&l,inst);
 	$$->code = l;
 	};
-comandos_simples: declaracao_local ';' comandos_simples {if($1 == NULL) {$$ = $3;} else {$$ = $1; add_child($$,$3);}}
+comandos_simples: declaracao_local ';' comandos_simples {if(!$1) {$$ = $3;} else {add_child($1,$3); $$ = $1;}}
 	| declaracao_local ';' {$$ = $1;}
 	| bloco ';' comandos_simples {$$ = $1; add_child($$,$3);}
 	| bloco ';' {$$ = $1;}

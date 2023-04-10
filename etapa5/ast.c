@@ -10,6 +10,7 @@ node_t* create_node(int type,char* label){
         new_node->type = type;
         new_node->number_of_children = 0;
         new_node->children = NULL;
+        new_node->code = NULL;
     }
     return new_node;
 }
@@ -86,6 +87,8 @@ void libera(void *arvore){
 
 void print_code(void *arvore){
   node_t *tree = (node_t *) arvore;
-  
-  print_list_ilocs(tree->code);
+  if(tree->code)
+    print_list_ilocs(tree->code);
+  else
+    printf("\nnão tem codigo nenhum aqui");
 }

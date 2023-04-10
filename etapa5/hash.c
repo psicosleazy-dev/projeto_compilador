@@ -36,16 +36,13 @@ void insert_item(HASH_TABLE* table, valor_t novo_simbolo)
             item->desloc = desloc;
             table->items[index] = item;
             desloc = desloc + item->valor_lexico.tamanho;
-            printf("inseriu variavel");
         }
-        if(novo_simbolo.linha == NAT_FUNCTION){
+        if(novo_simbolo.natureza == NAT_FUNCTION){
+            item->valor_lexico.label = strdup(gera_rotulo());
             table->items[index] = item;
-            novo_simbolo.label = strdup(gera_rotulo());
-            printf("inseriu nome funcao");
         }
         else{
             table->items[index] = item;
-            printf("inseriu");
         }
     }
 }
@@ -111,7 +108,7 @@ HASH_ENT* ht_search(HASH_TABLE* table, char* token)
     HASH_ENT* item = table->items[index];
 
     // Provide only non-NULL values.
-    if (item != NULL)
+    if (item)
     {
         if (strcmp(item->valor_lexico.value.token, token) == 0){
             return item;

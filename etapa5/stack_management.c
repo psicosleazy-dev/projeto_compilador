@@ -67,12 +67,12 @@ void print_stack(Stack* stack){
     }
 }
 
-HASH_ENT* search_stack(Stack* stack, char* simbolo){
+HASH_ENT* search_stack(Stack* stack, char* token){
     stack_node* aux;
     aux = stack->head;
     HASH_ENT* achou;
     while(aux){
-        achou = ht_search(aux->data,simbolo);
+        achou = ht_search(aux->data,token);
         if(achou)
             return achou;
         aux = aux->next;
@@ -114,7 +114,7 @@ int escopo_global(Stack *stack, valor_t s)
 
 char* retorna_label(Stack* s, char* token)
 {
-    HASH_ENT *ent = search_stack(s,token);;
+    HASH_ENT *ent = search_stack(s,token);
     if (ent)
         return ent->valor_lexico.label;
     return "NULL";
@@ -125,8 +125,6 @@ void checkTableDec(Stack* stack, valor_t novo_simbolo)
     HASH_ENT* tmp = search_stack(stack,novo_simbolo.value.token);
     if(tmp)
     {
-        if(tmp->valor_lexico.tipo != novo_simbolo.tipo)
-            printError(ERR_DECLARED, novo_simbolo.value.token, tmp->valor_lexico.tipo);
         if((tmp->valor_lexico.natureza == NAT_VARIABLE) && ((novo_simbolo.natureza == NAT_ARRAY)))
             printError(ERR_VARIABLE, novo_simbolo.value.token,0);
         if((tmp->valor_lexico.natureza == NAT_ARRAY) && ((novo_simbolo.natureza == NAT_VARIABLE) || (novo_simbolo.natureza == NAT_FUNCTION)))
@@ -162,19 +160,16 @@ int retorna_tipo_simbolo(valor_t s, Stack* stack){
         printError(ERR_UNDECLARED,s.value.token,s.tipo);
     return 0;
 }
-// alterar para que inuse faça a verificacao na pilha e dec apenas na tabela!!!!
 
 void insere_lista_na_tabela(LISTA* l, Stack* stack){
     LISTA* aux = NULL;
     HASH_TABLE *table = NULL;
-    if(!l) printf("sim, a lista ta vazia");
     for(aux = l; aux!=NULL; aux=aux->prox){
         checkTableDec(stack,aux->valor_lexico);
         table = pop(stack);
         aux->valor_lexico = altera_tamanho(aux->valor_lexico);
         insert_item(table,aux->valor_lexico);
         push(stack,table);
-        printf("entrou no laco");
     }
 }
 
