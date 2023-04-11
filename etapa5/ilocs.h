@@ -15,7 +15,6 @@
 #define ILOC_AND 345
 #define ILOC_OR 346
 #define ILOC_NOT 347
-#define ILOC_LABEL 348
 #define ILOC_IF 349
 #define ILOC_JUMP 350
 #define ILOC_CALL 351
@@ -40,6 +39,7 @@
 #include <stdio.h>
 
 struct iloc{
+    int eh_label;
     int tipo_iloc;
     char* label;
     char* op;
@@ -58,10 +58,11 @@ typedef struct lista_ilocs{
 void insere_lista_ilocs(LISTA_ILOCS**,ILOC);
 ILOC gera_inst(int,char*,char*,char*,char*);
 ILOC gera_inst_com_label(char*,ILOC);
-void print_iloc(ILOC);
+void print_iloc(ILOC,FILE*);
 void print_list_ilocs(LISTA_ILOCS*);
 LISTA_ILOCS* concat_lista_ilocs(LISTA_ILOCS*,LISTA_ILOCS*);
 void free_list(LISTA_ILOCS*);
+int tam_lista_ilocs(LISTA_ILOCS*);
 char* gera_temp(void);
 char* gera_rotulo(void);
 #endif

@@ -2,5 +2,6 @@ int a, x;
 int b;
 int foo(){
 int xa;
-xa = 4;
+int ba;
+xa = xa * 8 - ba;
 }

@@ -96,6 +96,9 @@ funcao: tipo TK_IDENTIFICADOR '(' parametros ')' bloco { // adicionar na tabela 
 	label_da_funcao = retorna_label(stack,$2.value.token);
 	LISTA_ILOCS* l = NULL;
 	ILOC inst;
+	inst = gera_inst(ILOC_JUMP,"jumpI",NULL,NULL,label_da_funcao);
+	// printf("label ta aqui: %s",inst.res);
+	insere_lista_ilocs(&l,inst);
 	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 	inst = gera_inst_com_label(label_da_funcao,inst);
 	insere_lista_ilocs(&l,inst);
@@ -473,7 +476,7 @@ $$ = inf_tipo($$,$1,$3,AST_ADD);
 $$->temp = gera_temp();
 LISTA_ILOCS *l = NULL, *code_1, *code_3;
 ILOC inst;
-if($3->type == INT_TYPE)
+if($3->datatype == INT_TYPE)
     inst = gera_inst(ILOC_ADDI,"addI",$1->temp,$3->temp,$$->temp);
 else
     inst = gera_inst(ILOC_ADD,"add",$1->temp,$3->temp,$$->temp);
@@ -491,7 +494,7 @@ $$->code = code_1;
 	$$->temp = gera_temp();
 LISTA_ILOCS *l = NULL, *code_1, *code_3;
 ILOC inst;
-if($3->type == INT_TYPE)
+if($3->datatype == INT_TYPE)
     inst = gera_inst(ILOC_SUBI,"subI",$1->temp,$3->temp,$$->temp);
 else
     inst = gera_inst(ILOC_SUB,"sub",$1->temp,$3->temp,$$->temp);
@@ -509,7 +512,7 @@ $$ = inf_tipo($$,$1,$3,AST_MUL);
 $$->temp = gera_temp();
 LISTA_ILOCS *l = NULL, *code_1, *code_3;
 ILOC inst;
-if($3->type == INT_TYPE)
+if($3->datatype == INT_TYPE)
     inst = gera_inst(ILOC_MULTI,"multI",$1->temp,$3->temp,$$->temp);
 else
     inst = gera_inst(ILOC_MULT,"mult",$1->temp,$3->temp,$$->temp);
@@ -527,7 +530,7 @@ $$->code = code_1;
 	$$->temp = gera_temp();
 	LISTA_ILOCS *l = NULL, *code_1, *code_3;
 	ILOC inst;
-	if($3->type == INT_TYPE)
+	if($3->datatype == INT_TYPE)
 		inst = gera_inst(ILOC_DIVI,"divI",$1->temp,$3->temp,$$->temp);
 	else
 		inst = gera_inst(ILOC_DIV,"div",$1->temp,$3->temp,$$->temp);
@@ -550,7 +553,6 @@ argumentos: expressao ',' argumentos {$$ = $1; add_child($$,$3);}
 	| expressao {$$ = $1;};
 args: argumentos {$$ = $1;}
 	| {$$ = NULL;};
-// falta gerar codigo aqui
 chamada_funcao: TK_IDENTIFICADOR '(' args ')' {
 	char label[100] = "call ", *nome_fun;
 	nome_fun = strdup(create_leaf($1));
@@ -592,6 +594,8 @@ $$ = create_node(AST_INDEX,"[]");
 	}
 	| TK_LIT_INT {char* leaf;
 	leaf = create_leaf($1);
+	char buf[2];
+	sprintf(buf,"%d",atoi(leaf));
 	$$ = create_node(AST_LIT_INT,leaf);
 	$$ = altera_datatype($$);
 	$1 = altera_natureza($1,NAT_LITERAL);
@@ -602,9 +606,7 @@ $$ = create_node(AST_INDEX,"[]");
 	$$->temp = gera_temp();
 	LISTA_ILOCS* l = NULL;
 	ILOC inst;
-	char buf[2];
-	sprintf(buf,"%d",$1.value.int_value);
-	inst = gera_inst(ILOC_LOADI,"loadI",buf,"null",$$->temp);
+	inst = gera_inst(ILOC_LOADI,"loadI",buf,NULL,$$->temp);
 	insere_lista_ilocs(&l,inst);
 	$$->code = l;
 	}
@@ -632,7 +634,7 @@ $$ = create_node(AST_INDEX,"[]");
 	ILOC inst;
 	char buf[2];
 	sprintf(buf,"%d",$1.value.int_value);
-	inst = gera_inst(ILOC_LOADI,"loadI",buf,"null",$$->temp);
+	inst = gera_inst(ILOC_LOADI,"loadI",buf,NULL,$$->temp);
 	insere_lista_ilocs(&l,inst);
 	$$->code = l;
 	}
@@ -650,7 +652,7 @@ $$ = create_node(AST_INDEX,"[]");
 	ILOC inst;
 	char buf[2];
 	sprintf(buf, "%d", $1.value.int_value);
-	inst = gera_inst(ILOC_LOADI,"loadI",buf,"null",$$->temp);
+	inst = gera_inst(ILOC_LOADI,"loadI",buf,NULL,$$->temp);
 	insere_lista_ilocs(&l,inst);
 	$$->code = l;}
 	| chamada_funcao {$$ = $1;}; 
@@ -712,7 +714,9 @@ node_t *new_node;
 	   inst = gera_inst(ILOC_ATT,"storeAI",$3->temp,"rfp",buf);
 	}
 	insere_lista_ilocs(&l,inst);
+	l = concat_lista_ilocs(l,$3->code);
 	$$->code = l;
+	//print_code($$);
 	};
 comandos_simples: declaracao_local ';' comandos_simples {if(!$1) {$$ = $3;} else {add_child($1,$3); $$ = $1;}}
 	| declaracao_local ';' {$$ = $1;}
@@ -753,23 +757,23 @@ if_else: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco TK_PR_ELSE bloco {
 	char *opaco = gera_temp();
 	LISTA_ILOCS *l = NULL;
 	ILOC inst;
-	inst = gera_inst(ILOC_LOADI, "loadI","0","null",$$->temp);
+	inst = gera_inst(ILOC_LOADI, "loadI","0",NULL,$$->temp);
 	insere_lista_ilocs(&l,inst);
 	inst = gera_inst(ILOC_DIF,"cmp_NE",$3->temp,$$->temp,opaco);
 	insere_lista_ilocs(&l,inst);
 	inst = gera_inst(ILOC_BR,"cbr",opaco,label_true,label_false);
 	insere_lista_ilocs(&l,inst);
-	inst = gera_inst(ILOC_LABEL,"nop","null","null","null");
+	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 	inst = gera_inst_com_label(label_true,inst);
 	insere_lista_ilocs(&l,inst);
 	l = concat_lista_ilocs(l,$6->code);
-	inst = gera_inst(ILOC_JUMPI,"jumpI","null","null",next);
+	inst = gera_inst(ILOC_JUMPI,"jumpI",NULL,NULL,next);
 	insere_lista_ilocs(&l,inst);
-	inst = gera_inst(ILOC_LABEL,"nop","null","null","null");
+	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 	inst = gera_inst_com_label(label_false,inst);
 	insere_lista_ilocs(&l,inst);
 	l = concat_lista_ilocs(l,$8->code);
-	inst = gera_inst(ILOC_LABEL,"nop","null","null","null");
+	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 	inst = gera_inst_com_label(next,inst);
 	};
 if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco {
@@ -782,19 +786,19 @@ if: TK_PR_IF '(' expressao ')' TK_PR_THEN bloco {
 	char *opaco = gera_temp();
 	LISTA_ILOCS *l = NULL;
 	ILOC inst;
-	inst = gera_inst(ILOC_LOADI, "loadI","0","null",$$->temp);
+	inst = gera_inst(ILOC_LOADI, "loadI","0",NULL,$$->temp);
 	insere_lista_ilocs(&l,inst);
 	inst = gera_inst(ILOC_DIF,"cmp_NE",$3->temp,$$->temp,opaco);
 	insere_lista_ilocs(&l,inst);
 	inst = gera_inst(ILOC_BR,"cbr",opaco,label_true,label_false);
 	insere_lista_ilocs(&l,inst);
-	inst = gera_inst(ILOC_LABEL,"nop","null","null","null");
+	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 	inst = gera_inst_com_label(label_true,inst);
 	insere_lista_ilocs(&l,inst);
 	l = concat_lista_ilocs(l,$6->code);
-	inst = gera_inst(ILOC_JUMPI,"jumpI","null","null",label_false);
+	inst = gera_inst(ILOC_JUMPI,"jumpI",NULL,NULL,label_false);
 	insere_lista_ilocs(&l,inst);
-	inst = gera_inst(ILOC_LABEL,"nop","null","null","null");
+	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 	inst = gera_inst_com_label(label_false,inst);
 	};
 while: TK_PR_WHILE '(' expressao ')' bloco {
@@ -807,7 +811,7 @@ while: TK_PR_WHILE '(' expressao ')' bloco {
 	char *opaco = gera_temp();
     LISTA_ILOCS *l = NULL;
 	ILOC inst;
-	inst = gera_inst(ILOC_LABEL,"nop","null","null","null");
+	inst = gera_inst(ILOC_NOP,"nop",NULL,NULL,NULL);
 	inst = gera_inst_com_label(label_true,inst);
 	insere_lista_ilocs(&l,inst);
 	inst = gera_inst(ILOC_LOADI, "loadI","0",NULL,$$->temp);

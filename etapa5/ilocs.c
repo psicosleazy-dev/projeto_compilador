@@ -7,8 +7,10 @@ void insere_lista_ilocs(LISTA_ILOCS **lista, ILOC inst)
   p->inst = inst;
   p->next = NULL;
 
-  if (*lista == NULL){
+  if (*lista == NULL)
+  {
     *lista = p;
+    printf("inseriu");
   }
   else
   {
@@ -16,6 +18,7 @@ void insere_lista_ilocs(LISTA_ILOCS **lista, ILOC inst)
     while (aux->next)
       aux = aux->next;
     aux->next = p;
+    printf("inseriu");
   }
 }
 
@@ -24,6 +27,7 @@ ILOC gera_inst(int tipo, char *op, char *op1, char *op2, char *res)
   ILOC inst;
 
   inst.tipo_iloc = tipo;
+  inst.eh_label = 0;
   if (op)
     inst.op = strdup(op);
   if (op1)
@@ -39,13 +43,12 @@ ILOC gera_inst(int tipo, char *op, char *op1, char *op2, char *res)
 ILOC gera_inst_com_label(char *label, ILOC inst)
 {
   inst.label = strdup(label);
-  inst.tipo_iloc = ILOC_LABEL;
+  inst.eh_label = 1;
   return inst;
 }
 
-void print_iloc(ILOC inst)
+void print_iloc(ILOC inst,FILE* saida)
 {
-  FILE *saida = fopen("saida", "a");
   if (saida)
   {
     switch (inst.tipo_iloc)
@@ -61,12 +64,28 @@ void print_iloc(ILOC inst)
     case ILOC_DEC:
     case ILOC_OR:
     case ILOC_AND:
-      fprintf(saida, "\n%s    %s, %s => %s", inst.op, inst.op1, inst.op2, inst.res);
-      printf("\n%s    %s, %s => %s", inst.op, inst.op1, inst.op2, inst.res);
+      if (inst.eh_label)
+      {
+        fprintf(saida, "\n%s: %s    %s, %s  => %s", inst.label, inst.op, inst.op1, inst.op2, inst.res);
+        printf("\n%s:  %s      %s, %s  => %s", inst.label, inst.op, inst.op1, inst.op2, inst.res);
+      }
+      else
+      {
+        fprintf(saida, "\n%s    %s, %s => %s", inst.op, inst.op1, inst.op2, inst.res);
+        printf("\n%s    %s, %s => %s", inst.op, inst.op1, inst.op2, inst.res);
+      }
       break;
     case ILOC_ATT:
-      fprintf(saida, "\n%s    %s   => %s, %s", inst.op, inst.op1, inst.op2, inst.res);
-      printf("\n%s    %s     => %s, %s", inst.op, inst.op1, inst.op2, inst.res);
+      if (inst.eh_label)
+      {
+        fprintf(saida, "\n%s: %s    %s   => %s, %s", inst.label, inst.op, inst.op1, inst.op2, inst.res);
+        printf("\n%s: %s    %s     => %s, %s", inst.label, inst.op, inst.op1, inst.op2, inst.res);
+      }
+      else
+      {
+        fprintf(saida, "\n%s    %s   => %s, %s", inst.op, inst.op1, inst.op2, inst.res);
+        printf("\n%s    %s     => %s, %s", inst.op, inst.op1, inst.op2, inst.res);
+      }
       break;
     case ILOC_LE:
     case ILOC_LESS:
@@ -74,44 +93,111 @@ void print_iloc(ILOC inst)
     case ILOC_GE:
     case ILOC_GREAT:
     case ILOC_DIF:
-      fprintf(saida, "\n%s %s, %s     -> %s", inst.op, inst.op1, inst.op2, inst.res);
-      printf("\n%s %s, %s    -> %s", inst.op, inst.op1, inst.op2, inst.res);
+      if (inst.eh_label)
+      {
+        fprintf(saida, "\n%s: %s %s, %s     -> %s", inst.label, inst.op, inst.op1, inst.op2, inst.res);
+        printf("\n%s: %s %s, %s    -> %s", inst.label, inst.op, inst.op1, inst.op2, inst.res);
+      }
+      else
+      {
+        fprintf(saida, "\n%s %s, %s     -> %s", inst.op, inst.op1, inst.op2, inst.res);
+        printf("\n%s %s, %s    -> %s", inst.op, inst.op1, inst.op2, inst.res);
+      }
       break;
     case ILOC_LOADI:
-      fprintf(saida, "\n%s %s        => %s", inst.op, inst.op1, inst.op2);
-      printf("\n%s %s        => %s", inst.op, inst.op1, inst.op2);
+      if (inst.eh_label)
+      {
+        fprintf(saida, "\n%s: %s %s        => %s", inst.label, inst.op, inst.op1, inst.res);
+        printf("\n%s: %s %s        => %s", inst.label, inst.op, inst.op1, inst.res);
+      }
+      else
+      {
+        fprintf(saida, "\n%s %s        => %s", inst.op, inst.op1, inst.res);
+        printf("\n%s %s        => %s", inst.op, inst.op1, inst.res);
+      }
       break;
     case ILOC_BR:
-      fprintf(saida, "\n%s %s       -> %s, %s", inst.op, inst.op1, inst.op2, inst.res);
-      printf("\n%s %s        -> %s, %s", inst.op, inst.op1, inst.op2, inst.res);
+      if (inst.eh_label)
+      {
+        fprintf(saida, "\n%s: %s %s       -> %s, %s", inst.label, inst.op, inst.op1, inst.op2, inst.res);
+        printf("\n%s: %s %s        -> %s, %s", inst.label, inst.op, inst.op1, inst.op2, inst.res);
+      }
+      else
+      {
+        fprintf(saida, "\n%s %s       -> %s, %s", inst.op, inst.op1, inst.op2, inst.res);
+        printf("\n%s %s        -> %s, %s", inst.op, inst.op1, inst.op2, inst.res);
+      }
       break;
     case ILOC_JUMP:
-      fprintf(saida, "\n%s            -> %s", inst.op, inst.op1);
-      printf("\n%s           -> %s", inst.op, inst.op1);
-      break;
-    case ILOC_LABEL:
-      fprintf(saida, "\n%s: %s %s, %s  => %s",inst.label, inst.op, inst.op1, inst.op2, inst.res);
-      printf("\n%s:  %s %s, %s  => %s", inst.label, inst.op, inst.op1, inst.op2, inst.res);
+      if (inst.eh_label)
+      {
+        fprintf(saida, "\n%s: %s            -> %s", inst.label, inst.op, inst.res);
+        printf("\n%s: %s           -> %s", inst.label, inst.op, inst.res);
+      }
+      else
+      {
+        fprintf(saida, "\n%s            -> %s", inst.op, inst.res);
+        printf("\n%s           -> %s", inst.op, inst.res);
+      }
       break;
     case ILOC_NOP:
-      fprintf(saida, "\n%s", inst.op);
-      printf("\n%s", inst.op);
+      if (inst.eh_label)
+      {
+        fprintf(saida, "\n%s: %s", inst.label, inst.op);
+        printf("\n%s: %s", inst.label, inst.op);
+      }
+      else
+      {
+        fprintf(saida, "\n%s", inst.op);
+        printf("\n%s", inst.op);
+      }
       break;
     }
   }
-  fclose(saida);
+  
+}
+
+int tam_lista_ilocs(LISTA_ILOCS *l)
+{
+  int cont = 0;
+  LISTA_ILOCS *aux = l;
+  while (aux->next)
+  {
+    aux = aux->next;
+    cont++;
+  }
+  return cont;
 }
 
 void print_list_ilocs(LISTA_ILOCS *l)
 {
-  LISTA_ILOCS *currentNode = l;
+  // montando as instrucoes de cabeçalho
+  LISTA_ILOCS *intro = NULL, *currentNode = NULL;
+  ILOC inst;
+  int body;
+  inst = gera_inst(ILOC_LOADI, "loadI", "0", "null", "rfp");
+  insere_lista_ilocs(&intro, inst);
+  inst = gera_inst(ILOC_LOADI, "loadI", "0", "null", "rsp");
+  insere_lista_ilocs(&intro, inst);
+  body = tam_lista_ilocs(l);
+  body = body + 4;
+  char buf[2];
+  sprintf(buf, "%d", body);
+  inst = gera_inst(ILOC_LOADI, "loadI", buf, "null", "rbss");
+  insere_lista_ilocs(&intro, inst);
+  intro = concat_lista_ilocs(intro, l);
+  currentNode = intro;
+
+  FILE *saida = fopen("saida", "w+");
+
   while (currentNode != NULL)
   {
-    print_iloc(currentNode->inst);
-    printf("\n");
+    print_iloc(currentNode->inst,saida);
     currentNode = currentNode->next;
   }
   printf("\n");
+
+  fclose(saida);
 }
 
 void free_list(LISTA_ILOCS *l)
@@ -170,7 +256,7 @@ int main(){
 
   insere_lista_ilocs(&l,inst);
   insere_lista_ilocs(&l,inst2);
-  
+
   inst2 = gera_inst(ILOC_ADD,"add","r1","r100",gera_temp());
   insere_lista_ilocs(&l2,inst2);
   concat_lista_ilocs(l,l2);

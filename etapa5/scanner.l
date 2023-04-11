@@ -1,5 +1,7 @@
 /* Nomes: Lucas Brum e Arthur Oliveira*/
 %{
+#include <stdio.h>
+#include <stdlib.h>
 #include "parser.tab.h"
 #include "stack_management.h"
 extern void *arvore;
